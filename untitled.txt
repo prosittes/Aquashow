@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Sistema de Piscinas</title>
+<style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f0f0f0; }
+    header { background: #007bff; color: white; padding: 10px; text-align: center; }
+    .container { padding: 20px; max-width: 800px; margin: auto; }
+    .hidden { display: none; }
+    button { padding: 10px 15px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
+    .btn-primary { background: #007bff; color: white; }
+    .btn-danger { background: #dc3545; color: white; }
+    .stars span { font-size: 24px; cursor: pointer; color: #ccc; }
+    .stars span.selected { color: gold; }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Sistema de Piscinas</h1>
+</header>
+
+<div class="container">
+    <!-- Tela de Login -->
+    <div id="login-screen">
+        <h2>Login</h2>
+        <p>Escolha o tipo de acesso:</p>
+        <button class="btn-primary" onclick="login('cliente')">Cliente</button>
+        <button class="btn-primary" onclick="login('funcionario')">Funcionário</button>
+        <button class="btn-primary" onclick="login('admin')">Administrador</button>
+    </div>
+
+    <!-- Área do Cliente -->
+    <div id="cliente-screen" class="hidden">
+        <h2>Área do Cliente</h2>
+        <p><strong>Serviço:</strong> Limpeza semanal</p>
+        <p><strong>Próxima visita:</strong> 28/08/2025</p>
+        <button class="btn-danger" onclick="alert('Emergência enviada ao administrador!')">Chamada de Emergência</button>
+        <h3>Avaliar Funcionário</h3>
+        <div class="stars" id="rating">
+            <span onclick="rate(1)">★</span>
+            <span onclick="rate(2)">★</span>
+            <span onclick="rate(3)">★</span>
+            <span onclick="rate(4)">★</span>
+            <span onclick="rate(5)">★</span>
+        </div>
+        <p id="rating-result"></p>
+        <button onclick="logout()">Sair</button>
+    </div>
+
+    <!-- Área do Funcionário -->
+    <div id="funcionario-screen" class="hidden">
+        <h2>Área do Funcionário</h2>
+        <p><strong>Meta semanal:</strong> 80 piscinas</p>
+        <p><strong>Hoje:</strong> 16 piscinas programadas</p>
+        <ul>
+            <li>Cliente A - Rua 1 <button onclick="marcarConcluida(this)">Concluir</button></li>
+            <li>Cliente B - Rua 2 <button onclick="marcarConcluida(this)">Concluir</button></li>
+        </ul>
+        <button onclick="logout()">Sair</button>
+    </div>
+
+    <!-- Área do Administrador -->
+    <div id="admin-screen" class="hidden">
+        <h2>Área do Administrador</h2>
+        <p><strong>Total de funcionários:</strong> 5</p>
+        <p><strong>Total de clientes:</strong> 80</p>
+        <p><strong>Avisos de emergência:</strong> Nenhum no momento</p>
+        <button onclick="logout()">Sair</button>
+    </div>
+</div>
+
+<script>
+    function login(tipo) {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById(tipo + '-screen').classList.remove('hidden');
+    }
+    function logout() {
+        document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
+        document.getElementById('login-screen').classList.remove('hidden');
+    }
+    function rate(stars) {
+        let spans = document.querySelectorAll('#rating span');
+        spans.forEach((s, i) => {
+            s.classList.toggle('selected', i < stars);
+        });
+        document.getElementById('rating-result').innerText = "Você avaliou com " + stars + " estrelas!";
+    }
+    function marcarConcluida(btn) {
+        btn.parentElement.style.textDecoration = "line-through";
+        btn.disabled = true;
+    }
+</script>
+
+</body>
+</html>
