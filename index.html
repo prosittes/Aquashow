@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>AQUASHOUW PISCINAS</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f0f0f0; }
+  header { background: #0077b6; color: white; padding: 20px; text-align: center; font-size: 24px; }
+  main { padding: 20px; }
+  .hidden { display: none; }
+  button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+  .back-btn { background: #ccc; border: none; color: #000; }
+  .panel { background: white; padding: 20px; border-radius: 10px; margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<header>
+  AQUASHOUW PISCINAS
+</header>
+
+<main>
+  <!-- Tela de Login -->
+  <div id="loginScreen" class="panel">
+    <h2>Login</h2>
+    <label>Tipo de acesso:</label><br>
+    <select id="loginType">
+      <option value="admin">Administrador</option>
+      <option value="funcionario">Funcionário</option>
+      <option value="cliente">Cliente</option>
+    </select><br><br>
+    <label>Usuário:</label><br>
+    <input type="text" id="username"><br><br>
+    <label>Senha:</label><br>
+    <input type="password" id="password"><br><br>
+    <button onclick="login()">Entrar</button>
+  </div>
+
+  <!-- Painel Administrador -->
+  <div id="adminPanel" class="panel hidden">
+    <h2>Painel do Administrador</h2>
+    <button class="back-btn" onclick="goBack()">Voltar para a página inicial</button>
+    <h3>Gerenciar Clientes</h3>
+    <div id="clientes"></div>
+    <button onclick="addCliente()">Adicionar Cliente</button>
+    <h3>Gerenciar Funcionários</h3>
+    <div id="funcionarios"></div>
+    <button onclick="addFuncionario()">Adicionar Funcionário</button>
+    <h3>Listas de Piscinas</h3>
+    <div id="piscinas"></div>
+    <button onclick="addPiscina()">Adicionar Piscina</button>
+    <h3>Avaliações</h3>
+    <div id="avaliacoes"></div>
+  </div>
+
+  <!-- Painel Funcionário -->
+  <div id="funcPanel" class="panel hidden">
+    <h2>Painel do Funcionário</h2>
+    <button class="back-btn" onclick="goBack()">Voltar para a página inicial</button>
+    <h3>Suas Piscinas</h3>
+    <div id="minhasPiscinas"></div>
+  </div>
+
+  <!-- Painel Cliente -->
+  <div id="clientePanel" class="panel hidden">
+    <h2>Painel do Cliente</h2>
+    <button class="back-btn" onclick="goBack()">Voltar para a página inicial</button>
+    <button onclick="emergencia()">Chamada de Emergência</button>
+    <h3>Avaliar Funcionário</h3>
+    <input type="text" id="funcAvaliar" placeholder="Nome do funcionário">
+    <select id="nota">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+    <button onclick="avaliar()">Enviar Avaliação</button>
+  </div>
+</main>
+
+<script>
+let clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+let funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || [];
+let piscinas = JSON.parse(localStorage.getItem('piscinas')) || [];
+let avaliacoes = JSON.parse(localStorage.getItem('avaliacoes')) || [];
+
+function login() {
+  const type = document.getElementById('loginType').value;
+  const user = document.getElementById('username').value;
+  const pass = document.getElementById('password').value;
+  if ((type === 'admin' && user === 'admin' && pass === '123') ||
+      (type === 'funcionario' && user === 'funcionario' && pass === '123') ||
+      (type === 'cliente' && user === 'cliente' && pass === '123')) {
+    document.getElementById('loginScreen').classList.add('hidden');
+    if (type === 'admin') { loadAdmin(); document.getElementById('adminPanel').classList.remove('hidden'); }
+    if (type === 'funcionario') { loadFuncionario(); document.getElementById('funcPanel').classList.remove('hidden'); }
+    if (type === 'cliente') { document.getElementById('clientePanel').classList.remove('hidden'); }
+  } else {
+    alert('Credenciais inválidas!');
+  }
+}
+
+function goBack() {
+  document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
+  document.getElementById('loginScreen').classList.remove('hidden');
+}
+
+function addCliente() {
+  const nome = prompt('Nome do cliente:');
+  const endereco = prompt('Endereço:');
+  if (!nome || !endereco) return;
+  clientes.push({ nome, endereco });
+  localStorage.setItem('clientes', JSON.stringify(clientes));
+  loadAdmin();
+}
+
+function addFuncionario() {
+  const nome = prompt('Nome do funcionário:');
+  const meta = prompt('Meta semanal:');
+  if (!nome || !meta) return;
+  funcionarios.push({ nome, meta });
+  localStorage.setItem('funcionarios', JSON.stringify(funcionarios));
+  loadAdmin();
+}
+
+function addPiscina() {
+  const funcionario = prompt('Atribuir a qual funcionário?');
+  const endereco = prompt('Endereço da piscina:');
+  if (!funcionario || !endereco) return;
+  piscinas.push({ funcionario, endereco, status: 'Pendente' });
+  localStorage.setItem('piscinas', JSON.stringify(piscinas));
+  loadAdmin();
+}
+
+function loadAdmin() {
+  document.getElementById('clientes').innerHTML = clientes.map(c => `<p>${c.nome} - ${c.endereco}</p>`).join('');
+  document.getElementById('funcionarios').innerHTML = funcionarios.map(f => `<p>${f.nome} - Meta: ${f.meta}</p>`).join('');
+  document.getElementById('piscinas').innerHTML = piscinas.map(p => `<p>${p.endereco} - ${p.funcionario} (${p.status})</p>`).join('');
+  document.getElementById('avaliacoes').innerHTML = avaliacoes.map(a => `<p>${a.funcionario}: ${a.nota} estrelas</p>`).join('');
+}
+
+function loadFuncionario() {
+  const minhas = piscinas.filter(p => p.funcionario === 'funcionario');
+  document.getElementById('minhasPiscinas').innerHTML = minhas.map(m => `<p>${m.endereco} - ${m.status}</p>`).join('');
+}
+
+function avaliar() {
+  const funcionario = document.getElementById('funcAvaliar').value;
+  const nota = document.getElementById('nota').value;
+  if (!funcionario) return alert('Informe o funcionário');
+  avaliacoes.push({ funcionario, nota });
+  localStorage.setItem('avaliacoes', JSON.stringify(avaliacoes));
+  alert('Avaliação enviada!');
+}
+
+function emergencia() {
+  alert('Chamada de emergência enviada!');
+}
+</script>
+</body>
+</html>
