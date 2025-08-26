@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sistema de Piscinas — Versão Única (HTML)</title>
+<style>
+  :root{
+    --primary:#0ea5e9;--primary-600:#0284c7;--danger:#ef4444;--ok:#16a34a;
+    --bg:#f6f7fb;--card:#ffffff;--text:#0f172a;--muted:#6b7280;--line:#e5e7eb;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,'Noto Sans',sans-serif;background:var(--bg);color:var(--text)}
+  header{background:linear-gradient(90deg,var(--primary),var(--primary-600));color:#fff;padding:20px 16px;text-align:center}
+  header h1{margin:0;font-size:clamp(20px,3vw,28px)}
+  header .sub{opacity:.9;font-size:13px}
+  .wrap{max-width:1100px;margin:20px auto;padding:0 16px}
+  .card{background:var(--card);border-radius:16px;box-shadow:0 8px 24px rgba(2,6,23,.06);padding:18px;margin-bottom:16px}
+  .hidden{display:none}
+  h2{margin:.2rem 0 .8rem 0}
+  h3{margin:.2rem 0 .8rem 0}
+  .muted{color:var(--muted)}
+  .row{display:grid;gap:12px}
+  .row-2{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  label{font-size:13px;color:var(--muted)}
+  input,select{width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:12px;font-size:16px;margin-top:6px;background:#fff}
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
+  button{padding:10px 14px;border:0;border-radius:12px;font-weight:600;cursor:pointer}
+  .btn{background:#fff;border:2px solid var(--line)}
+  .btn-primary{background:var(--primary);color:#fff}
+  .btn-danger{background:var(--danger);color:#fff}
+  .btn-ghost{background:transparent;border:2px dashed var(--line);color:var(--muted)}
+  .list-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--line);gap:10px}
+  .list-row:last-child{border-bottom:0}
+  .badge{display:inline-block;background:#e0f2fe;color:#075985;padding:3px 8px;border-radius:999px;font-size:12px;margin-left:8px}
+  .pill{display:inline-block;background:#ecfeff;color:#0369a1;padding:4px 10px;border-radius:999px;font-size:12px;margin-left:6px}
+  .meta{height:10px;background:#e5e7eb;border-radius:999px;overflow:hidden}
+  .meta > div{height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);width:0%}
+  .stars{user-select:none}
+  .stars span{font-size:28px;cursor:pointer;color:#d1d5db;transition:transform .1s}
+  .stars span.selected{color:#f59e0b}
+  .stars span:hover{transform:scale(1.1)}
+  .footer-note{font-size:12px;color:var(--muted);text-align:center;margin:24px 0}
+  .login-roles{display:flex;gap:6px;margin-top:8px}
+  .login-roles button{flex:1}
+  .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono','Courier New',monospace;background:#111827;color:#fff;border-radius:6px;padding:2px 6px;font-size:12px}
+</style>
+</head>
+<body>
+  <header>
+    <h1>💧 Sistema de Piscinas</h1>
+    <div class="sub">Site único em HTML com login, avaliação (1–5), emergências e metas</div>
+  </header>
+
+  <div class="wrap">
+
+    <!-- LOGIN -->
+    <div id="screen-login" class="card">
+      <h2>Entrar</h2>
+      <div class="row row-2">
+        <div>
+          <label>Usuário</label>
+          <input id="login-user" placeholder="cliente | funcionario | admin" autocomplete="username" />
+        </div>
+        <div>
+          <label>Senha</label>
+          <input id="login-pass" type="password" placeholder="123" autocomplete="current-password" />
+        </div>
+      </div>
+      <div class="login-roles">
+        <button class="btn" onclick="prefill('cliente')">Cliente</button>
+        <button class="btn" onclick="prefill('funcionario')">Funcionário</button>
+        <button class="btn" onclick="prefill('admin')">Administrador</button>
+      </div>
+      <div class="actions" style="margin-top:10px">
+        <button class="btn-primary" onclick="doLogin()">Acessar</button>
+        <button class="btn-ghost" onclick="resetDemo()">Limpar dados de teste</button>
+      </div>
+      <p class="footer-note">
+        Dica: use <span class="kbd">cliente</span>, <span class="kbd">funcionario</span> ou <span class="kbd">admin</span> com senha <span class="kbd">123</span>.
+      </p>
+    </div>
+
+    <!-- CLIENTE -->
+    <div id="screen-cliente" class="hidden">
+      <div class="card">
+        <h2>Área do Cliente</h2>
+        <div class="row row-2">
+          <div>
+            <label>Cliente</label>
+            <div><strong id="cli-nome">—</strong> <span class="pill" id="cli-plano">—</span></div>
+          </div>
+          <div>
+            <label>Endereço</label>
+            <div id="cli-endereco"><strong>—</strong></div>
+          </div>
+          <div>
+            <label>Próxima visita</label>
+            <div id="cli-prox"><strong>—</strong></div>
+          </div>
+          <div>
+            <label>Produtos previstos</label>
+            <div id="cli-produtos"><span class="badge">Cloro</span> <span class="badge">Redinha</span></div>
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          <button class="btn-danger" onclick="notifyEmergency()">🚨 Chamada de Emergência</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Avaliar último atendimento</h3>
+        <div id="cli-ultimo-func" class="muted">Funcionário: —</div>
+        <div id="rating" class="stars" style="margin:10px 0">
+          <span onclick="rate(1)">★</span>
+          <span onclick="rate(2)">★</span>
+          <span onclick="rate(3)">★</span>
+          <span onclick="rate(4)">★</span>
+          <span onclick="rate(5)">★</span>
+        </div>
+        <div id="rating-msg" class="muted">Escolha de 1 a 5 estrelas.</div>
+      </div>
+
+      <div class="card">
+        <h3>Histórico de atendimentos</h3>
+        <div id="cli-historico"></div>
+      </div>
+
+      <div class="card">
+        <button class="btn" onclick="logout()">Sair</button>
+      </div>
+    </div>
+
+    <!-- FUNCIONÁRIO -->
+    <div id="screen-func" class="hidden">
+      <div class="card">
+        <h2>Área do Funcionário</h2>
+        <div class="row row-2">
+          <div>
+            <label>Nome</label>
+            <div><strong id="fun-nome">—</strong></div>
+          </div>
+          <div>
+            <label>Meta semanal</label>
+            <div><strong id="fun-meta">80</strong> piscinas</div>
+          </div>
+          <div>
+            <label>Concluídas nesta semana</label>
+            <div><strong id="fun-concluidas">0</strong></div>
+          </div>
+        </div>
+        <div class="meta" style="margin-top:10px"><div id="fun-progress" style="width:0%"></div></div>
+      </div>
+
+      <div class="card">
+        <h3>Roteiro de hoje</h3>
+        <div id="fun-roteiro"></div>
+      </div>
+
+      <div class="card">
+        <h3>Minhas avaliações recentes</h3>
+        <div id="fun-avaliacoes" class="muted">Sem avaliações ainda.</div>
+      </div>
+
+      <div class="card">
+        <button class="btn" onclick="logout()">Sair</button>
+      </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div id="screen-admin" class="hidden">
+      <div class="card">
+        <h2>Área do Administrador</h2>
+        <div class="row row-2">
+          <div>
+            <label>Total de funcionários</label>
+            <div><strong id="adm-tot-func">—</strong></div>
+          </div>
+          <div>
+            <label>Total de clientes</label>
+            <div><strong id="adm-tot-cli">—</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Avisos de Emergência</h3>
+        <div id="adm-emerg"></div>
+      </div>
+
+      <div class="card">
+        <h3>Avaliações por funcionário</h3>
+        <div id="adm-avaliacoes"></div>
+      </div>
+
+      <div class="card">
+        <button class="btn" onclick="logout()">Sair</button>
+      </div>
+    </div>
+
+    <p class="footer-note">Versão demo: dados salvos apenas no navegador (LocalStorage). Para produção, conectar a um banco.</p>
+  </div>
+
+<script>
+// ===== Demo base =====
+const DEMO = {
+  cliente: { id: 101, nome:"Condomínio Jardim Azul", endereco:"Rua das Águas, 100", plano:"Semanal",
+             proximaVisita: addDays(new Date(), 2), produtos:["Cloro","Redinha"] },
+  funcionarios: [
+    { id: 1, nome:"João Silva", metaSemanal:80 },
+    { id: 2, nome:"Maria Souza", metaSemanal:80 },
+    { id: 3, nome:"Pedro Santos", metaSemanal:80 }
+  ],
+  visitasHoje: Array.from({length:16}, (_,i)=>({id:i+1, cliente:`Cliente ${i+1}`, endereco:`Rua ${i+1}`, produtos:["Cloro","Escova"], status:"pendente"})),
+  historicoCliente: [
+    { data:addDays(new Date(), -7), funcionarioId:1, funcionario:"João Silva", status:"Concluído" },
+    { data:addDays(new Date(), -14), funcionarioId:1, funcionario:"João Silva", status:"Concluído" }
+  ]
+};
+
+// ===== Sessão / Auth simples =====
+const USERS = {
+  cliente:{ user:"cliente", pass:"123", role:"cliente" },
+  funcionario:{ user:"funcionario", pass:"123", role:"func" },
+  admin:{ user:"admin", pass:"123", role:"admin" }
+};
+
+function prefill(role){
+  const map={cliente:"cliente",funcionario:"funcionario",admin:"admin"};
+  document.getElementById('login-user').value = map[role];
+  document.getElementById('login-pass').value = "123";
+}
+
+function doLogin(){
+  const u = (document.getElementById('login-user').value||"").trim().toLowerCase();
+  const p = (document.getElementById('login-pass').value||"").trim();
+  const match = Object.values(USERS).find(x=>x.user===u && x.pass===p);
+  if(!match){ alert("Usuário ou senha inválidos."); return; }
+  localStorage.setItem('sessao_role', match.role);
+  routeToRole(match.role);
+}
+
+function logout(){
+  localStorage.removeItem('sessao_role');
+  showOnly('screen-login');
+}
+
+function routeToRole(role){
+  if(role==='cliente'){ initCliente(); showOnly('screen-cliente'); }
+  if(role==='func'){ initFuncionario(); showOnly('screen-func'); }
+  if(role==='admin'){ initAdmin(); showOnly('screen-admin'); }
+}
+
+function showOnly(id){
+  ['screen-login','screen-cliente','screen-func','screen-admin'].forEach(k=>{
+    document.getElementById(k).classList.add('hidden');
+  });
+  document.getElementById(id).classList.remove('hidden');
+}
+
+// ===== Util =====
+function addDays(d, n){ const x=new Date(d); x.setDate(x.getDate()+n); return x; }
+function fmtDate(d){ return new Date(d).toLocaleDateString('pt-BR',{year:'numeric',month:'2-digit',day:'2-digit'}); }
+function el(q){ return document.querySelector(q); }
+function els(q){ return Array.from(document.querySelectorAll(q)); }
+
+// ===== Cliente =====
+function initCliente(){
+  el('#cli-nome').textContent = DEMO.cliente.nome;
+  el('#cli-plano').textContent = DEMO.cliente.plano;
+  el('#cli-endereco').innerHTML = `<strong>${DEMO.cliente.endereco}</strong>`;
+  el('#cli-prox').innerHTML = `<strong>${fmtDate(DEMO.cliente.proximaVisita)}</strong>`;
+  el('#cli-produtos').innerHTML = DEMO.cliente.produtos.map(p=>`<span class="badge">${p}</span>`).join(' ');
+
+  // Último atendimento
+  const last = DEMO.historicoCliente[0];
+  el('#cli-ultimo-func').textContent = `Funcionário: ${last.funcionario}`;
+
+  // Precarregar estrelas com última nota, se houver
+  const avs = getAvaliacoes();
+  if(avs.length){
+    const lastAv = avs[avs.length-1];
+    highlightStars(lastAv.nota);
+    el('#rating-msg').textContent = `Última avaliação enviada: ${lastAv.nota} estrela(s).`;
+  }else{
+    highlightStars(0);
+    el('#rating-msg').textContent = 'Escolha de 1 a 5 estrelas.';
+  }
+
+  // Histórico
+  const histWrap = el('#cli-historico');
+  histWrap.innerHTML = DEMO.historicoCliente.map(h=>`
+    <div class="list-row">
+      <div>${fmtDate(h.data)} — ${h.funcionario}</div>
+      <div class="badge">${h.status}</div>
+    </div>
+  `).join('');
+}
+
+function notifyEmergency(){
+  const arr = getEmergencias();
+  arr.push({ cliente: DEMO.cliente.nome, data:new Date().toISOString(), msg:'Solicitação de atendimento emergencial' });
+  setEmergencias(arr);
+  alert('Emergência enviada! O administrador verá o alerta.');
+}
+
+function rate(stars){
+  const arr = getAvaliacoes();
+  const last = DEMO.historicoCliente[0];
+  arr.push({ funcionarioId:last.funcionarioId, funcionario:last.funcionario, nota:stars, data:new Date().toISOString() });
+  setAvaliacoes(arr);
+  highlightStars(stars);
+  el('#rating-msg').textContent = `Obrigado! Avaliação registrada: ${stars} estrela(s).`;
+}
+
+function highlightStars(n){
+  els('#rating span').forEach((s,i)=> s.classList.toggle('selected', i < n));
+}
+
+// ===== Funcionário =====
+function initFuncionario(){
+  const eu = DEMO.funcionarios[0]; // demo: João
+  el('#fun-nome').textContent = eu.nome;
+  el('#fun-meta').textContent = eu.metaSemanal;
+  const concluidas = getConcluidasSemana();
+  el('#fun-concluidas').textContent = concluidas;
+  el('#fun-progress').style.width = Math.min(100, concluidas/eu.metaSemanal*100) + '%';
+
+  const rota = el('#fun-roteiro');
+  rota.innerHTML = DEMO.visitasHoje.map(v=>`
+    <div class="list-row">
+      <div>
+        <strong>${v.cliente}</strong> <span class="muted">— ${v.endereco}</span>
+        <span class="badge">${v.produtos.join(', ')}</span>
+      </div>
+      <div><button class="btn" onclick="marcarConcluida(this)">Concluir</button></div>
+    </div>
+  `).join('');
+
+  renderMinhasAvaliacoes(eu.id);
+}
+
+function marcarConcluida(btn){
+  btn.disabled = true;
+  btn.textContent = 'Concluída';
+  btn.closest('.list-row').style.opacity = .6;
+  const novo = getConcluidasSemana() + 1;
+  setConcluidasSemana(novo);
+  el('#fun-concluidas').textContent = novo;
+  const meta = Number(el('#fun-meta').textContent)||80;
+  el('#fun-progress').style.width = Math.min(100, novo/meta*100) + '%';
+}
+
+function renderMinhasAvaliacoes(funcId){
+  const av = getAvaliacoes().filter(a=>a.funcionarioId===funcId);
+  const wrap = el('#fun-avaliacoes');
+  if(!av.length){ wrap.textContent = 'Sem avaliações ainda.'; return; }
+  wrap.innerHTML = av.slice(-6).reverse().map(a=>`
+    <div class="list-row">
+      <div>${new Date(a.data).toLocaleDateString('pt-BR')}</div>
+      <div>${'★'.repeat(a.nota)}</div>
+    </div>
+  `).join('');
+}
+
+// ===== Admin =====
+function initAdmin(){
+  el('#adm-tot-func').textContent = DEMO.funcionarios.length;
+  el('#adm-tot-cli').textContent = 1;
+
+  // Emergências
+  const ems = getEmergencias();
+  const emWrap = el('#adm-emerg');
+  emWrap.innerHTML = ems.length ? ems.slice(-20).reverse().map(e=>`
+    <div class="list-row">
+      <div><strong>${e.cliente}</strong> — <span class="muted">${new Date(e.data).toLocaleString('pt-BR')}</span></div>
+      <div class="badge">EMERGÊNCIA</div>
+    </div>
+  `).join('') : '<div class="muted">Nenhuma emergência.</div>';
+
+  // Avaliações por funcionário
+  const av = getAvaliacoes();
+  const map = {};
+  av.forEach(a=>{
+    map[a.funcionario] = map[a.funcionario] || { soma:0, qtd:0 };
+    map[a.funcionario].soma += a.nota; map[a.funcionario].qtd += 1;
+  });
+  const avWrap = el('#adm-avaliacoes');
+  const rows = Object.entries(map).map(([nome,st])=>{
+    const media = (st.soma / st.qtd).toFixed(1);
+    return `<div class="list-row"><div>${nome}</div><div>${media} ★ (${st.qtd})</div></div>`;
+  });
+  avWrap.innerHTML = rows.length ? rows.join('') : '<div class="muted">Sem avaliações registradas.</div>';
+}
+
+// ===== Storage helpers =====
+function getAvaliacoes(){ try{ return JSON.parse(localStorage.getItem('avaliacoes')||'[]'); }catch{ return []; } }
+function setAvaliacoes(v){ localStorage.setItem('avaliacoes', JSON.stringify(v)); }
+function getEmergencias(){ try{ return JSON.parse(localStorage.getItem('emergencias')||'[]'); }catch{ return []; } }
+function setEmergencias(v){ localStorage.setItem('emergencias', JSON.stringify(v)); }
+function getConcluidasSemana(){ return Number(localStorage.getItem('concluidasSemana')||'0'); }
+function setConcluidasSemana(n){ localStorage.setItem('concluidasSemana', String(n)); }
+function resetDemo(){
+  localStorage.removeItem('avaliacoes');
+  localStorage.removeItem('emergencias');
+  localStorage.removeItem('concluidasSemana');
+  alert('Dados de teste limpos!');
+}
+
+// ===== Inicialização =====
+(function(){
+  const role = localStorage.getItem('sessao_role');
+  if(role){ routeToRole(role); }
+})();
+</script>
+</body>
+</html>
