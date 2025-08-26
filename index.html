@@ -1,165 +1,186 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AQUASHOUW PISCINAS</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f0f0f0;
-        }
-        header {
-            background: #0077b6;
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
-        header img {
-            max-height: 80px;
-            display: block;
-            margin: 0 auto 10px;
-        }
-        main {
-            padding: 20px;
-        }
-        .login, .dashboard {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 400px;
-            margin: 20px auto;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
-        input, button, select {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            background: #0077b6;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #005f86;
-        }
-        .hidden {
-            display: none;
-        }
-        h2 {
-            margin-top: 0;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>AQUASHOUW PISCINAS - Sistema</title>
+<style>
+    body { font-family: Arial, sans-serif; background: #f2f2f2; margin: 0; padding: 0; }
+    header { background: #0077b6; color: white; padding: 15px; text-align: center; }
+    .container { max-width: 800px; margin: 30px auto; background: white; padding: 20px; border-radius: 10px; }
+    h2 { color: #0077b6; }
+    input, select, button, textarea { width: 100%; padding: 10px; margin: 5px 0; }
+    button { background: #0077b6; color: white; border: none; cursor: pointer; }
+    button:hover { background: #005f8a; }
+    .hidden { display: none; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background: #0077b6; color: white; }
+</style>
 </head>
 <body>
-    <header>
-        <img src="logo.png" alt="Logo AQUASHOUW PISCINAS (adicione sua imagem aqui)">
-        <h1>AQUASHOUW PISCINAS</h1>
-    </header>
-    <main>
-        <div class="login" id="login-screen">
-            <h2>Login</h2>
-            <input type="text" id="username" placeholder="Usuário">
-            <input type="password" id="password" placeholder="Senha">
-            <button onclick="login()">Entrar</button>
-        </div>
+<header>
+    <h1>AQUASHOUW PISCINAS</h1>
+</header>
+<div class="container" id="login-section">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Usuário">
+    <input type="password" id="password" placeholder="Senha">
+    <select id="userType">
+        <option value="">Selecione o tipo de acesso</option>
+        <option value="admin">Administrador</option>
+        <option value="funcionario">Funcionário</option>
+        <option value="cliente">Cliente</option>
+    </select>
+    <button onclick="login()">Entrar</button>
+</div>
 
-        <div class="dashboard hidden" id="cliente-dashboard">
-            <h2>Área do Cliente</h2>
-            <p>Bem-vindo! Aqui você pode:</p>
-            <button onclick="alert('Emergência solicitada!')">Chamar Emergência</button>
-            <h3>Avaliar Funcionário</h3>
-            <select id="avaliacao-cliente">
-                <option value="">Selecione</option>
-                <option value="1">1 - Péssimo</option>
-                <option value="2">2 - Ruim</option>
-                <option value="3">3 - Regular</option>
-                <option value="4">4 - Bom</option>
-                <option value="5">5 - Excelente</option>
-            </select>
-            <button onclick="salvarAvaliacao()">Salvar Avaliação</button>
-            <button onclick="logout()">Sair</button>
-        </div>
+<div class="container hidden" id="admin-panel">
+    <h2>Painel do Administrador</h2>
+    <button onclick="showSection('clientes')">Gerenciar Clientes</button>
+    <button onclick="showSection('funcionarios')">Gerenciar Funcionários</button>
+    <button onclick="showSection('avaliacoes')">Ver Avaliações</button>
+    <button onclick="showSection('senha')">Alterar Senha</button>
+    <div id="admin-content"></div>
+</div>
 
-        <div class="dashboard hidden" id="funcionario-dashboard">
-            <h2>Área do Funcionário</h2>
-            <p>Piscinas do dia: 16</p>
-            <p>Meta semanal: 80</p>
-            <button onclick="logout()">Sair</button>
-        </div>
+<div class="container hidden" id="funcionario-panel">
+    <h2>Painel do Funcionário</h2>
+    <p>Aqui você verá suas metas semanais e piscinas designadas.</p>
+</div>
 
-        <div class="dashboard hidden" id="admin-dashboard">
-            <h2>Painel do Administrador</h2>
-            <p>Classificações recentes:</p>
-            <ul id="lista-avaliacoes"></ul>
-            <button onclick="logout()">Sair</button>
-        </div>
-    </main>
+<div class="container hidden" id="cliente-panel">
+    <h2>Painel do Cliente</h2>
+    <button onclick="alert('Chamado de emergência enviado!')">Chamada de Emergência</button>
+    <h3>Avaliar Funcionário</h3>
+    <select id="avaliacao">
+        <option value="1">1 estrela</option>
+        <option value="2">2 estrelas</option>
+        <option value="3">3 estrelas</option>
+        <option value="4">4 estrelas</option>
+        <option value="5">5 estrelas</option>
+    </select>
+    <button onclick="salvarAvaliacao()">Enviar Avaliação</button>
+</div>
 
-    <script>
-        const avaliacoes = JSON.parse(localStorage.getItem('avaliacoes') || '[]');
+<script>
+let adminSenha = "123";
+let avaliacoes = JSON.parse(localStorage.getItem("avaliacoes")) || [];
+let clientes = JSON.parse(localStorage.getItem("clientes")) || [];
+let funcionarios = JSON.parse(localStorage.getItem("funcionarios")) || [];
 
-        function login() {
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
+function login() {
+    const user = document.getElementById("username").value;
+    const pass = document.getElementById("password").value;
+    const type = document.getElementById("userType").value;
 
-            if (user === 'cliente' && pass === '123') {
-                mostrarDashboard('cliente');
-            } else if (user === 'funcionario' && pass === '123') {
-                mostrarDashboard('funcionario');
-            } else if (user === 'admin' && pass === '123') {
-                mostrarDashboard('admin');
-                carregarAvaliacoes();
-            } else {
-                alert('Usuário ou senha incorretos!');
-            }
-        }
+    if (type === "admin" && user === "admin" && pass === adminSenha) {
+        document.getElementById("login-section").classList.add("hidden");
+        document.getElementById("admin-panel").classList.remove("hidden");
+    } else if (type === "funcionario" && user === "funcionario" && pass === "123") {
+        document.getElementById("login-section").classList.add("hidden");
+        document.getElementById("funcionario-panel").classList.remove("hidden");
+    } else if (type === "cliente" && user === "cliente" && pass === "123") {
+        document.getElementById("login-section").classList.add("hidden");
+        document.getElementById("cliente-panel").classList.remove("hidden");
+    } else {
+        alert("Credenciais inválidas!");
+    }
+}
 
-        function mostrarDashboard(tipo) {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('cliente-dashboard').classList.add('hidden');
-            document.getElementById('funcionario-dashboard').classList.add('hidden');
-            document.getElementById('admin-dashboard').classList.add('hidden');
+function showSection(section) {
+    let content = document.getElementById("admin-content");
+    content.innerHTML = "";
 
-            if (tipo === 'cliente') document.getElementById('cliente-dashboard').classList.remove('hidden');
-            if (tipo === 'funcionario') document.getElementById('funcionario-dashboard').classList.remove('hidden');
-            if (tipo === 'admin') document.getElementById('admin-dashboard').classList.remove('hidden');
-        }
+    if (section === "clientes") {
+        content.innerHTML = `
+            <h3>Clientes</h3>
+            <form onsubmit="adicionarCliente(event)">
+                <input type="text" id="clienteNome" placeholder="Nome" required>
+                <input type="text" id="clienteEndereco" placeholder="Endereço" required>
+                <input type="text" id="clienteContato" placeholder="Contato" required>
+                <button type="submit">Adicionar Cliente</button>
+            </form>
+            <table>
+                <tr><th>Nome</th><th>Endereço</th><th>Contato</th><th>Ações</th></tr>
+                ${clientes.map((c, i) => `<tr><td>${c.nome}</td><td>${c.endereco}</td><td>${c.contato}</td><td><button onclick="removerCliente(${i})">Remover</button></td></tr>`).join("")}
+            </table>
+        `;
+    } else if (section === "funcionarios") {
+        content.innerHTML = `
+            <h3>Funcionários</h3>
+            <form onsubmit="adicionarFuncionario(event)">
+                <input type="text" id="funcNome" placeholder="Nome" required>
+                <input type="number" id="funcMeta" placeholder="Meta semanal" required>
+                <button type="submit">Adicionar Funcionário</button>
+            </form>
+            <table>
+                <tr><th>Nome</th><th>Meta Semanal</th><th>Ações</th></tr>
+                ${funcionarios.map((f, i) => `<tr><td>${f.nome}</td><td>${f.meta}</td><td><button onclick="removerFuncionario(${i})">Remover</button></td></tr>`).join("")}
+            </table>
+        `;
+    } else if (section === "avaliacoes") {
+        content.innerHTML = `
+            <h3>Avaliações</h3>
+            <table>
+                <tr><th>Avaliação</th></tr>
+                ${avaliacoes.map(a => `<tr><td>${a} estrelas</td></tr>`).join("")}
+            </table>
+        `;
+    } else if (section === "senha") {
+        content.innerHTML = `
+            <h3>Alterar Senha do Administrador</h3>
+            <input type="password" id="novaSenha" placeholder="Nova senha">
+            <button onclick="alterarSenha()">Alterar</button>
+        `;
+    }
+}
 
-        function salvarAvaliacao() {
-            const valor = document.getElementById('avaliacao-cliente').value;
-            if (!valor) {
-                alert('Selecione uma avaliação!');
-                return;
-            }
-            avaliacoes.push(valor);
-            localStorage.setItem('avaliacoes', JSON.stringify(avaliacoes));
-            alert('Avaliação salva!');
-        }
+function adicionarCliente(event) {
+    event.preventDefault();
+    const nome = document.getElementById("clienteNome").value;
+    const endereco = document.getElementById("clienteEndereco").value;
+    const contato = document.getElementById("clienteContato").value;
+    clientes.push({ nome, endereco, contato });
+    localStorage.setItem("clientes", JSON.stringify(clientes));
+    showSection('clientes');
+}
 
-        function carregarAvaliacoes() {
-            const lista = document.getElementById('lista-avaliacoes');
-            lista.innerHTML = '';
-            avaliacoes.forEach((nota, i) => {
-                const li = document.createElement('li');
-                li.textContent = `Avaliação ${i + 1}: ${nota} estrelas`;
-                lista.appendChild(li);
-            });
-        }
+function removerCliente(i) {
+    clientes.splice(i, 1);
+    localStorage.setItem("clientes", JSON.stringify(clientes));
+    showSection('clientes');
+}
 
-        function logout() {
-            document.getElementById('login-screen').classList.remove('hidden');
-            document.getElementById('cliente-dashboard').classList.add('hidden');
-            document.getElementById('funcionario-dashboard').classList.add('hidden');
-            document.getElementById('admin-dashboard').classList.add('hidden');
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-        }
-    </script>
+function adicionarFuncionario(event) {
+    event.preventDefault();
+    const nome = document.getElementById("funcNome").value;
+    const meta = document.getElementById("funcMeta").value;
+    funcionarios.push({ nome, meta });
+    localStorage.setItem("funcionarios", JSON.stringify(funcionarios));
+    showSection('funcionarios');
+}
+
+function removerFuncionario(i) {
+    funcionarios.splice(i, 1);
+    localStorage.setItem("funcionarios", JSON.stringify(funcionarios));
+    showSection('funcionarios');
+}
+
+function salvarAvaliacao() {
+    const avaliacao = document.getElementById("avaliacao").value;
+    avaliacoes.push(avaliacao);
+    localStorage.setItem("avaliacoes", JSON.stringify(avaliacoes));
+    alert("Avaliação salva!");
+}
+
+function alterarSenha() {
+    const nova = document.getElementById("novaSenha").value;
+    if (nova) {
+        adminSenha = nova;
+        alert("Senha alterada com sucesso!");
+    }
+}
+</script>
 </body>
 </html>
