@@ -141,6 +141,11 @@ html+=`<div class="list-item"><strong>${f}</strong> - ${db.avaliacoes[f].map(a=>
 html+=`<h3>Exportar Clientes</h3>
 <button onclick="exportarClientes()">Exportar Lista de Clientes (Word)</button>`;
 
+// IMPORTAR CLIENTES
+html+=`<h3>Importar Clientes</h3>
+<input type="file" id="importFile" accept=".json">
+<button onclick="importarClientes()">Importar Clientes</button>`;
+
 html+=`<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
 main.innerHTML=html;
 }
@@ -207,6 +212,29 @@ function exportarClientes(){
   document.body.removeChild(link);
 }
 
+// IMPORTAR CLIENTES
+function importarClientes(){
+  const fileInput = document.getElementById('importFile');
+  if(fileInput.files.length === 0){ alert('Selecione um arquivo JSON'); return; }
+  const file = fileInput.files[0];
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const dados = JSON.parse(e.target.result);
+      const db = JSON.parse(localStorage.getItem('aquashowDB'));
+      for(let c in dados){
+        db.usuarios[c] = dados[c]; // adiciona ou atualiza clientes
+      }
+      localStorage.setItem('aquashowDB', JSON.stringify(db));
+      alert('Clientes importados com sucesso!');
+      painelAdmin();
+    }catch(err){
+      alert('Arquivo inválido');
+    }
+  };
+  reader.readAsText(file);
+}
+
 // FUNCIONÁRIO
 function painelFuncionario(funcUser){
 const main=document.getElementById("main-content");
@@ -232,20 +260,4 @@ html+=`<p>Status do serviço: Em andamento</p>`;
 html+=`<p>Próximo vencimento: ${db.usuarios[clienteUser].vencimento} - Valor: R$${db.usuarios[clienteUser].valor}</p>`;
 html+=`<h3>Avaliar Funcionário</h3><select id="avaliarFuncionario">`;
 for(let u in db.usuarios){if(db.usuarios[u].tipo==="funcionario"){html+=`<option value="${u}">${u}</option>`;}}
-html+=`</select><select id="notaFuncionario"><option value="1">1 - Ruim</option><option value="2">2 - Regular</option><option value="3">3 - Bom</option><option value="4">4 - Muito Bom</option><option value="5">5 - Excelente</option></select>
-<button onclick="enviarAvaliacaoCliente('${clienteUser}')">Enviar Avaliação</button>`;
-html+=`<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
-main.innerHTML=html;
-}
-function enviarAvaliacaoCliente(clienteUser){
-const func=document.getElementById("avaliarFuncionario").value;
-const nota=parseInt(document.getElementById("notaFuncionario").value);
-const descr=["","Ruim","Regular","Bom","Muito Bom","Excelente"];
-const db=JSON.parse(localStorage.getItem("aquashowDB"));
-if(!db.avaliacoes[func]) db.avaliacoes[func]=[];
-db.avaliacoes[func].push({nota:nota,descricao:descr[nota]});
-localStorage.setItem("aquashowDB",JSON.stringify(db)); alert("Avaliação enviada!");
-}
-</script>
-</body>
-</html>
+html+=`</select><select id="notaFuncionario"><option value="1">1 - Ruim</option><option value="2">2 - Regular</option><option value="3">3 - Bom</option><option value="4">4
