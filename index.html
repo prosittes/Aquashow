@@ -136,6 +136,11 @@ for(let f in db.usuarios){
 if(db.usuarios[f].tipo==="funcionario" && db.avaliacoes[f]){
 html+=`<div class="list-item"><strong>${f}</strong> - ${db.avaliacoes[f].map(a=>a.nota+' ('+a.descricao+')').join(', ')}</div>`;}
 }
+
+// EXPORTAR CLIENTES
+html+=`<h3>Exportar Clientes</h3>
+<button onclick="exportarClientes()">Exportar Lista de Clientes (Word)</button>`;
+
 html+=`<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
 main.innerHTML=html;
 }
@@ -180,6 +185,26 @@ const db=JSON.parse(localStorage.getItem("aquashowDB"));
 if(!db.usuarios[func].manutencao) db.usuarios[func].manutencao=[];
 db.usuarios[func].manutencao.push({descricao:desc,feita:false});
 localStorage.setItem("aquashowDB",JSON.stringify(db)); painelAdmin();
+}
+
+// EXPORTAR CLIENTES
+function exportarClientes(){
+  const db = JSON.parse(localStorage.getItem("aquashowDB"));
+  let conteudo = "<h1>Lista de Clientes AQUASHOW PISCINAS</h1><ul>";
+  for(let u in db.usuarios){
+    if(db.usuarios[u].tipo === "cliente"){
+      conteudo += `<li><strong>${u}</strong> - Endereço: ${db.usuarios[u].endereco} - Vencimento: ${db.usuarios[u].vencimento} - Valor: R$${db.usuarios[u].valor}</li>`;
+    }
+  }
+  conteudo += "</ul>";
+  const blob = new Blob(['\ufeff', conteudo], { type: 'application/msword' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'Lista_Clientes.doc';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 
 // FUNCIONÁRIO
