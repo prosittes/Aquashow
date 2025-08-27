@@ -1,162 +1,169 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>AQUASHOW PISCINAS</title>
-<style>
-  body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f0f0f0; }
-  header { background: #0077b6; color: white; padding: 20px; text-align: center; font-size: 24px; }
-  main { padding: 20px; }
-  .hidden { display: none; }
-  button { padding: 10px 20px; margin: 5px; cursor: pointer; }
-  .back-btn { background: #ccc; border: none; color: #000; }
-  .panel { background: white; padding: 20px; border-radius: 10px; margin-top: 20px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AQUASHOUW PISCINAS</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
+        header { background: #0077b6; color: white; padding: 15px; text-align: center; font-size: 24px; }
+        main { padding: 20px; max-width: 900px; margin: auto; background: white; border-radius: 8px; }
+        h2 { color: #0077b6; }
+        input, select, textarea, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 5px; border: 1px solid #ccc; }
+        button { background: #0077b6; color: white; border: none; cursor: pointer; }
+        button:hover { background: #005f86; }
+        .hidden { display: none; }
+        .list-item { border-bottom: 1px solid #ddd; padding: 8px 0; }
+        .back-btn { background: #ccc; color: black; margin-top: 10px; }
+    </style>
 </head>
 <body>
-
-<header>
-  AQUASHOW PISCINAS
-</header>
-
-<main>
-  <!-- Tela de Login -->
-  <div id="loginScreen" class="panel">
+<header>AQUASHOUW PISCINAS</header>
+<main id="main-content">
     <h2>Login</h2>
-    <label>Tipo de acesso:</label><br>
-    <select id="loginType">
-      <option value="admin">Administrador</option>
-      <option value="funcionario">Funcionário</option>
-      <option value="cliente">Cliente</option>
-    </select><br><br>
-    <label>Usuário:</label><br>
-    <input type="text" id="username"><br><br>
-    <label>Senha:</label><br>
-    <input type="password" id="password"><br><br>
-    <button onclick="login()">Entrar</button>
-  </div>
-
-  <!-- Painel Administrador -->
-  <div id="adminPanel" class="panel hidden">
-    <h2>Painel do Administrador</h2>
-    <button class="back-btn" onclick="goBack()">Voltar para a página inicial</button>
-    <h3>Gerenciar Clientes</h3>
-    <div id="clientes"></div>
-    <button onclick="addCliente()">Adicionar Cliente</button>
-    <h3>Gerenciar Funcionários</h3>
-    <div id="funcionarios"></div>
-    <button onclick="addFuncionario()">Adicionar Funcionário</button>
-    <h3>Listas de Piscinas</h3>
-    <div id="piscinas"></div>
-    <button onclick="addPiscina()">Adicionar Piscina</button>
-    <h3>Avaliações</h3>
-    <div id="avaliacoes"></div>
-  </div>
-
-  <!-- Painel Funcionário -->
-  <div id="funcPanel" class="panel hidden">
-    <h2>Painel do Funcionário</h2>
-    <button class="back-btn" onclick="goBack()">Voltar para a página inicial</button>
-    <h3>Suas Piscinas</h3>
-    <div id="minhasPiscinas"></div>
-  </div>
-
-  <!-- Painel Cliente -->
-  <div id="clientePanel" class="panel hidden">
-    <h2>Painel do Cliente</h2>
-    <button class="back-btn" onclick="goBack()">Voltar para a página inicial</button>
-    <button onclick="emergencia()">Chamada de Emergência</button>
-    <h3>Avaliar Funcionário</h3>
-    <input type="text" id="funcAvaliar" placeholder="Nome do funcionário">
-    <select id="nota">
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-      <option value="5">5</option>
+    <select id="tipo-acesso">
+        <option value="admin">Administrador</option>
+        <option value="funcionario">Funcionário</option>
+        <option value="cliente">Cliente</option>
     </select>
-    <button onclick="avaliar()">Enviar Avaliação</button>
-  </div>
+    <input type="text" id="usuario" placeholder="Usuário">
+    <input type="password" id="senha" placeholder="Senha">
+    <button onclick="login()">Entrar</button>
+
+    <h2>Solicitar Orçamento</h2>
+    <input type="text" id="nomeOrc" placeholder="Nome">
+    <input type="text" id="telOrc" placeholder="Telefone">
+    <input type="text" id="endOrc" placeholder="Endereço">
+    <input type="text" id="servOrc" placeholder="Serviço desejado">
+    <textarea id="obsOrc" placeholder="Observações"></textarea>
+    <button onclick="enviarOrcamento()">Enviar Orçamento</button>
 </main>
 
 <script>
-let clientes = JSON.parse(localStorage.getItem('clientes')) || [];
-let funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || [];
-let piscinas = JSON.parse(localStorage.getItem('piscinas')) || [];
-let avaliacoes = JSON.parse(localStorage.getItem('avaliacoes')) || [];
+const db = {
+    usuarios: {
+        admin: { senha: "123", tipo: "admin" },
+        func1: { senha: "123", tipo: "funcionario", piscinas: [] },
+        cliente1: { senha: "123", tipo: "cliente", endereco: "Rua A, 123" }
+    },
+    orcamentos: [],
+    avaliacoes: {}
+};
+
+if(!localStorage.getItem("aquashouwDB")) {
+    localStorage.setItem("aquashouwDB", JSON.stringify(db));
+}
+
+function voltarInicio() { location.reload(); }
 
 function login() {
-  const type = document.getElementById('loginType').value;
-  const user = document.getElementById('username').value;
-  const pass = document.getElementById('password').value;
-  if ((type === 'admin' && user === 'admin' && pass === '123') ||
-      (type === 'funcionario' && user === 'funcionario' && pass === '123') ||
-      (type === 'cliente' && user === 'cliente' && pass === '123')) {
-    document.getElementById('loginScreen').classList.add('hidden');
-    if (type === 'admin') { loadAdmin(); document.getElementById('adminPanel').classList.remove('hidden'); }
-    if (type === 'funcionario') { loadFuncionario(); document.getElementById('funcPanel').classList.remove('hidden'); }
-    if (type === 'cliente') { document.getElementById('clientePanel').classList.remove('hidden'); }
-  } else {
-    alert('Credenciais inválidas!');
-  }
+    const tipo = document.getElementById("tipo-acesso").value;
+    const user = document.getElementById("usuario").value.trim();
+    const pass = document.getElementById("senha").value.trim();
+    const dbAtual = JSON.parse(localStorage.getItem("aquashouwDB"));
+
+    if (dbAtual.usuarios[user] && dbAtual.usuarios[user].senha === pass && dbAtual.usuarios[user].tipo === tipo) {
+        if (tipo === "admin") painelAdmin(user);
+        if (tipo === "funcionario") painelFuncionario(user);
+        if (tipo === "cliente") painelCliente(user);
+    } else {
+        alert("Usuário ou senha inválidos.");
+    }
 }
 
-function goBack() {
-  document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
-  document.getElementById('loginScreen').classList.remove('hidden');
+function painelAdmin(adminUser) {
+    const main = document.getElementById("main-content");
+    const dbAtual = JSON.parse(localStorage.getItem("aquashouwDB"));
+    let html = `<h2>Painel do Administrador</h2>`;
+
+    html += `<h3>Orçamentos Recebidos</h3>`;
+    if (dbAtual.orcamentos.length === 0) html += `<p>Nenhum orçamento recebido.</p>`;
+    else dbAtual.orcamentos.forEach(o => {
+        html += `<div class="list-item"><strong>${o.nome}</strong> - ${o.servico}<br>Tel: ${o.tel}<br>End: ${o.endereco}<br>Obs: ${o.obs}</div>`;
+    });
+
+    html += `<h3>Funcionários</h3>`;
+    for (let user in dbAtual.usuarios) {
+        if (dbAtual.usuarios[user].tipo === "funcionario") {
+            html += `<div class="list-item"><strong>${user}</strong> - Piscinas atribuídas: ${(dbAtual.usuarios[user].piscinas || []).length}</div>`;
+        }
+    }
+
+    html += `<h3>Clientes</h3>`;
+    for (let user in dbAtual.usuarios) {
+        if (dbAtual.usuarios[user].tipo === "cliente") {
+            html += `<div class="list-item"><strong>${user}</strong> - Endereço: ${dbAtual.usuarios[user].endereco || 'Não informado'}</div>`;
+        }
+    }
+
+    html += `<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
+    main.innerHTML = html;
 }
 
-function addCliente() {
-  const nome = prompt('Nome do cliente:');
-  const endereco = prompt('Endereço:');
-  if (!nome || !endereco) return;
-  clientes.push({ nome, endereco });
-  localStorage.setItem('clientes', JSON.stringify(clientes));
-  loadAdmin();
+function painelFuncionario(funcUser) {
+    const main = document.getElementById("main-content");
+    const dbAtual = JSON.parse(localStorage.getItem("aquashouwDB"));
+    let html = `<h2>Painel do Funcionário (${funcUser})</h2>`;
+
+    const piscinas = dbAtual.usuarios[funcUser].piscinas || [];
+    if (piscinas.length === 0) html += `<p>Nenhuma piscina atribuída hoje.</p>`;
+    else piscinas.forEach((p, i) => {
+        html += `<div class="list-item"><strong>${p.endereco}</strong> - Status: ${p.feita ? 'Feita' : 'Pendente'} <button onclick="marcarPiscina('${funcUser}', ${i})">Marcar como Feita</button></div>`;
+    });
+
+    html += `<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
+    main.innerHTML = html;
 }
 
-function addFuncionario() {
-  const nome = prompt('Nome do funcionário:');
-  const meta = prompt('Meta semanal:');
-  if (!nome || !meta) return;
-  funcionarios.push({ nome, meta });
-  localStorage.setItem('funcionarios', JSON.stringify(funcionarios));
-  loadAdmin();
+function marcarPiscina(funcUser, index) {
+    const dbAtual = JSON.parse(localStorage.getItem("aquashouwDB"));
+    dbAtual.usuarios[funcUser].piscinas[index].feita = true;
+    localStorage.setItem("aquashouwDB", JSON.stringify(dbAtual));
+    painelFuncionario(funcUser);
 }
 
-function addPiscina() {
-  const funcionario = prompt('Atribuir a qual funcionário?');
-  const endereco = prompt('Endereço da piscina:');
-  if (!funcionario || !endereco) return;
-  piscinas.push({ funcionario, endereco, status: 'Pendente' });
-  localStorage.setItem('piscinas', JSON.stringify(piscinas));
-  loadAdmin();
+function painelCliente(clienteUser) {
+    const main = document.getElementById("main-content");
+    let html = `<h2>Painel do Cliente (${clienteUser})</h2>`;
+    html += `<p>Acompanhe seu serviço e avalie o funcionário após a visita.</p>`;
+    html += `<label>Avaliar funcionário:</label>
+             <select id="avaliacao">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+             </select>
+             <button onclick="enviarAvaliacao('${clienteUser}')">Enviar Avaliação</button>`;
+    html += `<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
+    main.innerHTML = html;
 }
 
-function loadAdmin() {
-  document.getElementById('clientes').innerHTML = clientes.map(c => `<p>${c.nome} - ${c.endereco}</p>`).join('');
-  document.getElementById('funcionarios').innerHTML = funcionarios.map(f => `<p>${f.nome} - Meta: ${f.meta}</p>`).join('');
-  document.getElementById('piscinas').innerHTML = piscinas.map(p => `<p>${p.endereco} - ${p.funcionario} (${p.status})</p>`).join('');
-  document.getElementById('avaliacoes').innerHTML = avaliacoes.map(a => `<p>${a.funcionario}: ${a.nota} estrelas</p>`).join('');
+function enviarAvaliacao(clienteUser) {
+    const nota = parseInt(document.getElementById("avaliacao").value);
+    const dbAtual = JSON.parse(localStorage.getItem("aquashouwDB"));
+    if (!dbAtual.avaliacoes[clienteUser]) dbAtual.avaliacoes[clienteUser] = [];
+    dbAtual.avaliacoes[clienteUser].push(nota);
+    localStorage.setItem("aquashouwDB", JSON.stringify(dbAtual));
+    alert("Avaliação enviada com sucesso!");
 }
 
-function loadFuncionario() {
-  const minhas = piscinas.filter(p => p.funcionario === 'funcionario');
-  document.getElementById('minhasPiscinas').innerHTML = minhas.map(m => `<p>${m.endereco} - ${m.status}</p>`).join('');
-}
+function enviarOrcamento() {
+    const nome = document.getElementById("nomeOrc").value;
+    const tel = document.getElementById("telOrc").value;
+    const end = document.getElementById("endOrc").value;
+    const serv = document.getElementById("servOrc").value;
+    const obs = document.getElementById("obsOrc").value;
 
-function avaliar() {
-  const funcionario = document.getElementById('funcAvaliar').value;
-  const nota = document.getElementById('nota').value;
-  if (!funcionario) return alert('Informe o funcionário');
-  avaliacoes.push({ funcionario, nota });
-  localStorage.setItem('avaliacoes', JSON.stringify(avaliacoes));
-  alert('Avaliação enviada!');
-}
+    if (!nome || !tel || !end || !serv) {
+        alert("Preencha todos os campos obrigatórios.");
+        return;
+    }
 
-function emergencia() {
-  alert('Chamada de emergência enviada!');
+    const dbAtual = JSON.parse(localStorage.getItem("aquashouwDB"));
+    dbAtual.orcamentos.push({ nome, tel, endereco: end, servico: serv, obs });
+    localStorage.setItem("aquashouwDB", JSON.stringify(dbAtual));
+    alert("Orçamento enviado com sucesso! O administrador entrará em contato.");
 }
 </script>
 </body>
