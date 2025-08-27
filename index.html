@@ -60,12 +60,13 @@ if(!localStorage.getItem("aquashowDB")) localStorage.setItem("aquashowDB",JSON.s
 // FUNÇÕES BÁSICAS
 function voltarInicio(){location.reload();}
 
-// BOTÃO ENTRAR FUNCIONANDO
-document.getElementById("btnLogin").addEventListener("click", function(){
+// FUNÇÃO LOGIN
+function login() {
   const tipo = document.getElementById("tipo-acesso").value;
   const user = document.getElementById("usuario").value.trim();
   const pass = document.getElementById("senha").value.trim();
   const db = JSON.parse(localStorage.getItem("aquashowDB"));
+
   if(db.usuarios[user] && db.usuarios[user].senha === pass && db.usuarios[user].tipo === tipo){
     if(tipo==="admin") painelAdmin();
     if(tipo==="funcionario") painelFuncionario(user);
@@ -73,7 +74,10 @@ document.getElementById("btnLogin").addEventListener("click", function(){
   } else {
     alert("Usuário ou senha inválidos.");
   }
-});
+}
+
+// Atrelando função ao botão
+document.getElementById("btnLogin").addEventListener("click", login);
 
 // ORÇAMENTO
 function enviarOrcamento(){
@@ -150,6 +154,7 @@ main.innerHTML=html;
 atualizarListasAdmin();
 }
 
+// ATUALIZAR LISTAS
 function atualizarListasAdmin(){
 const db = JSON.parse(localStorage.getItem("aquashowDB"));
 let htmlClientes="", htmlFuncionarios="";
@@ -183,4 +188,46 @@ const nome=document.getElementById("novoClienteNome").value;
 const end=document.getElementById("novoClienteEndereco").value;
 const venc=document.getElementById("novoClienteVenc").value;
 const val=parseFloat(document.getElementById("novoClienteValor").value);
-const senha=document.getElementById("
+const senha=document.getElementById("novoClienteSenha").value;
+if(!nome||!end||!venc||isNaN(val)||!senha){alert("Preencha todos os campos."); return;}
+const db=JSON.parse(localStorage.getItem("aquashowDB"));
+db.usuarios[nome]={senha:senha,tipo:"cliente",endereco:end,vencimento:venc,valor:val};
+localStorage.setItem("aquashowDB",JSON.stringify(db)); atualizarListasAdmin();
+}
+function removerCliente(u){const db=JSON.parse(localStorage.getItem("aquashowDB"));delete db.usuarios[u];localStorage.setItem("aquashowDB",JSON.stringify(db)); atualizarListasAdmin();}
+function adicionarFuncionario(){
+const nome=document.getElementById("novoFuncNome").value;
+const senha=document.getElementById("novoFuncSenha").value;
+const meta=parseInt(document.getElementById("novaMeta").value);
+if(!nome||!senha||isNaN(meta)){alert("Preencha todos os campos."); return;}
+const db=JSON.parse(localStorage.getItem("aquashowDB"));
+db.usuarios[nome]={senha:senha,tipo:"funcionario",piscinas:[],manutencao:[],metaSemanal:meta};
+localStorage.setItem("aquashowDB",JSON.stringify(db)); atualizarListasAdmin();
+}
+function removerFuncionario(u){const db=JSON.parse(localStorage.getItem("aquashowDB"));delete db.usuarios[u];localStorage.setItem("aquashowDB",JSON.stringify(db)); atualizarListasAdmin();}
+
+//---------------- FUNCIONARIO ----------------
+function painelFuncionario(user){
+const main=document.getElementById("main-content");
+const db=JSON.parse(localStorage.getItem("aquashowDB"));
+let html=`<h2>Painel do Funcionário: ${user}</h2>`;
+// Piscinas e tarefas podem ser adicionadas aqui (mantendo antigas funcionalidades)
+html+=`<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
+main.innerHTML=html;
+}
+
+//---------------- CLIENTE ----------------
+function painelCliente(user){
+const main=document.getElementById("main-content");
+const db=JSON.parse(localStorage.getItem("aquashowDB"));
+let html=`<h2>Painel do Cliente: ${user}</h2>`;
+const c=db.usuarios[user];
+html+=`<p>Endereço: ${c.endereco}</p><p>Próximo Vencimento: ${c.vencimento}</p><p>Valor: R$${c.valor}</p>`;
+html+=`<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
+main.innerHTML=html;
+}
+
+// Funções para atribuir piscinas, manutenção, export/import podem ser adicionadas conforme código anterior
+</script>
+</body>
+</html>
