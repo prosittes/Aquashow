@@ -25,13 +25,14 @@ button:hover { background:#005f86; }
 <main id="main-content">
 <h2>Login</h2>
 <select id="tipo-acesso">
-<option value="admin">Administrador</option>
-<option value="funcionario">Funcionário</option>
-<option value="cliente">Cliente</option>
+  <option value="admin">Administrador</option>
+  <option value="funcionario">Funcionário</option>
+  <option value="cliente">Cliente</option>
 </select>
 <input type="text" id="usuario" placeholder="Usuário">
 <input type="password" id="senha" placeholder="Senha">
-<button onclick="login()">Entrar</button>
+<button id="btnLogin">Entrar</button>
+
 <h2>Solicitar Orçamento</h2>
 <input type="text" id="nomeOrc" placeholder="Nome">
 <input type="text" id="telOrc" placeholder="Telefone">
@@ -58,17 +59,21 @@ if(!localStorage.getItem("aquashowDB")) localStorage.setItem("aquashowDB",JSON.s
 
 // FUNÇÕES BÁSICAS
 function voltarInicio(){location.reload();}
-function login(){
-const tipo=document.getElementById("tipo-acesso").value;
-const user=document.getElementById("usuario").value.trim();
-const pass=document.getElementById("senha").value.trim();
-const db=JSON.parse(localStorage.getItem("aquashowDB"));
-if(db.usuarios[user] && db.usuarios[user].senha===pass && db.usuarios[user].tipo===tipo){
-if(tipo==="admin") painelAdmin();
-if(tipo==="funcionario") painelFuncionario(user);
-if(tipo==="cliente") painelCliente(user);
-}else{alert("Usuário ou senha inválidos.");}
-}
+
+// BOTÃO ENTRAR FUNCIONANDO
+document.getElementById("btnLogin").addEventListener("click", function(){
+  const tipo = document.getElementById("tipo-acesso").value;
+  const user = document.getElementById("usuario").value.trim();
+  const pass = document.getElementById("senha").value.trim();
+  const db = JSON.parse(localStorage.getItem("aquashowDB"));
+  if(db.usuarios[user] && db.usuarios[user].senha === pass && db.usuarios[user].tipo === tipo){
+    if(tipo==="admin") painelAdmin();
+    if(tipo==="funcionario") painelFuncionario(user);
+    if(tipo==="cliente") painelCliente(user);
+  } else {
+    alert("Usuário ou senha inválidos.");
+  }
+});
 
 // ORÇAMENTO
 function enviarOrcamento(){
@@ -178,14 +183,4 @@ const nome=document.getElementById("novoClienteNome").value;
 const end=document.getElementById("novoClienteEndereco").value;
 const venc=document.getElementById("novoClienteVenc").value;
 const val=parseFloat(document.getElementById("novoClienteValor").value);
-const senha=document.getElementById("novoClienteSenha").value;
-if(!nome||!end||!venc||isNaN(val)||!senha){alert("Preencha todos os campos."); return;}
-const db=JSON.parse(localStorage.getItem("aquashowDB"));
-db.usuarios[nome]={senha:senha,tipo:"cliente",endereco:end,vencimento:venc,valor:val};
-localStorage.setItem("aquashowDB",JSON.stringify(db)); atualizarListasAdmin();
-}
-function removerCliente(u){const db=JSON.parse(localStorage.getItem("aquashowDB"));delete db.usuarios[u];localStorage.setItem("aquashowDB",JSON.stringify(db)); atualizarListasAdmin();}
-function adicionarFuncionario(){
-const nome=document.getElementById("novoFuncNome").value;
-const senha=document.getElementById("novoFuncSenha").value;
-const meta=parseInt(document.getElementById("nova
+const senha=document.getElementById("
