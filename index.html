@@ -92,29 +92,21 @@ let html=`<h2>Painel do Administrador</h2>`;
 
 // CLIENTES
 html+=`<h3>Clientes</h3>
-<input id="novoClienteNome" placeholder="Nome">
+<input id="novoClienteNome" placeholder="Nome do Cliente">
 <input id="novoClienteEndereco" placeholder="Endereço">
-<input id="novoClienteVenc" type="date">
-<input id="novoClienteValor" type="number" placeholder="Valor">
-<input id="novoClienteSenha" placeholder="Senha">
-<button onclick="adicionarCliente()">Adicionar Cliente</button>`;
-for(let u in db.usuarios){
-if(db.usuarios[u].tipo==="cliente"){
-html+=`<div class="list-item"><strong>${u}</strong> - End:${db.usuarios[u].endereco} - Venc:${db.usuarios[u].vencimento} - R$${db.usuarios[u].valor} 
-<button onclick="removerCliente('${u}')">Remover</button></div>`;
-}}
+<input id="novoClienteVenc" type="date" placeholder="Data de Vencimento">
+<input id="novoClienteValor" type="number" placeholder="Valor a Pagar">
+<input id="novoClienteSenha" type="password" placeholder="Senha">
+<button onclick="adicionarCliente()">Adicionar Cliente</button>
+<div id="listaClientes"></div>`;
 
 // FUNCIONÁRIOS
 html+=`<h3>Funcionários</h3>
 <input id="novoFuncNome" placeholder="Nome">
 <input id="novoFuncSenha" placeholder="Senha">
 <input id="novaMeta" type="number" placeholder="Meta Semanal">
-<button onclick="adicionarFuncionario()">Adicionar Funcionário</button>`;
-for(let u in db.usuarios){
-if(db.usuarios[u].tipo==="funcionario"){
-html+=`<div class="list-item"><strong>${u}</strong> - Meta Semanal:${db.usuarios[u].metaSemanal} 
-<button onclick="removerFuncionario('${u}')">Remover</button></div>`;
-}}
+<button onclick="adicionarFuncionario()">Adicionar Funcionário</button>
+<div id="listaFuncionarios"></div>`;
 
 // PISCINAS
 html+=`<h3>Atribuir Piscinas</h3>
@@ -148,6 +140,36 @@ html+=`<h3>Importar Clientes</h3>
 
 html+=`<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
 main.innerHTML=html;
+
+// Atualizar listas
+atualizarListasAdmin();
+}
+
+function atualizarListasAdmin(){
+const db = JSON.parse(localStorage.getItem("aquashowDB"));
+let htmlClientes="", htmlFuncionarios="";
+
+// Clientes
+for(let u in db.usuarios){
+if(db.usuarios[u].tipo==="cliente"){
+htmlClientes += `<div class="list-item">
+<strong>${u}</strong> - Endereço: ${db.usuarios[u].endereco} - Vencimento: ${db.usuarios[u].vencimento} - Valor: R$${db.usuarios[u].valor}
+<button onclick="removerCliente('${u}')">Remover</button>
+</div>`;
+}
+}
+document.getElementById("listaClientes").innerHTML = htmlClientes;
+
+// Funcionários
+for(let u in db.usuarios){
+if(db.usuarios[u].tipo==="funcionario"){
+htmlFuncionarios += `<div class="list-item">
+<strong>${u}</strong> - Meta Semanal:${db.usuarios[u].metaSemanal} 
+<button onclick="removerFuncionario('${u}')">Remover</button>
+</div>`;
+}
+}
+document.getElementById("listaFuncionarios").innerHTML = htmlFuncionarios;
 }
 
 // FUNÇÕES ADMIN CRUD
@@ -160,104 +182,10 @@ const senha=document.getElementById("novoClienteSenha").value;
 if(!nome||!end||!venc||isNaN(val)||!senha){alert("Preencha todos os campos."); return;}
 const db=JSON.parse(localStorage.getItem("aquashowDB"));
 db.usuarios[nome]={senha:senha,tipo:"cliente",endereco:end,vencimento:venc,valor:val};
-localStorage.setItem("aquashowDB",JSON.stringify(db)); painelAdmin();
+localStorage.setItem("aquashowDB",JSON.stringify(db)); atualizarListasAdmin();
 }
-function removerCliente(u){const db=JSON.parse(localStorage.getItem("aquashowDB"));delete db.usuarios[u];localStorage.setItem("aquashowDB",JSON.stringify(db)); painelAdmin();}
+function removerCliente(u){const db=JSON.parse(localStorage.getItem("aquashowDB"));delete db.usuarios[u];localStorage.setItem("aquashowDB",JSON.stringify(db)); atualizarListasAdmin();}
 function adicionarFuncionario(){
 const nome=document.getElementById("novoFuncNome").value;
 const senha=document.getElementById("novoFuncSenha").value;
-const meta=parseInt(document.getElementById("novaMeta").value);
-if(!nome||!senha||isNaN(meta)){alert("Preencha todos os campos.");return;}
-const db=JSON.parse(localStorage.getItem("aquashowDB"));
-db.usuarios[nome]={senha:senha,tipo:"funcionario",piscinas:[],manutencao:[],metaSemanal:meta};
-localStorage.setItem("aquashowDB",JSON.stringify(db)); painelAdmin();
-}
-function removerFuncionario(u){const db=JSON.parse(localStorage.getItem("aquashowDB"));delete db.usuarios[u];localStorage.setItem("aquashowDB",JSON.stringify(db)); painelAdmin();}
-function atribuirPiscina(){
-const end=document.getElementById("endPiscina").value;
-const func=document.getElementById("funcPiscina").value;
-if(!end){alert("Preencha o endereço."); return;}
-const db=JSON.parse(localStorage.getItem("aquashowDB"));
-if(!db.usuarios[func].piscinas) db.usuarios[func].piscinas=[];
-db.usuarios[func].piscinas.push({endereco:end,feita:false});
-localStorage.setItem("aquashowDB",JSON.stringify(db)); painelAdmin();
-}
-function atribuirManut(){
-const desc=document.getElementById("descManut").value;
-const func=document.getElementById("funcManut").value;
-if(!desc){alert("Preencha a descrição."); return;}
-const db=JSON.parse(localStorage.getItem("aquashowDB"));
-if(!db.usuarios[func].manutencao) db.usuarios[func].manutencao=[];
-db.usuarios[func].manutencao.push({descricao:desc,feita:false});
-localStorage.setItem("aquashowDB",JSON.stringify(db)); painelAdmin();
-}
-
-// EXPORTAR CLIENTES
-function exportarClientes(){
-  const db = JSON.parse(localStorage.getItem("aquashowDB"));
-  let conteudo = "<h1>Lista de Clientes AQUASHOW PISCINAS</h1><ul>";
-  for(let u in db.usuarios){
-    if(db.usuarios[u].tipo === "cliente"){
-      conteudo += `<li><strong>${u}</strong> - Endereço: ${db.usuarios[u].endereco} - Vencimento: ${db.usuarios[u].vencimento} - Valor: R$${db.usuarios[u].valor}</li>`;
-    }
-  }
-  conteudo += "</ul>";
-  const blob = new Blob(['\ufeff', conteudo], { type: 'application/msword' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'Lista_Clientes.doc';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
-
-// IMPORTAR CLIENTES
-function importarClientes(){
-  const fileInput = document.getElementById('importFile');
-  if(fileInput.files.length === 0){ alert('Selecione um arquivo JSON'); return; }
-  const file = fileInput.files[0];
-  const reader = new FileReader();
-  reader.onload = function(e){
-    try{
-      const dados = JSON.parse(e.target.result);
-      const db = JSON.parse(localStorage.getItem('aquashowDB'));
-      for(let c in dados){
-        db.usuarios[c] = dados[c]; // adiciona ou atualiza clientes
-      }
-      localStorage.setItem('aquashowDB', JSON.stringify(db));
-      alert('Clientes importados com sucesso!');
-      painelAdmin();
-    }catch(err){
-      alert('Arquivo inválido');
-    }
-  };
-  reader.readAsText(file);
-}
-
-// FUNCIONÁRIO
-function painelFuncionario(funcUser){
-const main=document.getElementById("main-content");
-const db=JSON.parse(localStorage.getItem("aquashowDB"));
-let html=`<h2>Painel do Funcionário (${funcUser})</h2>`;
-const piscinas=db.usuarios[funcUser].piscinas||[];
-if(piscinas.length===0) html+=`<p>Nenhuma piscina atribuída.</p>`;
-else piscinas.forEach((p,i)=>{html+=`<div class="list-item"><strong>${p.endereco}</strong> - Status: ${p.feita?'Feita':'Pendente'} <button onclick="marcarPiscina('${funcUser}',${i})">Marcar como Feita</button></div>`;});
-const manut=db.usuarios[funcUser].manutencao||[];
-if(manut.length>0){html+=`<h3>Manutenção</h3>`; manut.forEach((m,i)=>{html+=`<div class="list-item"><strong>${m.descricao}</strong> - Status: ${m.feita?'Concluída':'Pendente'} <button onclick="marcarManut('${funcUser}',${i})">Concluída</button></div>`;});}
-html+=`<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
-main.innerHTML=html;
-}
-function marcarPiscina(funcUser,index){const db=JSON.parse(localStorage.getItem("aquashowDB")); db.usuarios[funcUser].piscinas[index].feita=true; localStorage.setItem("aquashowDB",JSON.stringify(db)); painelFuncionario(funcUser);}
-function marcarManut(funcUser,index){const db=JSON.parse(localStorage.getItem("aquashowDB")); db.usuarios[funcUser].manutencao[index].feita=true; localStorage.setItem("aquashowDB",JSON.stringify(db)); painelFuncionario(funcUser);}
-
-// CLIENTE
-function painelCliente(clienteUser){
-const main=document.getElementById("main-content");
-const db=JSON.parse(localStorage.getItem("aquashowDB"));
-let html=`<h2>Painel do Cliente (${clienteUser})</h2>`;
-html+=`<p>Status do serviço: Em andamento</p>`;
-html+=`<p>Próximo vencimento: ${db.usuarios[clienteUser].vencimento} - Valor: R$${db.usuarios[clienteUser].valor}</p>`;
-html+=`<h3>Avaliar Funcionário</h3><select id="avaliarFuncionario">`;
-for(let u in db.usuarios){if(db.usuarios[u].tipo==="funcionario"){html+=`<option value="${u}">${u}</option>`;}}
-html+=`</select><select id="notaFuncionario"><option value="1">1 - Ruim</option><option value="2">2 - Regular</option><option value="3">3 - Bom</option><option value="4">4
+const meta=parseInt(document.getElementById("nova
