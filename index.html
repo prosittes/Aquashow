@@ -1,169 +1,211 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AQUASHOUW PISCINAS</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
-        header { background: #0077b6; color: white; padding: 15px; text-align: center; font-size: 24px; }
-        main { padding: 20px; max-width: 900px; margin: auto; background: white; border-radius: 8px; }
-        h2 { color: #0077b6; }
-        input, select, textarea, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 5px; border: 1px solid #ccc; }
-        button { background: #0077b6; color: white; border: none; cursor: pointer; }
-        button:hover { background: #005f86; }
-        .hidden { display: none; }
-        .list-item { border-bottom: 1px solid #ddd; padding: 8px 0; }
-        .back-btn { background: #ccc; color: black; margin-top: 10px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AQUASHOUW PISCINAS</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
+header { background: #0077b6; color: white; padding: 15px; text-align: center; font-size: 24px; }
+main { padding: 20px; max-width: 900px; margin: auto; background: white; border-radius: 8px; }
+h2 { color: #0077b6; }
+input, select, textarea, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 5px; border: 1px solid #ccc; }
+button { background: #0077b6; color: white; border: none; cursor: pointer; }
+button:hover { background: #005f86; }
+.hidden { display: none; }
+.list-item { border-bottom: 1px solid #ddd; padding: 8px 0; }
+.back-btn { background: #ccc; color: black; margin-top: 10px; }
+</style>
 </head>
 <body>
-<header>AQUASHOUW PISCINAS</header>
+<header>AQUASHOW PISCINAS</header>
 <main id="main-content">
-    <h2>Login</h2>
-    <select id="tipo-acesso">
-        <option value="admin">Administrador</option>
-        <option value="funcionario">Funcionário</option>
-        <option value="cliente">Cliente</option>
-    </select>
-    <input type="text" id="usuario" placeholder="Usuário">
-    <input type="password" id="senha" placeholder="Senha">
-    <button onclick="login()">Entrar</button>
+<h2>Login</h2>
+<select id="tipo-acesso">
+<option value="admin">Administrador</option>
+<option value="funcionario">Funcionário</option>
+<option value="cliente">Cliente</option>
+</select>
+<input type="text" id="usuario" placeholder="Usuário">
+<input type="password" id="senha" placeholder="Senha">
+<button onclick="login()">Entrar</button>
 
-    <h2>Solicitar Orçamento</h2>
-    <input type="text" id="nomeOrc" placeholder="Nome">
-    <input type="text" id="telOrc" placeholder="Telefone">
-    <input type="text" id="endOrc" placeholder="Endereço">
-    <input type="text" id="servOrc" placeholder="Serviço desejado">
-    <textarea id="obsOrc" placeholder="Observações"></textarea>
-    <button onclick="enviarOrcamento()">Enviar Orçamento</button>
+<h2>Solicitar Orçamento</h2>
+<input type="text" id="nomeOrc" placeholder="Nome">
+<input type="text" id="telOrc" placeholder="Telefone">
+<input type="text" id="endOrc" placeholder="Endereço">
+<input type="text" id="servOrc" placeholder="Serviço desejado">
+<textarea id="obsOrc" placeholder="Observações"></textarea>
+<button onclick="enviarOrcamento()">Enviar Orçamento</button>
 </main>
 
 <script>
 const db = {
-    usuarios: {
-        admin: { senha: "123", tipo: "admin" },
-        func1: { senha: "123", tipo: "funcionario", piscinas: [] },
-        cliente1: { senha: "123", tipo: "cliente", endereco: "Rua A, 123" }
-    },
-    orcamentos: [],
-    avaliacoes: {}
+usuarios: {
+admin: {senha:"123",tipo:"admin"},
+func1: {senha:"123",tipo:"funcionario",piscinas:[],manutencao:[]},
+func2: {senha:"123",tipo:"funcionario",piscinas:[],manutencao:[]},
+cliente1: {senha:"123",tipo:"cliente",endereco:"Rua A, 123",vencimento:"2025-09-10",valor:150},
+cliente2: {senha:"123",tipo:"cliente",endereco:"Rua B, 456",vencimento:"2025-09-12",valor:200}
+},
+orcamentos: [],
+avaliacoes: {}
 };
 
-if(!localStorage.getItem("aquashouwDB")) {
-    localStorage.setItem("aquashouwDB", JSON.stringify(db));
+if(!localStorage.getItem("aquashouwDB")){
+localStorage.setItem("aquashouwDB",JSON.stringify(db));
 }
 
-function voltarInicio() { location.reload(); }
+function voltarInicio(){location.reload();}
 
-function login() {
-    const tipo = document.getElementById("tipo-acesso").value;
-    const user = document.getElementById("usuario").value.trim();
-    const pass = document.getElementById("senha").value.trim();
-    const dbAtual = JSON.parse(localStorage.getItem("aquashouwDB"));
-
-    if (dbAtual.usuarios[user] && dbAtual.usuarios[user].senha === pass && dbAtual.usuarios[user].tipo === tipo) {
-        if (tipo === "admin") painelAdmin(user);
-        if (tipo === "funcionario") painelFuncionario(user);
-        if (tipo === "cliente") painelCliente(user);
-    } else {
-        alert("Usuário ou senha inválidos.");
-    }
+function login(){
+const tipo=document.getElementById("tipo-acesso").value;
+const user=document.getElementById("usuario").value.trim();
+const pass=document.getElementById("senha").value.trim();
+const dbAtual=JSON.parse(localStorage.getItem("aquashouwDB"));
+if(dbAtual.usuarios[user]&&dbAtual.usuarios[user].senha===pass&&dbAtual.usuarios[user].tipo===tipo){
+if(tipo==="admin")painelAdmin(user);
+if(tipo==="funcionario")painelFuncionario(user);
+if(tipo==="cliente")painelCliente(user);
+}else{alert("Usuário ou senha inválidos.");}
 }
 
-function painelAdmin(adminUser) {
-    const main = document.getElementById("main-content");
-    const dbAtual = JSON.parse(localStorage.getItem("aquashouwDB"));
-    let html = `<h2>Painel do Administrador</h2>`;
+//---------------------------------ADMIN---------------------------------
+function painelAdmin(adminUser){
+const main=document.getElementById("main-content");
+const dbAtual=JSON.parse(localStorage.getItem("aquashouwDB"));
+let html=`<h2>Painel do Administrador</h2>`;
 
-    html += `<h3>Orçamentos Recebidos</h3>`;
-    if (dbAtual.orcamentos.length === 0) html += `<p>Nenhum orçamento recebido.</p>`;
-    else dbAtual.orcamentos.forEach(o => {
-        html += `<div class="list-item"><strong>${o.nome}</strong> - ${o.servico}<br>Tel: ${o.tel}<br>End: ${o.endereco}<br>Obs: ${o.obs}</div>`;
-    });
+//Orçamentos
+html+=`<h3>Orçamentos Recebidos</h3>`;
+if(dbAtual.orcamentos.length===0) html+=`<p>Nenhum orçamento recebido.</p>`;
+else dbAtual.orcamentos.forEach(o=>{
+html+=`<div class="list-item"><strong>${o.nome}</strong> - ${o.servico}<br>Tel: ${o.tel}<br>End: ${o.endereco}<br>Obs: ${o.obs}</div>`;
+});
 
-    html += `<h3>Funcionários</h3>`;
-    for (let user in dbAtual.usuarios) {
-        if (dbAtual.usuarios[user].tipo === "funcionario") {
-            html += `<div class="list-item"><strong>${user}</strong> - Piscinas atribuídas: ${(dbAtual.usuarios[user].piscinas || []).length}</div>`;
-        }
-    }
-
-    html += `<h3>Clientes</h3>`;
-    for (let user in dbAtual.usuarios) {
-        if (dbAtual.usuarios[user].tipo === "cliente") {
-            html += `<div class="list-item"><strong>${user}</strong> - Endereço: ${dbAtual.usuarios[user].endereco || 'Não informado'}</div>`;
-        }
-    }
-
-    html += `<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
-    main.innerHTML = html;
+//Clientes
+html+=`<h3>Clientes</h3>`;
+for(let user in dbAtual.usuarios){
+if(dbAtual.usuarios[user].tipo==="cliente"){
+html+=`<div class="list-item"><strong>${user}</strong> - Endereço: ${dbAtual.usuarios[user].endereco} - Vencimento: ${dbAtual.usuarios[user].vencimento} - Valor: R$${dbAtual.usuarios[user].valor}</div>`;
+}
 }
 
-function painelFuncionario(funcUser) {
-    const main = document.getElementById("main-content");
-    const dbAtual = JSON.parse(localStorage.getItem("aquashouwDB"));
-    let html = `<h2>Painel do Funcionário (${funcUser})</h2>`;
-
-    const piscinas = dbAtual.usuarios[funcUser].piscinas || [];
-    if (piscinas.length === 0) html += `<p>Nenhuma piscina atribuída hoje.</p>`;
-    else piscinas.forEach((p, i) => {
-        html += `<div class="list-item"><strong>${p.endereco}</strong> - Status: ${p.feita ? 'Feita' : 'Pendente'} <button onclick="marcarPiscina('${funcUser}', ${i})">Marcar como Feita</button></div>`;
-    });
-
-    html += `<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
-    main.innerHTML = html;
+//Funcionários
+html+=`<h3>Funcionários</h3>`;
+for(let user in dbAtual.usuarios){
+if(dbAtual.usuarios[user].tipo==="funcionario"){
+html+=`<div class="list-item"><strong>${user}</strong> - Piscinas atribuídas: ${(dbAtual.usuarios[user].piscinas||[]).length} - Tarefas manutenção: ${(dbAtual.usuarios[user].manutencao||[]).length}</div>`;
+}
 }
 
-function marcarPiscina(funcUser, index) {
-    const dbAtual = JSON.parse(localStorage.getItem("aquashouwDB"));
-    dbAtual.usuarios[funcUser].piscinas[index].feita = true;
-    localStorage.setItem("aquashouwDB", JSON.stringify(dbAtual));
-    painelFuncionario(funcUser);
+//Avaliações
+html+=`<h3>Avaliações</h3>`;
+for(let func in dbAtual.usuarios){
+if(dbAtual.usuarios[func].tipo==="funcionario"&&dbAtual.avaliacoes[func]){
+html+=`<div class="list-item"><strong>${func}</strong> - Notas: ${dbAtual.avaliacoes[func].map(a=>a.nota+' ('+a.descricao+')').join(', ')}</div>`;
+}
 }
 
-function painelCliente(clienteUser) {
-    const main = document.getElementById("main-content");
-    let html = `<h2>Painel do Cliente (${clienteUser})</h2>`;
-    html += `<p>Acompanhe seu serviço e avalie o funcionário após a visita.</p>`;
-    html += `<label>Avaliar funcionário:</label>
-             <select id="avaliacao">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-             </select>
-             <button onclick="enviarAvaliacao('${clienteUser}')">Enviar Avaliação</button>`;
-    html += `<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
-    main.innerHTML = html;
+html+=`<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
+main.innerHTML=html;
 }
 
-function enviarAvaliacao(clienteUser) {
-    const nota = parseInt(document.getElementById("avaliacao").value);
-    const dbAtual = JSON.parse(localStorage.getItem("aquashouwDB"));
-    if (!dbAtual.avaliacoes[clienteUser]) dbAtual.avaliacoes[clienteUser] = [];
-    dbAtual.avaliacoes[clienteUser].push(nota);
-    localStorage.setItem("aquashouwDB", JSON.stringify(dbAtual));
-    alert("Avaliação enviada com sucesso!");
+//---------------------------------FUNCIONÁRIO---------------------------------
+function painelFuncionario(funcUser){
+const main=document.getElementById("main-content");
+const dbAtual=JSON.parse(localStorage.getItem("aquashouwDB"));
+let html=`<h2>Painel do Funcionário (${funcUser})</h2>`;
+
+//Piscinas
+const piscinas=dbAtual.usuarios[funcUser].piscinas||[];
+if(piscinas.length===0) html+=`<p>Nenhuma piscina atribuída hoje.</p>`;
+else piscinas.forEach((p,i)=>{
+html+=`<div class="list-item"><strong>${p.endereco}</strong> - Status: ${p.feita?'Feita':'Pendente'} <button onclick="marcarPiscina('${funcUser}',${i})">Marcar como Feita</button></div>`;
+});
+
+//Manutenção
+const manut=dbAtual.usuarios[funcUser].manutencao||[];
+if(manut.length>0){html+=`<h3>Manutenção</h3>`; manut.forEach((m,i)=>{
+html+=`<div class="list-item"><strong>${m.descricao}</strong> - Status: ${m.feita?'Concluída':'Pendente'} <button onclick="marcarManut('${funcUser}',${i})">Marcar como Concluída</button></div>`;
+});}
+
+html+=`<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
+main.innerHTML=html;
 }
 
-function enviarOrcamento() {
-    const nome = document.getElementById("nomeOrc").value;
-    const tel = document.getElementById("telOrc").value;
-    const end = document.getElementById("endOrc").value;
-    const serv = document.getElementById("servOrc").value;
-    const obs = document.getElementById("obsOrc").value;
+function marcarPiscina(funcUser,index){
+const dbAtual=JSON.parse(localStorage.getItem("aquashouwDB"));
+dbAtual.usuarios[funcUser].piscinas[index].feita=true;
+localStorage.setItem("aquashouwDB",JSON.stringify(dbAtual));
+painelFuncionario(funcUser);
+}
 
-    if (!nome || !tel || !end || !serv) {
-        alert("Preencha todos os campos obrigatórios.");
-        return;
-    }
+function marcarManut(funcUser,index){
+const dbAtual=JSON.parse(localStorage.getItem("aquashouwDB"));
+dbAtual.usuarios[funcUser].manutencao[index].feita=true;
+localStorage.setItem("aquashouwDB",JSON.stringify(dbAtual));
+painelFuncionario(funcUser);
+}
 
-    const dbAtual = JSON.parse(localStorage.getItem("aquashouwDB"));
-    dbAtual.orcamentos.push({ nome, tel, endereco: end, servico: serv, obs });
-    localStorage.setItem("aquashouwDB", JSON.stringify(dbAtual));
-    alert("Orçamento enviado com sucesso! O administrador entrará em contato.");
+//---------------------------------CLIENTE---------------------------------
+function painelCliente(clienteUser){
+const main=document.getElementById("main-content");
+const dbAtual=JSON.parse(localStorage.getItem("aquashouwDB"));
+let html=`<h2>Painel do Cliente (${clienteUser})</h2>`;
+
+//Status do serviço (exemplo simples)
+html+=`<p>Status do serviço: Em andamento</p>`;
+
+//Vencimento
+html+=`<p>Próximo vencimento: ${dbAtual.usuarios[clienteUser].vencimento} - Valor: R$${dbAtual.usuarios[clienteUser].valor}</p>`;
+
+//Avaliar funcionário
+html+=`<h3>Avaliar Funcionário</h3>`;
+html+=`<select id="avaliarFuncionario">`;
+for(let user in dbAtual.usuarios){
+if(dbAtual.usuarios[user].tipo==="funcionario"){
+html+=`<option value="${user}">${user}</option>`;
+}
+}
+html+=`</select>`;
+
+html+=`<select id="notaFuncionario">
+<option value="1">1 - Ruim</option>
+<option value="2">2 - Regular</option>
+<option value="3">3 - Bom</option>
+<option value="4">4 - Muito Bom</option>
+<option value="5">5 - Excelente</option>
+</select>
+<button onclick="enviarAvaliacaoCliente('${clienteUser}')">Enviar Avaliação</button>`;
+
+html+=`<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
+main.innerHTML=html;
+}
+
+function enviarAvaliacaoCliente(clienteUser){
+const func=document.getElementById("avaliarFuncionario").value;
+const nota=parseInt(document.getElementById("notaFuncionario").value);
+const descr=["","Ruim","Regular","Bom","Muito Bom","Excelente"];
+const dbAtual=JSON.parse(localStorage.getItem("aquashouwDB"));
+if(!dbAtual.avaliacoes[func]) dbAtual.avaliacoes[func]=[];
+dbAtual.avaliacoes[func].push({nota:nota,descricao:descr[nota]});
+localStorage.setItem("aquashouwDB",JSON.stringify(dbAtual));
+alert("Avaliação enviada com sucesso!");
+}
+
+//---------------------------------ORÇAMENTO---------------------------------
+function enviarOrcamento(){
+const nome=document.getElementById("nomeOrc").value;
+const tel=document.getElementById("telOrc").value;
+const end=document.getElementById("endOrc").value;
+const serv=document.getElementById("servOrc").value;
+const obs=document.getElementById("obsOrc").value;
+if(!nome||!tel||!end||!serv){alert("Preencha todos os campos obrigatórios."); return;}
+const dbAtual=JSON.parse(localStorage.getItem("aquashouwDB"));
+dbAtual.orcamentos.push({nome,tel,endereco:end,servico:serv,obs});
+localStorage.setItem("aquashouwDB",JSON.stringify(dbAtual));
+alert("Orçamento enviado com sucesso!");
 }
 </script>
 </body>
