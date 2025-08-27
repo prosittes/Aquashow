@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AQUASHOUW PISCINAS</title>
+<title>AQUASHOW PISCINAS</title>
 <style>
 body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f4f4f4; }
-header { background:#0077b6; color:white; padding:15px; text-align:center; font-size:24px; }
+header { background:#0077b6; color:white; padding:15px; text-align:center; font-size:24px; display:flex; align-items:center; justify-content:center; gap:10px; }
+header img { height:40px; border-radius:5px; }
 main { padding:20px; max-width:900px; margin:auto; background:white; border-radius:8px; }
 h2,h3{ color:#0077b6; }
 input, select, textarea, button { width:100%; padding:10px; margin:8px 0; border-radius:5px; border:1px solid #ccc; }
@@ -17,7 +18,10 @@ button:hover { background:#005f86; }
 </style>
 </head>
 <body>
-<header>AQUASHOUW PISCINAS</header>
+<header>
+<img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=80&q=80" alt="Logo Água">
+<span>AQUASHOW PISCINAS - Manutenção</span>
+</header>
 <main id="main-content">
 <h2>Login</h2>
 <select id="tipo-acesso">
@@ -28,7 +32,6 @@ button:hover { background:#005f86; }
 <input type="text" id="usuario" placeholder="Usuário">
 <input type="password" id="senha" placeholder="Senha">
 <button onclick="login()">Entrar</button>
-
 <h2>Solicitar Orçamento</h2>
 <input type="text" id="nomeOrc" placeholder="Nome">
 <input type="text" id="telOrc" placeholder="Telefone">
@@ -39,6 +42,7 @@ button:hover { background:#005f86; }
 </main>
 
 <script>
+// DATABASE INICIAL
 const dbTemplate = {
 usuarios: {
 admin:{senha:"123",tipo:"admin"},
@@ -50,18 +54,15 @@ cliente2:{senha:"123",tipo:"cliente",endereco:"Rua B,456",vencimento:"2025-09-12
 orcamentos:[],
 avaliacoes:{}
 };
+if(!localStorage.getItem("aquashowDB")) localStorage.setItem("aquashowDB",JSON.stringify(dbTemplate));
 
-if(!localStorage.getItem("aquashouwDB")){
-localStorage.setItem("aquashouwDB",JSON.stringify(dbTemplate));
-}
-
+// FUNÇÕES BÁSICAS
 function voltarInicio(){location.reload();}
-
 function login(){
 const tipo=document.getElementById("tipo-acesso").value;
 const user=document.getElementById("usuario").value.trim();
 const pass=document.getElementById("senha").value.trim();
-const db=JSON.parse(localStorage.getItem("aquashouwDB"));
+const db=JSON.parse(localStorage.getItem("aquashowDB"));
 if(db.usuarios[user] && db.usuarios[user].senha===pass && db.usuarios[user].tipo===tipo){
 if(tipo==="admin") painelAdmin();
 if(tipo==="funcionario") painelFuncionario(user);
@@ -69,88 +70,157 @@ if(tipo==="cliente") painelCliente(user);
 }else{alert("Usuário ou senha inválidos.");}
 }
 
-//----------------------- ADMIN -------------------------
+// ORÇAMENTO
+function enviarOrcamento(){
+const nome=document.getElementById("nomeOrc").value;
+const tel=document.getElementById("telOrc").value;
+const end=document.getElementById("endOrc").value;
+const serv=document.getElementById("servOrc").value;
+const obs=document.getElementById("obsOrc").value;
+if(!nome||!tel||!end||!serv){alert("Preencha todos os campos."); return;}
+const db=JSON.parse(localStorage.getItem("aquashowDB"));
+db.orcamentos.push({nome,tel,endereco:end,servico:serv,obs});
+localStorage.setItem("aquashowDB",JSON.stringify(db));
+alert("Orçamento enviado!");
+}
+
+//---------------- ADMIN ----------------
 function painelAdmin(){
 const main=document.getElementById("main-content");
-const db=JSON.parse(localStorage.getItem("aquashouwDB"));
+const db=JSON.parse(localStorage.getItem("aquashowDB"));
 let html=`<h2>Painel do Administrador</h2>`;
 
-//Orçamentos
-html+=`<h3>Orçamentos Recebidos</h3>`;
-if(db.orcamentos.length===0) html+=`<p>Nenhum orçamento.</p>`;
-else db.orcamentos.forEach(o=>{html+=`<div class="list-item"><strong>${o.nome}</strong> - ${o.servico}<br>Tel:${o.tel}<br>End:${o.endereco}<br>Obs:${o.obs}</div>`;});
-
-//Clientes
-html+=`<h3>Clientes</h3>`;
-html+=`<div><input id="novoClienteNome" placeholder="Nome"><input id="novoClienteEndereco" placeholder="Endereço"><input id="novoClienteVenc" type="date"><input id="novoClienteValor" type="number" placeholder="Valor"><input id="novoClienteSenha" placeholder="Senha"><button onclick="adicionarCliente()">Adicionar Cliente</button></div>`;
+// CLIENTES
+html+=`<h3>Clientes</h3>
+<input id="novoClienteNome" placeholder="Nome">
+<input id="novoClienteEndereco" placeholder="Endereço">
+<input id="novoClienteVenc" type="date">
+<input id="novoClienteValor" type="number" placeholder="Valor">
+<input id="novoClienteSenha" placeholder="Senha">
+<button onclick="adicionarCliente()">Adicionar Cliente</button>`;
 for(let u in db.usuarios){
 if(db.usuarios[u].tipo==="cliente"){
-html+=`<div class="list-item"><strong>${u}</strong> - End:${db.usuarios[u].endereco} - Venc:${db.usuarios[u].vencimento} - R$${db.usuarios[u].valor} <button onclick="editarCliente('${u}')">Editar</button> <button onclick="removerCliente('${u}')">Remover</button></div>`;
+html+=`<div class="list-item"><strong>${u}</strong> - End:${db.usuarios[u].endereco} - Venc:${db.usuarios[u].vencimento} - R$${db.usuarios[u].valor} 
+<button onclick="removerCliente('${u}')">Remover</button></div>`;
 }}
 
-//Funcionários
-html+=`<h3>Funcionários</h3>`;
-html+=`<div><input id="novoFuncNome" placeholder="Nome"><input id="novoFuncSenha" placeholder="Senha"><input id="novaMeta" type="number" placeholder="Meta Semanal"><button onclick="adicionarFuncionario()">Adicionar Funcionário</button></div>`;
+// FUNCIONÁRIOS
+html+=`<h3>Funcionários</h3>
+<input id="novoFuncNome" placeholder="Nome">
+<input id="novoFuncSenha" placeholder="Senha">
+<input id="novaMeta" type="number" placeholder="Meta Semanal">
+<button onclick="adicionarFuncionario()">Adicionar Funcionário</button>`;
 for(let u in db.usuarios){
 if(db.usuarios[u].tipo==="funcionario"){
-html+=`<div class="list-item"><strong>${u}</strong> - Meta Semanal:${db.usuarios[u].metaSemanal} <button onclick="editarFuncionario('${u}')">Editar</button> <button onclick="removerFuncionario('${u}')">Remover</button></div>`;
+html+=`<div class="list-item"><strong>${u}</strong> - Meta Semanal:${db.usuarios[u].metaSemanal} 
+<button onclick="removerFuncionario('${u}')">Remover</button></div>`;
 }}
 
-//Piscinas
-html+=`<h3>Atribuir Piscinas</h3>`;
-html+=`<input id="endPiscina" placeholder="Endereço da Piscina"><select id="funcPiscina">`;
+// PISCINAS
+html+=`<h3>Atribuir Piscinas</h3>
+<input id="endPiscina" placeholder="Endereço da Piscina">
+<select id="funcPiscina">`;
 for(let u in db.usuarios){if(db.usuarios[u].tipo==="funcionario"){html+=`<option value="${u}">${u}</option>`;}}
 html+=`</select><button onclick="atribuirPiscina()">Atribuir Piscina</button>`;
 
-//Manutenção
-html+=`<h3>Tarefas de Manutenção</h3>`;
-html+=`<input id="descManut" placeholder="Descrição"><select id="funcManut">`;
+// MANUTENÇÃO
+html+=`<h3>Tarefas de Manutenção</h3>
+<input id="descManut" placeholder="Descrição">
+<select id="funcManut">`;
 for(let u in db.usuarios){if(db.usuarios[u].tipo==="funcionario"){html+=`<option value="${u}">${u}</option>`;}}
 html+=`</select><button onclick="atribuirManut()">Criar Tarefa</button>`;
 
-//Avaliações
+// AVALIAÇÕES
 html+=`<h3>Avaliações</h3>`;
-for(let f in db.usuarios){if(db.usuarios[f].tipo==="funcionario" && db.avaliacoes[f]){
-html+=`<div class="list-item"><strong>${f}</strong> - ${db.avaliacoes[f].map(a=>a.nota+' ('+a.descricao+')').join(', ')}</div>`;}}
-
+for(let f in db.usuarios){
+if(db.usuarios[f].tipo==="funcionario" && db.avaliacoes[f]){
+html+=`<div class="list-item"><strong>${f}</strong> - ${db.avaliacoes[f].map(a=>a.nota+' ('+a.descricao+')').join(', ')}</div>`;}
+}
 html+=`<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
 main.innerHTML=html;
 }
 
-//----------------------- CLIENTE -------------------------
+// FUNÇÕES ADMIN CRUD
+function adicionarCliente(){
+const nome=document.getElementById("novoClienteNome").value;
+const end=document.getElementById("novoClienteEndereco").value;
+const venc=document.getElementById("novoClienteVenc").value;
+const val=parseFloat(document.getElementById("novoClienteValor").value);
+const senha=document.getElementById("novoClienteSenha").value;
+if(!nome||!end||!venc||isNaN(val)||!senha){alert("Preencha todos os campos."); return;}
+const db=JSON.parse(localStorage.getItem("aquashowDB"));
+db.usuarios[nome]={senha:senha,tipo:"cliente",endereco:end,vencimento:venc,valor:val};
+localStorage.setItem("aquashowDB",JSON.stringify(db)); painelAdmin();
+}
+function removerCliente(u){const db=JSON.parse(localStorage.getItem("aquashowDB"));delete db.usuarios[u];localStorage.setItem("aquashowDB",JSON.stringify(db)); painelAdmin();}
+function adicionarFuncionario(){
+const nome=document.getElementById("novoFuncNome").value;
+const senha=document.getElementById("novoFuncSenha").value;
+const meta=parseInt(document.getElementById("novaMeta").value);
+if(!nome||!senha||isNaN(meta)){alert("Preencha todos os campos.");return;}
+const db=JSON.parse(localStorage.getItem("aquashowDB"));
+db.usuarios[nome]={senha:senha,tipo:"funcionario",piscinas:[],manutencao:[],metaSemanal:meta};
+localStorage.setItem("aquashowDB",JSON.stringify(db)); painelAdmin();
+}
+function removerFuncionario(u){const db=JSON.parse(localStorage.getItem("aquashowDB"));delete db.usuarios[u];localStorage.setItem("aquashowDB",JSON.stringify(db)); painelAdmin();}
+function atribuirPiscina(){
+const end=document.getElementById("endPiscina").value;
+const func=document.getElementById("funcPiscina").value;
+if(!end){alert("Preencha o endereço."); return;}
+const db=JSON.parse(localStorage.getItem("aquashowDB"));
+if(!db.usuarios[func].piscinas) db.usuarios[func].piscinas=[];
+db.usuarios[func].piscinas.push({endereco:end,feita:false});
+localStorage.setItem("aquashowDB",JSON.stringify(db)); painelAdmin();
+}
+function atribuirManut(){
+const desc=document.getElementById("descManut").value;
+const func=document.getElementById("funcManut").value;
+if(!desc){alert("Preencha a descrição."); return;}
+const db=JSON.parse(localStorage.getItem("aquashowDB"));
+if(!db.usuarios[func].manutencao) db.usuarios[func].manutencao=[];
+db.usuarios[func].manutencao.push({descricao:desc,feita:false});
+localStorage.setItem("aquashowDB",JSON.stringify(db)); painelAdmin();
+}
+
+// FUNCIONÁRIO
+function painelFuncionario(funcUser){
+const main=document.getElementById("main-content");
+const db=JSON.parse(localStorage.getItem("aquashowDB"));
+let html=`<h2>Painel do Funcionário (${funcUser})</h2>`;
+const piscinas=db.usuarios[funcUser].piscinas||[];
+if(piscinas.length===0) html+=`<p>Nenhuma piscina atribuída.</p>`;
+else piscinas.forEach((p,i)=>{html+=`<div class="list-item"><strong>${p.endereco}</strong> - Status: ${p.feita?'Feita':'Pendente'} <button onclick="marcarPiscina('${funcUser}',${i})">Marcar como Feita</button></div>`;});
+const manut=db.usuarios[funcUser].manutencao||[];
+if(manut.length>0){html+=`<h3>Manutenção</h3>`; manut.forEach((m,i)=>{html+=`<div class="list-item"><strong>${m.descricao}</strong> - Status: ${m.feita?'Concluída':'Pendente'} <button onclick="marcarManut('${funcUser}',${i})">Concluída</button></div>`;});}
+html+=`<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
+main.innerHTML=html;
+}
+function marcarPiscina(funcUser,index){const db=JSON.parse(localStorage.getItem("aquashowDB")); db.usuarios[funcUser].piscinas[index].feita=true; localStorage.setItem("aquashowDB",JSON.stringify(db)); painelFuncionario(funcUser);}
+function marcarManut(funcUser,index){const db=JSON.parse(localStorage.getItem("aquashowDB")); db.usuarios[funcUser].manutencao[index].feita=true; localStorage.setItem("aquashowDB",JSON.stringify(db)); painelFuncionario(funcUser);}
+
+// CLIENTE
 function painelCliente(clienteUser){
 const main=document.getElementById("main-content");
-const db=JSON.parse(localStorage.getItem("aquashouwDB"));
+const db=JSON.parse(localStorage.getItem("aquashowDB"));
 let html=`<h2>Painel do Cliente (${clienteUser})</h2>`;
 html+=`<p>Status do serviço: Em andamento</p>`;
 html+=`<p>Próximo vencimento: ${db.usuarios[clienteUser].vencimento} - Valor: R$${db.usuarios[clienteUser].valor}</p>`;
 html+=`<h3>Avaliar Funcionário</h3><select id="avaliarFuncionario">`;
 for(let u in db.usuarios){if(db.usuarios[u].tipo==="funcionario"){html+=`<option value="${u}">${u}</option>`;}}
-html+=`</select><select id="notaFuncionario"><option value="1">1 - Ruim</option><option value="2">2 - Regular</option><option value="3">3 - Bom</option><option value="4">4 - Muito Bom</option><option value="5">5 - Excelente</option></select><button onclick="enviarAvaliacaoCliente('${clienteUser}')">Enviar Avaliação</button>`;
+html+=`</select><select id="notaFuncionario"><option value="1">1 - Ruim</option><option value="2">2 - Regular</option><option value="3">3 - Bom</option><option value="4">4 - Muito Bom</option><option value="5">5 - Excelente</option></select>
+<button onclick="enviarAvaliacaoCliente('${clienteUser}')">Enviar Avaliação</button>`;
 html+=`<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
 main.innerHTML=html;
 }
-
-//----------------------- FUNCIONÁRIO -------------------------
-function painelFuncionario(funcUser){
-const main=document.getElementById("main-content");
-const db=JSON.parse(localStorage.getItem("aquashouwDB"));
-let html=`<h2>Painel do Funcionário (${funcUser})</h2>`;
-//Piscinas
-const piscinas=db.usuarios[funcUser].piscinas||[];
-if(piscinas.length===0) html+=`<p>Nenhuma piscina atribuída.</p>`; else piscinas.forEach((p,i)=>{html+=`<div class="list-item"><strong>${p.endereco}</strong> - Status: ${p.feita?'Feita':'Pendente'} <button onclick="marcarPiscina('${funcUser}',${i})">Marcar como Feita</button></div>`;});
-//Manutenção
-const manut=db.usuarios[funcUser].manutencao||[];
-if(manut.length>0){html+=`<h3>Manutenção</h3>`; manut.forEach((m,i)=>{html+=`<div class="list-item"><strong>${m.descricao}</strong> - Status: ${m.feita?'Concluída':'Pendente'} <button onclick="marcarManut('${funcUser}',${i})">Marcar como Concluída</button></div>`;});}
-html+=`<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
-main.innerHTML=html;
+function enviarAvaliacaoCliente(clienteUser){
+const func=document.getElementById("avaliarFuncionario").value;
+const nota=parseInt(document.getElementById("notaFuncionario").value);
+const descr=["","Ruim","Regular","Bom","Muito Bom","Excelente"];
+const db=JSON.parse(localStorage.getItem("aquashowDB"));
+if(!db.avaliacoes[func]) db.avaliacoes[func]=[];
+db.avaliacoes[func].push({nota:nota,descricao:descr[nota]});
+localStorage.setItem("aquashowDB",JSON.stringify(db)); alert("Avaliação enviada!");
 }
-
-//----------------------- FUNÇÕES -------------------------
-function enviarOrcamento(){const nome=document.getElementById("nomeOrc").value;const tel=document.getElementById("telOrc").value;const end=document.getElementById("endOrc").value;const serv=document.getElementById("servOrc").value;const obs=document.getElementById("obsOrc").value;if(!nome||!tel||!end||!serv){alert("Preencha todos os campos.");return;}const db=JSON.parse(localStorage.getItem("aquashouwDB"));db.orcamentos.push({nome,tel,endereco:end,servico:serv,obs});localStorage.setItem("aquashouwDB",JSON.stringify(db));alert("Orçamento enviado!");}
-
-function adicionarCliente(){const nome=document.getElementById("novoClienteNome").value;const end=document.getElementById("novoClienteEndereco").value;const venc=document.getElementById("novoClienteVenc").value;const val=parseFloat(document.getElementById("novoClienteValor").value);const senha=document.getElementById("novoClienteSenha").value;if(!nome||!end||!venc||isNaN(val)||!senha){alert("Preencha todos os campos.");return;}const db=JSON.parse(localStorage.getItem("aquashouwDB"));db.usuarios[nome]={senha:senha,tipo:"cliente",endereco:end,vencimento:venc,valor:val};localStorage.setItem("aquashouwDB",JSON.stringify(db));painelAdmin();}
-
-function removerCliente(u){const db=JSON.parse(localStorage.getItem("aquashouwDB"));delete db.usuarios[u];localStorage.setItem("aquashouwDB",JSON.stringify(db));painelAdmin();}
-
-function adicionarFuncionario(){const nome=document.getElementById("novoFuncNome").value;const senha=document.getElementById("novoFuncSenha").value;const meta=parseInt(document.getElementById("novaMeta").value);if(!nome||!senha||isNaN(meta)){alert("Preencha todos os campos.");return;}const db=JSON.parse(localStorage.getItem("aquashouwDB"));db.usuarios[nome]={senha:senha,tipo:"funcionario",piscinas:[],manutencao:[],metaSemanal:meta};localStorage.setItem("aquashouwDB",JSON.stringify(db));painelAdmin
+</script>
+</body>
+</html>
