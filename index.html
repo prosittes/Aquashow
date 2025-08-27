@@ -1,233 +1,137 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AQUASHOW PISCINAS</title>
-<style>
-body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f4f4f4; }
-header { background:#0077b6; color:white; padding:15px; text-align:center; font-size:24px; display:flex; align-items:center; justify-content:center; gap:10px; }
-header img { height:40px; border-radius:5px; }
-main { padding:20px; max-width:900px; margin:auto; background:white; border-radius:8px; }
-h2,h3{ color:#0077b6; }
-input, select, textarea, button { width:100%; padding:10px; margin:8px 0; border-radius:5px; border:1px solid #ccc; }
-button { background:#0077b6; color:white; border:none; cursor:pointer; }
-button:hover { background:#005f86; }
-.list-item { border-bottom:1px solid #ddd; padding:8px 0; }
-.back-btn { background:#ccc; color:black; margin-top:10px; }
-</style>
+  <meta charset="UTF-8">
+  <title>Aquashow Piscinas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f2f2f2; }
+    header { background: #0077b6; color: white; padding: 15px; text-align: center; }
+    nav { background: #023e8a; padding: 10px; text-align: center; }
+    nav a { color: white; margin: 0 10px; text-decoration: none; font-weight: bold; }
+    .container { padding: 20px; }
+    footer { background: #023e8a; color: white; text-align: center; padding: 10px; margin-top: 30px; }
+    button { background: #0077b6; color: white; border: none; padding: 10px 15px; margin: 5px; cursor: pointer; }
+    button:hover { background: #0096c7; }
+    .hidden { display: none; }
+    .emergency-options button { display: block; margin: 10px auto; width: 250px; }
+  </style>
 </head>
 <body>
-<header>
-<img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=80&q=80" alt="Logo Água">
-<span>AQUASHOW PISCINAS - Manutenção</span>
-</header>
-<main id="main-content">
-<h2>Login</h2>
-<select id="tipo-acesso">
-  <option value="admin">Administrador</option>
-  <option value="funcionario">Funcionário</option>
-  <option value="cliente">Cliente</option>
-</select>
-<input type="text" id="usuario" placeholder="Usuário">
-<input type="password" id="senha" placeholder="Senha">
-<button id="btnLogin">Entrar</button>
 
-<h2>Solicitar Orçamento</h2>
-<input type="text" id="nomeOrc" placeholder="Nome">
-<input type="text" id="telOrc" placeholder="Telefone">
-<input type="text" id="endOrc" placeholder="Endereço">
-<input type="text" id="servOrc" placeholder="Serviço desejado">
-<textarea id="obsOrc" placeholder="Observações"></textarea>
-<button onclick="enviarOrcamento()">Enviar Orçamento</button>
-</main>
+<header>
+  <h1>Aquashow Piscinas</h1>
+  <p>Há mais de 20 anos no mercado, zelando sempre pelo bem-estar dos nossos clientes.</p>
+</header>
+
+<nav>
+  <a href="#" onclick="showSection('home')">Início</a>
+  <a href="#" onclick="showSection('login')">Login</a>
+  <a href="#" onclick="showSection('orcamento')">Orçamento</a>
+</nav>
+
+<div class="container">
+  <!-- PÁGINA INICIAL -->
+  <section id="home">
+    <h2>Bem-vindo à Aquashow Piscinas</h2>
+    <p>Oferecemos serviços de manutenção, limpeza e suporte emergencial para sua piscina.</p>
+  </section>
+
+  <!-- LOGIN -->
+  <section id="login" class="hidden">
+    <h2>Área de Login</h2>
+    <label>Selecione seu perfil:</label><br>
+    <select id="perfil">
+      <option value="admin">Administrador</option>
+      <option value="funcionario">Funcionário</option>
+      <option value="cliente">Cliente</option>
+    </select><br><br>
+    <input type="text" id="usuario" placeholder="Usuário"><br><br>
+    <input type="password" id="senha" placeholder="Senha"><br><br>
+    <button onclick="login()">Entrar</button>
+  </section>
+
+  <!-- ADMIN -->
+  <section id="admin" class="hidden">
+    <h2>Painel do Administrador</h2>
+    <button onclick="showSection('login')">Sair</button>
+    <ul>
+      <li>Adicionar/editar clientes</li>
+      <li>Gerenciar funcionários</li>
+      <li>Atribuir piscinas por funcionário</li>
+      <li>Gerar vencimentos e pagamentos</li>
+      <li>Exportar lista de clientes (.docx)</li>
+    </ul>
+  </section>
+
+  <!-- FUNCIONÁRIO -->
+  <section id="funcionario" class="hidden">
+    <h2>Painel do Funcionário</h2>
+    <button onclick="showSection('login')">Sair</button>
+    <p>Lista de piscinas do dia:</p>
+    <ul id="lista-piscinas">
+      <li>Piscina 1 - Rua A, 123</li>
+      <li>Piscina 2 - Rua B, 456</li>
+    </ul>
+    <button>Registrar manutenção</button>
+  </section>
+
+  <!-- CLIENTE -->
+  <section id="cliente" class="hidden">
+    <h2>Área do Cliente</h2>
+    <button onclick="showSection('login')">Sair</button>
+    <p>Data do próximo vencimento: 15/09/2025</p>
+    <h3>Botão de Emergência</h3>
+    <div class="emergency-options">
+      <button onclick="alert('Notificação enviada: Vou precisar usar a piscina')">Vou precisar usar a piscina</button>
+      <button onclick="alert('Notificação enviada: Piscina está fazendo barulho na casa de máquinas')">Piscina está fazendo barulho na casa de máquinas</button>
+    </div>
+  </section>
+
+  <!-- ORÇAMENTO -->
+  <section id="orcamento" class="hidden">
+    <h2>Solicite um Orçamento</h2>
+    <form>
+      <input type="text" placeholder="Nome"><br><br>
+      <input type="text" placeholder="Telefone"><br><br>
+      <input type="text" placeholder="Cidade"><br><br>
+      <textarea placeholder="Descreva sua necessidade"></textarea><br><br>
+      <button type="submit">Enviar</button>
+    </form>
+  </section>
+</div>
+
+<footer>
+  © 2025 Aquashow Piscinas. Todos os direitos reservados.
+</footer>
 
 <script>
-// DATABASE INICIAL
-const dbTemplate = {
-usuarios: {
-admin:{senha:"123",tipo:"admin"},
-func1:{senha:"123",tipo:"funcionario",piscinas:[],manutencao:[],metaSemanal:16},
-func2:{senha:"123",tipo:"funcionario",piscinas:[],manutencao:[],metaSemanal:16},
-cliente1:{senha:"123",tipo:"cliente",endereco:"Rua A,123",vencimento:"2025-09-10",valor:150},
-cliente2:{senha:"123",tipo:"cliente",endereco:"Rua B,456",vencimento:"2025-09-12",valor:200}
-},
-orcamentos:[],
-avaliacoes:{}
-};
-if(!localStorage.getItem("aquashowDB")) localStorage.setItem("aquashowDB",JSON.stringify(dbTemplate));
+function showSection(id) {
+  document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
 
-// FUNÇÕES BÁSICAS
-function voltarInicio(){location.reload();}
-
-// FUNÇÃO LOGIN
 function login() {
-  const tipo = document.getElementById("tipo-acesso").value;
-  const user = document.getElementById("usuario").value.trim();
-  const pass = document.getElementById("senha").value.trim();
-  const db = JSON.parse(localStorage.getItem("aquashowDB"));
+  const perfil = document.getElementById('perfil').value;
+  const usuario = document.getElementById('usuario').value;
+  const senha = document.getElementById('senha').value;
 
-  if(db.usuarios[user] && db.usuarios[user].senha === pass && db.usuarios[user].tipo === tipo){
-    if(tipo==="admin") painelAdmin();
-    if(tipo==="funcionario") painelFuncionario(user);
-    if(tipo==="cliente") painelCliente(user);
+  // Senhas temporárias
+  const adminPass = 'admin123';
+  const funcPass = 'func123';
+  const clientePass = 'cliente123';
+
+  if (perfil === 'admin' && senha === adminPass) {
+    showSection('admin');
+  } else if (perfil === 'funcionario' && senha === funcPass) {
+    showSection('funcionario');
+  } else if (perfil === 'cliente' && senha === clientePass) {
+    showSection('cliente');
   } else {
-    alert("Usuário ou senha inválidos.");
+    alert('Usuário ou senha incorretos!');
   }
 }
-
-// Atrelando função ao botão
-document.getElementById("btnLogin").addEventListener("click", login);
-
-// ORÇAMENTO
-function enviarOrcamento(){
-const nome=document.getElementById("nomeOrc").value;
-const tel=document.getElementById("telOrc").value;
-const end=document.getElementById("endOrc").value;
-const serv=document.getElementById("servOrc").value;
-const obs=document.getElementById("obsOrc").value;
-if(!nome||!tel||!end||!serv){alert("Preencha todos os campos."); return;}
-const db=JSON.parse(localStorage.getItem("aquashowDB"));
-db.orcamentos.push({nome,tel,endereco:end,servico:serv,obs});
-localStorage.setItem("aquashowDB",JSON.stringify(db));
-alert("Orçamento enviado!");
-}
-
-//---------------- ADMIN ----------------
-function painelAdmin(){
-const main=document.getElementById("main-content");
-const db=JSON.parse(localStorage.getItem("aquashowDB"));
-let html=`<h2>Painel do Administrador</h2>`;
-
-// CLIENTES
-html+=`<h3>Clientes</h3>
-<input id="novoClienteNome" placeholder="Nome do Cliente">
-<input id="novoClienteEndereco" placeholder="Endereço">
-<input id="novoClienteVenc" type="date" placeholder="Data de Vencimento">
-<input id="novoClienteValor" type="number" placeholder="Valor a Pagar">
-<input id="novoClienteSenha" type="password" placeholder="Senha">
-<button onclick="adicionarCliente()">Adicionar Cliente</button>
-<div id="listaClientes"></div>`;
-
-// FUNCIONÁRIOS
-html+=`<h3>Funcionários</h3>
-<input id="novoFuncNome" placeholder="Nome">
-<input id="novoFuncSenha" placeholder="Senha">
-<input id="novaMeta" type="number" placeholder="Meta Semanal">
-<button onclick="adicionarFuncionario()">Adicionar Funcionário</button>
-<div id="listaFuncionarios"></div>`;
-
-// PISCINAS
-html+=`<h3>Atribuir Piscinas</h3>
-<input id="endPiscina" placeholder="Endereço da Piscina">
-<select id="funcPiscina">`;
-for(let u in db.usuarios){if(db.usuarios[u].tipo==="funcionario"){html+=`<option value="${u}">${u}</option>`;}}
-html+=`</select><button onclick="atribuirPiscina()">Atribuir Piscina</button>`;
-
-// MANUTENÇÃO
-html+=`<h3>Tarefas de Manutenção</h3>
-<input id="descManut" placeholder="Descrição">
-<select id="funcManut">`;
-for(let u in db.usuarios){if(db.usuarios[u].tipo==="funcionario"){html+=`<option value="${u}">${u}</option>`;}}
-html+=`</select><button onclick="atribuirManut()">Criar Tarefa</button>`;
-
-// AVALIAÇÕES
-html+=`<h3>Avaliações</h3>`;
-for(let f in db.usuarios){
-if(db.usuarios[f].tipo==="funcionario" && db.avaliacoes[f]){
-html+=`<div class="list-item"><strong>${f}</strong> - ${db.avaliacoes[f].map(a=>a.nota+' ('+a.descricao+')').join(', ')}</div>`;}
-}
-
-// EXPORTAR CLIENTES
-html+=`<h3>Exportar Clientes</h3>
-<button onclick="exportarClientes()">Exportar Lista de Clientes (Word)</button>`;
-
-// IMPORTAR CLIENTES
-html+=`<h3>Importar Clientes</h3>
-<input type="file" id="importFile" accept=".json">
-<button onclick="importarClientes()">Importar Clientes</button>`;
-
-html+=`<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
-main.innerHTML=html;
-
-// Atualizar listas
-atualizarListasAdmin();
-}
-
-// ATUALIZAR LISTAS
-function atualizarListasAdmin(){
-const db = JSON.parse(localStorage.getItem("aquashowDB"));
-let htmlClientes="", htmlFuncionarios="";
-
-// Clientes
-for(let u in db.usuarios){
-if(db.usuarios[u].tipo==="cliente"){
-htmlClientes += `<div class="list-item">
-<strong>${u}</strong> - Endereço: ${db.usuarios[u].endereco} - Vencimento: ${db.usuarios[u].vencimento} - Valor: R$${db.usuarios[u].valor}
-<button onclick="removerCliente('${u}')">Remover</button>
-</div>`;
-}
-}
-document.getElementById("listaClientes").innerHTML = htmlClientes;
-
-// Funcionários
-for(let u in db.usuarios){
-if(db.usuarios[u].tipo==="funcionario"){
-htmlFuncionarios += `<div class="list-item">
-<strong>${u}</strong> - Meta Semanal:${db.usuarios[u].metaSemanal} 
-<button onclick="removerFuncionario('${u}')">Remover</button>
-</div>`;
-}
-}
-document.getElementById("listaFuncionarios").innerHTML = htmlFuncionarios;
-}
-
-// FUNÇÕES ADMIN CRUD
-function adicionarCliente(){
-const nome=document.getElementById("novoClienteNome").value;
-const end=document.getElementById("novoClienteEndereco").value;
-const venc=document.getElementById("novoClienteVenc").value;
-const val=parseFloat(document.getElementById("novoClienteValor").value);
-const senha=document.getElementById("novoClienteSenha").value;
-if(!nome||!end||!venc||isNaN(val)||!senha){alert("Preencha todos os campos."); return;}
-const db=JSON.parse(localStorage.getItem("aquashowDB"));
-db.usuarios[nome]={senha:senha,tipo:"cliente",endereco:end,vencimento:venc,valor:val};
-localStorage.setItem("aquashowDB",JSON.stringify(db)); atualizarListasAdmin();
-}
-function removerCliente(u){const db=JSON.parse(localStorage.getItem("aquashowDB"));delete db.usuarios[u];localStorage.setItem("aquashowDB",JSON.stringify(db)); atualizarListasAdmin();}
-function adicionarFuncionario(){
-const nome=document.getElementById("novoFuncNome").value;
-const senha=document.getElementById("novoFuncSenha").value;
-const meta=parseInt(document.getElementById("novaMeta").value);
-if(!nome||!senha||isNaN(meta)){alert("Preencha todos os campos."); return;}
-const db=JSON.parse(localStorage.getItem("aquashowDB"));
-db.usuarios[nome]={senha:senha,tipo:"funcionario",piscinas:[],manutencao:[],metaSemanal:meta};
-localStorage.setItem("aquashowDB",JSON.stringify(db)); atualizarListasAdmin();
-}
-function removerFuncionario(u){const db=JSON.parse(localStorage.getItem("aquashowDB"));delete db.usuarios[u];localStorage.setItem("aquashowDB",JSON.stringify(db)); atualizarListasAdmin();}
-
-//---------------- FUNCIONARIO ----------------
-function painelFuncionario(user){
-const main=document.getElementById("main-content");
-const db=JSON.parse(localStorage.getItem("aquashowDB"));
-let html=`<h2>Painel do Funcionário: ${user}</h2>`;
-// Piscinas e tarefas podem ser adicionadas aqui (mantendo antigas funcionalidades)
-html+=`<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
-main.innerHTML=html;
-}
-
-//---------------- CLIENTE ----------------
-function painelCliente(user){
-const main=document.getElementById("main-content");
-const db=JSON.parse(localStorage.getItem("aquashowDB"));
-let html=`<h2>Painel do Cliente: ${user}</h2>`;
-const c=db.usuarios[user];
-html+=`<p>Endereço: ${c.endereco}</p><p>Próximo Vencimento: ${c.vencimento}</p><p>Valor: R$${c.valor}</p>`;
-html+=`<button class="back-btn" onclick="voltarInicio()">Voltar</button>`;
-main.innerHTML=html;
-}
-
-// Funções para atribuir piscinas, manutenção, export/import podem ser adicionadas conforme código anterior
 </script>
+
 </body>
 </html>
