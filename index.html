@@ -1,135 +1,104 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Aquashow Piscinas</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f2f2f2; }
-    header { background: #0077b6; color: white; padding: 15px; text-align: center; }
+<meta charset="UTF-8">
+<title>AquaShow Piscinas</title>
+<style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    header { background: #0077b6; color: white; padding: 20px; text-align: center; }
     nav { background: #023e8a; padding: 10px; text-align: center; }
-    nav a { color: white; margin: 0 10px; text-decoration: none; font-weight: bold; }
-    .container { padding: 20px; }
-    footer { background: #023e8a; color: white; text-align: center; padding: 10px; margin-top: 30px; }
-    button { background: #0077b6; color: white; border: none; padding: 10px 15px; margin: 5px; cursor: pointer; }
-    button:hover { background: #0096c7; }
+    nav a { color: white; margin: 0 15px; text-decoration: none; }
+    section { padding: 20px; display: none; }
+    footer { background: #03045e; color: white; text-align: center; padding: 10px; position: fixed; bottom: 0; width: 100%; }
     .hidden { display: none; }
-    .emergency-options button { display: block; margin: 10px auto; width: 250px; }
-  </style>
+    .btn { background: #0096c7; color: white; padding: 8px 12px; border: none; cursor: pointer; margin-top: 10px; }
+    .btn:hover { background: #0077b6; }
+</style>
 </head>
 <body>
 
 <header>
-  <h1>Aquashow Piscinas</h1>
-  <p>Há mais de 20 anos no mercado, zelando sempre pelo bem-estar dos nossos clientes.</p>
+    <h1>AquaShow Piscinas</h1>
+    <p>Há mais de 20 anos no mercado, zelando sempre pelo bem-estar dos nossos clientes!</p>
 </header>
 
 <nav>
-  <a href="#" onclick="showSection('home')">Início</a>
-  <a href="#" onclick="showSection('login')">Login</a>
-  <a href="#" onclick="showSection('orcamento')">Orçamento</a>
+    <a href="#" onclick="showSection('home')">Início</a>
+    <a href="#" onclick="showSection('login')">Login</a>
 </nav>
 
-<div class="container">
-  <!-- PÁGINA INICIAL -->
-  <section id="home">
-    <h2>Bem-vindo à Aquashow Piscinas</h2>
-    <p>Oferecemos serviços de manutenção, limpeza e suporte emergencial para sua piscina.</p>
-  </section>
+<section id="home" style="display:block;">
+    <h2>Bem-vindo à AquaShow Piscinas</h2>
+    <p>Oferecemos serviços de manutenção, limpeza e cuidados especiais para sua piscina.</p>
+    <p>Quer um orçamento? Preencha nosso formulário!</p>
+    <button class="btn" onclick="alert('Formulário de orçamento em breve!')">Solicitar Orçamento</button>
+</section>
 
-  <!-- LOGIN -->
-  <section id="login" class="hidden">
-    <h2>Área de Login</h2>
-    <label>Selecione seu perfil:</label><br>
-    <select id="perfil">
-      <option value="admin">Administrador</option>
-      <option value="funcionario">Funcionário</option>
-      <option value="cliente">Cliente</option>
+<section id="login">
+    <h2>Login</h2>
+    <p>Escolha seu tipo de acesso:</p>
+    <select id="tipoUsuario">
+        <option value="admin">Administrador</option>
+        <option value="funcionario">Funcionário</option>
+        <option value="cliente">Cliente</option>
     </select><br><br>
-    <input type="text" id="usuario" placeholder="Usuário"><br><br>
-    <input type="password" id="senha" placeholder="Senha"><br><br>
-    <button onclick="login()">Entrar</button>
-  </section>
+    <input type="password" id="senha" placeholder="Digite sua senha"><br><br>
+    <button class="btn" onclick="login()">Entrar</button>
+</section>
 
-  <!-- ADMIN -->
-  <section id="admin" class="hidden">
+<section id="admin">
     <h2>Painel do Administrador</h2>
-    <button onclick="showSection('login')">Sair</button>
+    <button class="btn" onclick="showSection('home')">Voltar ao início</button>
     <ul>
-      <li>Adicionar/editar clientes</li>
-      <li>Gerenciar funcionários</li>
-      <li>Atribuir piscinas por funcionário</li>
-      <li>Gerar vencimentos e pagamentos</li>
-      <li>Exportar lista de clientes (.docx)</li>
+        <li><a href="#" onclick="alert('Adicionar clientes em breve!')">Adicionar Clientes</a></li>
+        <li><a href="#" onclick="alert('Adicionar funcionários em breve!')">Adicionar Funcionários</a></li>
+        <li><a href="#" onclick="alert('Gerenciar endereços e metas em breve!')">Gerenciar Endereços & Metas</a></li>
+        <li><a href="#" onclick="alert('Ver avaliações em breve!')">Ver Avaliações</a></li>
+        <li><a href="#" onclick="alert('Exportar lista de clientes em breve!')">Exportar Lista de Clientes</a></li>
     </ul>
-  </section>
+</section>
 
-  <!-- FUNCIONÁRIO -->
-  <section id="funcionario" class="hidden">
+<section id="funcionario">
     <h2>Painel do Funcionário</h2>
-    <button onclick="showSection('login')">Sair</button>
-    <p>Lista de piscinas do dia:</p>
-    <ul id="lista-piscinas">
-      <li>Piscina 1 - Rua A, 123</li>
-      <li>Piscina 2 - Rua B, 456</li>
+    <button class="btn" onclick="showSection('home')">Voltar ao início</button>
+    <p>Lista de piscinas do dia: (em breve dinâmica)</p>
+    <ul>
+        <li>Piscina 1 - Endereço X</li>
+        <li>Piscina 2 - Endereço Y</li>
     </ul>
-    <button>Registrar manutenção</button>
-  </section>
+    <button class="btn">Registrar Manutenção</button>
+</section>
 
-  <!-- CLIENTE -->
-  <section id="cliente" class="hidden">
-    <h2>Área do Cliente</h2>
-    <button onclick="showSection('login')">Sair</button>
-    <p>Data do próximo vencimento: 15/09/2025</p>
-    <h3>Botão de Emergência</h3>
-    <div class="emergency-options">
-      <button onclick="alert('Notificação enviada: Vou precisar usar a piscina')">Vou precisar usar a piscina</button>
-      <button onclick="alert('Notificação enviada: Piscina está fazendo barulho na casa de máquinas')">Piscina está fazendo barulho na casa de máquinas</button>
-    </div>
-  </section>
-
-  <!-- ORÇAMENTO -->
-  <section id="orcamento" class="hidden">
-    <h2>Solicite um Orçamento</h2>
-    <form>
-      <input type="text" placeholder="Nome"><br><br>
-      <input type="text" placeholder="Telefone"><br><br>
-      <input type="text" placeholder="Cidade"><br><br>
-      <textarea placeholder="Descreva sua necessidade"></textarea><br><br>
-      <button type="submit">Enviar</button>
-    </form>
-  </section>
-</div>
+<section id="cliente">
+    <h2>Painel do Cliente</h2>
+    <button class="btn" onclick="showSection('home')">Voltar ao início</button>
+    <p>Data do próximo vencimento: <strong>15/09/2025</strong></p>
+    <p>Valor a pagar: R$ 250,00</p>
+    <button class="btn" onclick="alert('Equipe acionada!')">Chamar emergência</button>
+</section>
 
 <footer>
-  © 2025 Aquashow Piscinas. Todos os direitos reservados.
+    © 2025 AquaShow Piscinas - Todos os direitos reservados.
 </footer>
 
 <script>
 function showSection(id) {
-  document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
+    document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
+    document.getElementById(id).style.display = 'block';
 }
 
 function login() {
-  const perfil = document.getElementById('perfil').value;
-  const usuario = document.getElementById('usuario').value;
-  const senha = document.getElementById('senha').value;
-
-  // Senhas temporárias
-  const adminPass = 'admin123';
-  const funcPass = 'func123';
-  const clientePass = 'cliente123';
-
-  if (perfil === 'admin' && senha === adminPass) {
-    showSection('admin');
-  } else if (perfil === 'funcionario' && senha === funcPass) {
-    showSection('funcionario');
-  } else if (perfil === 'cliente' && senha === clientePass) {
-    showSection('cliente');
-  } else {
-    alert('Usuário ou senha incorretos!');
-  }
+    const tipo = document.getElementById('tipoUsuario').value;
+    const senha = document.getElementById('senha').value;
+    if (tipo === 'admin' && senha === 'admin123') {
+        showSection('admin');
+    } else if (tipo === 'funcionario' && senha === 'func123') {
+        showSection('funcionario');
+    } else if (tipo === 'cliente' && senha === 'cliente123') {
+        showSection('cliente');
+    } else {
+        alert('Senha incorreta!');
+    }
 }
 </script>
 
