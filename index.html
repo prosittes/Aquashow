@@ -5,23 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AquaShow Piscinas - Sistema de Gestão</title>
 <style>
-    body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f5f5; }
-    header { background:#007BFF; color:#fff; padding:15px; text-align:center; }
-    nav { background:#0056b3; color:#fff; padding:10px; text-align:center; }
-    nav a { color:#fff; margin:0 10px; text-decoration:none; font-weight:bold; }
-    section { padding:20px; }
-    footer { background:#333; color:#fff; text-align:center; padding:10px; position:fixed; bottom:0; width:100%; }
-    .card { background:#fff; padding:15px; margin:15px auto; border-radius:8px; box-shadow:0 0 8px rgba(0,0,0,0.1); max-width:800px; }
-    .hidden { display:none; }
-    .marca-dagua { position:fixed; bottom:10px; right:10px; opacity:0.2; font-size:12px; }
-    .btn { background:#007BFF; color:#fff; border:none; padding:10px 15px; border-radius:5px; cursor:pointer; margin:5px; }
-    .btn:hover { background:#0056b3; }
-    table { width:100%; border-collapse:collapse; margin-top:10px; }
-    th, td { border:1px solid #ccc; padding:8px; text-align:left; }
-    th { background:#eee; }
-    .feedback { display:flex; gap:5px; margin-top:5px; }
-    .feedback button { padding:5px 10px; }
-    img.ilustrativa { width:100%; max-height:200px; object-fit:cover; border-radius:8px; margin-bottom:10px; }
+body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f5f5; }
+header { background:#007BFF; color:#fff; padding:20px; text-align:center; }
+header h1 { margin:0; font-size:2em; }
+header p { margin:5px 0 0; font-size:1em; }
+nav { background:#0056b3; color:#fff; padding:10px; text-align:center; }
+nav a { color:#fff; margin:0 10px; text-decoration:none; font-weight:bold; }
+section { padding:20px; display:none; }
+section.active { display:block; }
+footer { background:#333; color:#fff; text-align:center; padding:10px; position:fixed; bottom:0; width:100%; }
+.card { background:#fff; padding:20px; margin:20px auto; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1); max-width:900px; }
+.marca-dagua { position:fixed; bottom:10px; right:10px; opacity:0.2; font-size:12px; }
+.btn { background:#007BFF; color:#fff; border:none; padding:10px 15px; border-radius:5px; cursor:pointer; margin:5px; }
+.btn:hover { background:#0056b3; }
+table { width:100%; border-collapse:collapse; margin-top:10px; }
+th, td { border:1px solid #ccc; padding:8px; text-align:left; }
+th { background:#eee; }
+.feedback { display:flex; gap:5px; margin-top:5px; }
+.feedback button { padding:5px 10px; cursor:pointer; }
+img.ilustrativa { width:100%; max-height:250px; object-fit:cover; border-radius:10px; margin-bottom:10px; }
 </style>
 </head>
 <body>
@@ -39,16 +41,18 @@
     <a href="mailto:contato@aquashow.com">E-mail</a>
 </nav>
 
-<section id="inicio">
+<!-- Tela Inicial -->
+<section id="inicio" class="active">
     <div class="card">
-        <img src="https://via.placeholder.com/800x200?text=Bem-vindo+a+AquaShow" alt="Piscina Ilustrativa" class="ilustrativa">
+        <img src="https://via.placeholder.com/900x250?text=AquaShow+Piscinas" class="ilustrativa">
         <h2>Bem-vindo à AquaShow Piscinas</h2>
         <p>Oferecemos manutenção, limpeza e cuidado com sua piscina há mais de 20 anos.</p>
-        <p>Entre para solicitar um orçamento ou acompanhar seus serviços.</p>
+        <p>Solicite um orçamento ou acompanhe seus serviços em nosso sistema.</p>
     </div>
 </section>
 
-<section id="login" class="hidden">
+<!-- Login -->
+<section id="login">
     <div class="card">
         <h2>Login</h2>
         <label>Usuário:</label><br>
@@ -60,8 +64,8 @@
     </div>
 </section>
 
-<!-- Painel do ADMIN -->
-<section id="painel-admin" class="hidden">
+<!-- Painel Admin -->
+<section id="painel-admin">
     <div class="card">
         <h2>Painel do Administrador</h2>
         <button class="btn" onclick="abrirSubsecao('clientes')">Gerenciar Clientes</button>
@@ -71,8 +75,8 @@
     </div>
 </section>
 
-<!-- Sub-seções do ADMIN -->
-<section id="clientes" class="hidden">
+<!-- Sub-seção Clientes -->
+<section id="clientes">
     <div class="card">
         <h2>Gerenciar Clientes</h2>
         <form onsubmit="enviarWhatsAppCliente(event)">
@@ -88,7 +92,8 @@
     </div>
 </section>
 
-<section id="funcionarios" class="hidden">
+<!-- Sub-seção Funcionários -->
+<section id="funcionarios">
     <div class="card">
         <h2>Gerenciar Funcionários</h2>
         <form onsubmit="enviarWhatsAppFuncionario(event)">
@@ -104,15 +109,17 @@
     </div>
 </section>
 
-<section id="relatorios" class="hidden">
+<!-- Sub-seção Relatórios -->
+<section id="relatorios">
     <div class="card">
         <h2>Relatórios</h2>
-        <p>Relatórios gerais de metas e tarefas concluídas.</p>
+        <p>Acompanhe o progresso das metas e atividades de cada funcionário.</p>
         <button class="btn" onclick="voltarPainel('painel-admin')">Voltar</button>
     </div>
 </section>
 
-<section id="metas" class="hidden">
+<!-- Sub-seção Metas -->
+<section id="metas">
     <div class="card">
         <h2>Metas de Funcionários</h2>
         <p>Defina e acompanhe metas diárias e semanais.</p>
@@ -120,11 +127,11 @@
     </div>
 </section>
 
-<!-- Painel do CLIENTE -->
-<section id="painel-cliente" class="hidden">
+<!-- Painel Cliente -->
+<section id="painel-cliente">
     <div class="card">
         <h2>Área do Cliente</h2>
-        <h3>Minhas notificações</h3>
+        <h3>Minhas Notificações</h3>
         <div id="notificacoes-cliente">Nenhuma notificação no momento.</div>
         <h3>Feedback</h3>
         <div class="feedback">
@@ -137,8 +144,8 @@
     </div>
 </section>
 
-<!-- Painel do FUNCIONÁRIO -->
-<section id="painel-funcionario" class="hidden">
+<!-- Painel Funcionário -->
+<section id="painel-funcionario">
     <div class="card">
         <h2>Área do Funcionário</h2>
         <h3>Lista de Piscinas</h3>
@@ -161,8 +168,57 @@
 <div class="marca-dagua">Página de Teste – Contate o Desenvolvedor</div>
 
 <script>
-let ultimaTela = 'inicio';
+function navegar(secao){
+    document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+    document.getElementById(secao).classList.add('active');
+}
 
-function navegar(secao) {
-    ultimaTela = secao;
-    document.query
+function abrirSubsecao(subsecao){
+    navegar(subsecao);
+}
+
+function voltarPainel(secao){
+    navegar(secao);
+}
+
+function fazerLogin(){
+    const usuario = document.getElementById('usuario').value.trim();
+    const senha = document.getElementById('senha').value.trim();
+    if(usuario==="admin" && senha==="admin123") navegar('painel-admin');
+    else if(usuario==="funcionario" && senha==="func123") navegar('painel-funcionario');
+    else if(usuario==="cliente" && senha==="cliente123") navegar('painel-cliente');
+    else document.getElementById('login-erro').innerText="Usuário ou senha incorretos.";
+}
+
+function enviarFeedback(nota){
+    alert("Feedback enviado: "+nota+" estrelas");
+}
+
+function enviarWhatsAppCliente(e){
+    e.preventDefault();
+    const nome = document.getElementById('cliente-nome').value;
+    const tel = document.getElementById('cliente-tel').value;
+    const cidade = document.getElementById('cliente-cidade').value;
+    const msg = `Olá ${nome}, seu cadastro na AquaShow Piscinas foi realizado. Cidade: ${cidade}`;
+    window.open(`https://wa.me/${tel.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+function enviarWhatsAppFuncionario(e){
+    e.preventDefault();
+    const nome = document.getElementById('funcionario-nome').value;
+    const cargo = document.getElementById('funcionario-cargo').value;
+    const meta = document.getElementById('funcionario-meta').value;
+    const msg = `Olá ${nome}, seu cadastro foi realizado. Cargo: ${cargo}, Meta diária: ${meta}`;
+    window.open(`https://wa.me/5512997968579?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+function enviarPedidoWhatsApp(e){
+    e.preventDefault();
+    const pedido = document.getElementById('pedido-produto').value;
+    const msg = `Pedido de produtos do funcionário: ${pedido}`;
+    window.open(`https://wa.me/5512997968579?text=${encodeURIComponent(msg)}`,'_blank');
+}
+</script>
+
+</body>
+</html>
