@@ -1,224 +1,137 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AquaShow Piscinas - Sistema de Gestão</title>
+<title>AquaShow - Painel de Gestão</title>
 <style>
-body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f5f5; }
-header { background:#007BFF; color:#fff; padding:20px; text-align:center; }
-header h1 { margin:0; font-size:2em; }
-header p { margin:5px 0 0; font-size:1em; }
-nav { background:#0056b3; color:#fff; padding:10px; text-align:center; }
-nav a { color:#fff; margin:0 10px; text-decoration:none; font-weight:bold; }
-section { padding:20px; display:none; }
-section.active { display:block; }
-footer { background:#333; color:#fff; text-align:center; padding:10px; position:fixed; bottom:0; width:100%; }
-.card { background:#fff; padding:20px; margin:20px auto; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1); max-width:900px; }
-.marca-dagua { position:fixed; bottom:10px; right:10px; opacity:0.2; font-size:12px; }
-.btn { background:#007BFF; color:#fff; border:none; padding:10px 15px; border-radius:5px; cursor:pointer; margin:5px; }
-.btn:hover { background:#0056b3; }
-table { width:100%; border-collapse:collapse; margin-top:10px; }
-th, td { border:1px solid #ccc; padding:8px; text-align:left; }
-th { background:#eee; }
-.feedback { display:flex; gap:5px; margin-top:5px; }
-.feedback button { padding:5px 10px; cursor:pointer; }
-img.ilustrativa { width:100%; max-height:250px; object-fit:cover; border-radius:10px; margin-bottom:10px; }
-input, textarea, select { width:100%; padding:8px; margin-top:5px; }
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f5f5 url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?fit=crop&w=1350&q=80') no-repeat center center fixed;
+    background-size: cover;
+  }
+  header {
+    background: rgba(0, 123, 255, 0.9);
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-size: 1.5rem;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  }
+  .container {
+    margin-top: 100px;
+    padding: 20px;
+  }
+  .login-box, .panel {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    max-width: 400px;
+    margin: 20px auto;
+  }
+  h2 {
+    text-align: center;
+  }
+  input, select, button, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  button {
+    background: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  button:hover {
+    background: #0056b3;
+  }
+  .back-btn {
+    background: #6c757d;
+    margin-top: 10px;
+  }
+  .watermark {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    opacity: 0.2;
+    font-size: 14px;
+    color: #000;
+  }
 </style>
 </head>
 <body>
-
 <header>
-    <h1>AquaShow Piscinas</h1>
-    <p>Mais de 20 anos cuidando do seu lazer!</p>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Water_drop_icon.svg/120px-Water_drop_icon.svg.png" alt="Logo" height="40" style="vertical-align: middle; margin-right: 10px;">
+  AquaShow - Gestão de Piscinas
 </header>
-
-<nav>
-    <a href="#" onclick="navegar('inicio')">Início</a>
-    <a href="#" onclick="navegar('login')">Entrar</a>
-    <a href="https://wa.me/5512997968579" target="_blank">WhatsApp</a>
-    <a href="https://instagram.com" target="_blank">Instagram</a>
-    <a href="mailto:contato@aquashow.com">E-mail</a>
-</nav>
-
-<section id="inicio" class="active">
-    <div class="card">
-        <img src="https://via.placeholder.com/900x250?text=AquaShow+Piscinas" class="ilustrativa">
-        <h2>Bem-vindo à AquaShow Piscinas</h2>
-        <p>Oferecemos manutenção, limpeza e cuidado com sua piscina há mais de 20 anos.</p>
-        <p>Solicite um orçamento ou acompanhe seus serviços em nosso sistema.</p>
-    </div>
-</section>
-
-<section id="login" class="active">
-    <div class="card">
-        <h2>Login</h2>
-        <label>Usuário:</label><br>
-        <input type="text" id="usuario" placeholder="Digite seu usuário"><br><br>
-        <label>Senha:</label><br>
-        <input type="password" id="senha" placeholder="Digite sua senha"><br><br>
-        <button class="btn" onclick="fazerLogin()">Entrar</button>
-        <p id="login-erro" style="color:red;"></p>
-    </div>
-</section>
-
-<section id="painel-admin">
-    <div class="card">
-        <h2>Painel do Administrador</h2>
-        <button class="btn" onclick="abrirSubsecao('clientes')">Gerenciar Clientes</button>
-        <button class="btn" onclick="abrirSubsecao('funcionarios')">Gerenciar Funcionários</button>
-        <button class="btn" onclick="abrirSubsecao('trocar-senha')">Trocar Senha</button>
-        <button class="btn" onclick="abrirSubsecao('relatorios')">Relatórios</button>
-        <button class="btn" onclick="abrirSubsecao('metas')">Metas</button>
-    </div>
-</section>
-
-<section id="clientes">
-    <div class="card">
-        <h2>Gerenciar Clientes</h2>
-        <form onsubmit="adicionarCliente(event)">
-            <label>Nome:</label><br>
-            <input type="text" id="cliente-nome" placeholder="Nome do cliente" required><br><br>
-            <label>Telefone:</label><br>
-            <input type="text" id="cliente-tel" placeholder="Telefone/WhatsApp" required><br><br>
-            <label>Cidade:</label><br>
-            <input type="text" id="cliente-cidade" placeholder="Cidade"><br><br>
-            <button class="btn" type="submit">Adicionar Cliente</button>
-        </form>
-        <h3>Lista de Clientes:</h3>
-        <table id="tabela-clientes">
-            <tr><th>Nome</th><th>Telefone</th><th>Cidade</th><th>Atribuir Funcionário</th></tr>
-        </table>
-        <button class="btn" onclick="voltarPainel('painel-admin')">Voltar</button>
-    </div>
-</section>
-
-<section id="funcionarios">
-    <div class="card">
-        <h2>Gerenciar Funcionários</h2>
-        <form onsubmit="adicionarFuncionario(event)">
-            <label>Nome:</label><br>
-            <input type="text" id="funcionario-nome" placeholder="Nome do funcionário" required><br><br>
-            <label>Cargo:</label><br>
-            <input type="text" id="funcionario-cargo" placeholder="Cargo ou Função"><br><br>
-            <label>Meta diária:</label><br>
-            <input type="number" id="funcionario-meta" placeholder="Meta de atendimentos"><br><br>
-            <label>Senha inicial:</label><br>
-            <input type="text" id="funcionario-senha" placeholder="Senha inicial"><br><br>
-            <button class="btn" type="submit">Adicionar Funcionário</button>
-        </form>
-        <h3>Lista de Funcionários:</h3>
-        <table id="tabela-funcionarios">
-            <tr><th>Nome</th><th>Cargo</th><th>Meta</th></tr>
-        </table>
-        <button class="btn" onclick="voltarPainel('painel-admin')">Voltar</button>
-    </div>
-</section>
-
-<section id="trocar-senha">
-    <div class="card">
-        <h2>Trocar Senha de Usuário</h2>
-        <label>Selecione usuário:</label><br>
-        <select id="usuario-selecionado"></select><br><br>
-        <label>Nova Senha:</label><br>
-        <input type="text" id="nova-senha"><br><br>
-        <button class="btn" onclick="trocarSenha()">Salvar Nova Senha</button>
-        <button class="btn" onclick="voltarPainel('painel-admin')">Voltar</button>
-    </div>
-</section>
-
-<section id="relatorios">
-    <div class="card">
-        <h2>Relatórios</h2>
-        <p>Acompanhe o progresso das metas e atividades de cada funcionário.</p>
-        <button class="btn" onclick="voltarPainel('painel-admin')">Voltar</button>
-    </div>
-</section>
-
-<section id="metas">
-    <div class="card">
-        <h2>Metas de Funcionários</h2>
-        <p>Defina e acompanhe metas diárias e semanais.</p>
-        <button class="btn" onclick="voltarPainel('painel-admin')">Voltar</button>
-    </div>
-</section>
-
-<section id="painel-cliente">
-    <div class="card">
-        <h2>Área do Cliente</h2>
-        <h3>Notificações</h3>
-        <div id="notificacoes-cliente">Nenhuma notificação no momento.</div>
-        <h3>Feedback</h3>
-        <div class="feedback">
-            <button onclick="enviarFeedback(1)">1</button>
-            <button onclick="enviarFeedback(2)">2</button>
-            <button onclick="enviarFeedback(3)">3</button>
-            <button onclick="enviarFeedback(4)">4</button>
-            <button onclick="enviarFeedback(5)">5</button>
-        </div>
-    </div>
-</section>
-
-<section id="painel-funcionario">
-    <div class="card">
-        <h2>Área do Funcionário</h2>
-        <h3>Lista de Clientes do Dia</h3>
-        <table id="lista-funcionario">
-            <tr><th>Cliente</th><th>Endereço</th><th>Feito?</th></tr>
-        </table>
-        <h3>Pedidos de Produtos</h3>
-        <form onsubmit="enviarPedidoWhatsApp(event)">
-            <textarea id="pedido-produto" placeholder="Descreva o pedido..." required></textarea><br>
-            <button class="btn" type="submit">Enviar Pedido / WhatsApp</button>
-        </form>
-        <button class="btn" onclick="voltarPainel('painel-admin')">Voltar</button>
-    </div>
-</section>
-
-<footer>
-    &copy; 2025 AquaShow Piscinas | Todos os direitos reservados
-</footer>
-<div class="marca-dagua">Página de Teste – Contate o Desenvolvedor</div>
-
+<div class="container" id="main">
+  <div class="login-box">
+    <h2>Login</h2>
+    <select id="userType">
+      <option value="admin">Administrador</option>
+      <option value="funcionario">Funcionário</option>
+      <option value="cliente">Cliente</option>
+    </select>
+    <input type="text" id="username" placeholder="Usuário">
+    <input type="password" id="password" placeholder="Senha">
+    <button onclick="login()">Entrar</button>
+  </div>
+</div>
+<div class="container" id="adminPanel" style="display:none;">
+  <div class="panel">
+    <h2>Painel do Administrador</h2>
+    <button onclick="alert('Cadastro de Cliente aberto')">Cadastrar Cliente</button>
+    <button onclick="alert('Cadastrar Funcionário aberto')">Cadastrar Funcionário</button>
+    <button onclick="alert('Enviar Lista de Serviços')">Enviar Lista</button>
+    <button onclick="alert('Definir Metas')">Definir Metas</button>
+    <button onclick="alert('Exportar Lista de Clientes')">Exportar Clientes</button>
+    <button class="back-btn" onclick="goBack()">Voltar</button>
+  </div>
+</div>
+<div class="container" id="funcionarioPanel" style="display:none;">
+  <div class="panel">
+    <h2>Painel do Funcionário</h2>
+    <button onclick="alert('Ver Lista de Serviços')">Lista de Serviços</button>
+    <button onclick="alert('Registrar Piscinas Feitas')">Marcar Piscinas</button>
+    <button onclick="alert('Ver Metas')">Ver Metas</button>
+    <button class="back-btn" onclick="goBack()">Voltar</button>
+  </div>
+</div>
+<div class="container" id="clientePanel" style="display:none;">
+  <div class="panel">
+    <h2>Painel do Cliente</h2>
+    <button onclick="alert('Feedback de Serviço')">Enviar Feedback</button>
+    <button onclick="alert('Ver Notificações')">Ver Notificações</button>
+    <button class="back-btn" onclick="goBack()">Voltar</button>
+  </div>
+</div>
+<div class="watermark">Página de Teste - Contate o desenvolvedor</div>
 <script>
-// Estruturas de dados internas
-let clientes = [];
-let funcionarios = [];
+  const users = {
+    admin: {username: 'admin', password: 'admin123'},
+    cliente: {username: 'cliente', password: 'cliente123'},
+    funcionario: {username: 'funcionario', password: 'func123'}
+  };function login(){ const type = document.getElementById('userType').value; const user = document.getElementById('username').value; const pass = document.getElementById('password').value;
 
-// Navegação
-function navegar(secao){
-    document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
-    document.getElementById(secao).classList.add('active');
+if(user === users[type].username && pass === users[type].password){
+  document.getElementById('main').style.display = 'none';
+  document.getElementById(type+'Panel').style.display = 'block';
+} else {
+  alert('Usuário ou senha incorretos!');
 }
 
-// Login
-function fazerLogin(){
-    const usuario = document.getElementById('usuario').value.trim();
-    const senha = document.getElementById('senha').value.trim();
-    if(usuario==="admin" && senha==="admin123") navegar('painel-admin');
-    else if(usuario==="funcionario" && senha==="func123") navegar('painel-funcionario');
-    else if(usuario==="cliente" && senha==="cliente123") navegar('painel-cliente');
-    else document.getElementById('login-erro').innerText="Usuário ou senha incorretos.";
 }
 
-// Clientes
-function adicionarCliente(event){
-    event.preventDefault();
-    const nome = document.getElementById('cliente-nome').value;
-    const tel = document.getElementById('cliente-tel').value;
-    const cidade = document.getElementById('cliente-cidade').value;
-    clientes.push({nome,tel,cidade,funcionario:''});
-    atualizarTabelaClientes();
-}
+function goBack(){ document.getElementById('adminPanel').style.display = 'none'; document.getElementById('funcionarioPanel').style.display = 'none'; document.getElementById('clientePanel').style.display = 'none'; document.getElementById('main').style.display = 'block'; } </script>
 
-function atualizarTabelaClientes(){
-    const tabela = document.getElementById('tabela-clientes');
-    tabela.innerHTML = '<tr><th>Nome</th><th>Telefone</th><th>Cidade</th><th>Atribuir Funcionário</th></tr>';
-    clientes.forEach((c,i)=>{
-        const row = tabela.insertRow();
-        row.insertCell(0).innerText=c.nome;
-        row.insertCell(1).innerText=c.tel;
-        row.insertCell(2).innerText=c.cidade;
-        const select = document.createElement('select');
-        funcionarios.forEach(f=>{ const opt = document.createElement('option'); opt.value=f.nome; opt.innerText=f.nome
+</body>
+</html>
