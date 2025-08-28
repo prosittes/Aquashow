@@ -24,7 +24,7 @@ th { background:#eee; }
 .feedback { display:flex; gap:5px; margin-top:5px; }
 .feedback button { padding:5px 10px; cursor:pointer; }
 img.ilustrativa { width:100%; max-height:250px; object-fit:cover; border-radius:10px; margin-bottom:10px; }
-input, textarea { width:100%; padding:8px; margin-top:5px; }
+input, textarea, select { width:100%; padding:8px; margin-top:5px; }
 </style>
 </head>
 <body>
@@ -51,7 +51,7 @@ input, textarea { width:100%; padding:8px; margin-top:5px; }
     </div>
 </section>
 
-<section id="login">
+<section id="login" class="active">
     <div class="card">
         <h2>Login</h2>
         <label>Usuário:</label><br>
@@ -68,7 +68,7 @@ input, textarea { width:100%; padding:8px; margin-top:5px; }
         <h2>Painel do Administrador</h2>
         <button class="btn" onclick="abrirSubsecao('clientes')">Gerenciar Clientes</button>
         <button class="btn" onclick="abrirSubsecao('funcionarios')">Gerenciar Funcionários</button>
-        <button class="btn" onclick="abrirSubsecao('trocar-senha')">Trocar Senha de Usuários</button>
+        <button class="btn" onclick="abrirSubsecao('trocar-senha')">Trocar Senha</button>
         <button class="btn" onclick="abrirSubsecao('relatorios')">Relatórios</button>
         <button class="btn" onclick="abrirSubsecao('metas')">Metas</button>
     </div>
@@ -152,4 +152,73 @@ input, textarea { width:100%; padding:8px; margin-top:5px; }
         <h3>Feedback</h3>
         <div class="feedback">
             <button onclick="enviarFeedback(1)">1</button>
-            <button onclick="enviar
+            <button onclick="enviarFeedback(2)">2</button>
+            <button onclick="enviarFeedback(3)">3</button>
+            <button onclick="enviarFeedback(4)">4</button>
+            <button onclick="enviarFeedback(5)">5</button>
+        </div>
+    </div>
+</section>
+
+<section id="painel-funcionario">
+    <div class="card">
+        <h2>Área do Funcionário</h2>
+        <h3>Lista de Clientes do Dia</h3>
+        <table id="lista-funcionario">
+            <tr><th>Cliente</th><th>Endereço</th><th>Feito?</th></tr>
+        </table>
+        <h3>Pedidos de Produtos</h3>
+        <form onsubmit="enviarPedidoWhatsApp(event)">
+            <textarea id="pedido-produto" placeholder="Descreva o pedido..." required></textarea><br>
+            <button class="btn" type="submit">Enviar Pedido / WhatsApp</button>
+        </form>
+        <button class="btn" onclick="voltarPainel('painel-admin')">Voltar</button>
+    </div>
+</section>
+
+<footer>
+    &copy; 2025 AquaShow Piscinas | Todos os direitos reservados
+</footer>
+<div class="marca-dagua">Página de Teste – Contate o Desenvolvedor</div>
+
+<script>
+// Estruturas de dados internas
+let clientes = [];
+let funcionarios = [];
+
+// Navegação
+function navegar(secao){
+    document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+    document.getElementById(secao).classList.add('active');
+}
+
+// Login
+function fazerLogin(){
+    const usuario = document.getElementById('usuario').value.trim();
+    const senha = document.getElementById('senha').value.trim();
+    if(usuario==="admin" && senha==="admin123") navegar('painel-admin');
+    else if(usuario==="funcionario" && senha==="func123") navegar('painel-funcionario');
+    else if(usuario==="cliente" && senha==="cliente123") navegar('painel-cliente');
+    else document.getElementById('login-erro').innerText="Usuário ou senha incorretos.";
+}
+
+// Clientes
+function adicionarCliente(event){
+    event.preventDefault();
+    const nome = document.getElementById('cliente-nome').value;
+    const tel = document.getElementById('cliente-tel').value;
+    const cidade = document.getElementById('cliente-cidade').value;
+    clientes.push({nome,tel,cidade,funcionario:''});
+    atualizarTabelaClientes();
+}
+
+function atualizarTabelaClientes(){
+    const tabela = document.getElementById('tabela-clientes');
+    tabela.innerHTML = '<tr><th>Nome</th><th>Telefone</th><th>Cidade</th><th>Atribuir Funcionário</th></tr>';
+    clientes.forEach((c,i)=>{
+        const row = tabela.insertRow();
+        row.insertCell(0).innerText=c.nome;
+        row.insertCell(1).innerText=c.tel;
+        row.insertCell(2).innerText=c.cidade;
+        const select = document.createElement('select');
+        funcionarios.forEach(f=>{ const opt = document.createElement('option'); opt.value=f.nome; opt.innerText=f.nome
