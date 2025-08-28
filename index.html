@@ -2,25 +2,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AquaShow Piscinas - Sistema de Gestão</title>
+<title>AquaShow Piscinas - Sistema Funcional</title>
 <style>
-body {
-  margin:0;
-  font-family: Arial, sans-serif;
-  background:#f5f5f5 url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?fit=crop&w=1350&q=80') no-repeat center center fixed;
-  background-size: cover;
-}
-header {
-  background: rgba(0,123,255,0.9);
-  color:white;
-  padding:15px;
-  text-align:center;
-  position: fixed;
-  top:0;
-  width:100%;
-  z-index:10;
-  box-shadow:0 2px 5px rgba(0,0,0,0.3);
-}
+body { margin:0; font-family: Arial, sans-serif; background:#f5f5f5 url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?fit=crop&w=1350&q=80') no-repeat center center fixed; background-size: cover; }
+header { background: rgba(0,123,255,0.9); color:white; padding:15px; text-align:center; position: fixed; top:0; width:100%; z-index:10; box-shadow:0 2px 5px rgba(0,0,0,0.3); }
 header img { vertical-align: middle; margin-right: 10px; height:40px; }
 .container { margin-top:100px; padding:20px; }
 .card { background:white; border-radius:12px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.2); max-width:900px; margin:20px auto; }
@@ -29,10 +14,7 @@ button { background:#007bff; color:white; border:none; cursor:pointer; font-weig
 button:hover { background:#0056b3; }
 .back-btn { background:#6c757d; margin-top:10px; }
 .watermark { position:fixed; bottom:10px; right:10px; opacity:0.2; font-size:14px; color:#000; }
-table { width:100%; border-collapse:collapse; }
-th, td { border:1px solid #ccc; padding:8px; text-align:left; }
-th { background:#eee; }
-.feedback button { width:auto; margin-right:5px; }
+.form-bar { margin-top:10px; padding:10px; background:#f1f1f1; border-radius:8px; display:none; }
 </style>
 </head>
 <body>
@@ -59,23 +41,24 @@ th { background:#eee; }
 <div class="container" id="clientePanel" style="display:none;"></div>
 <div class="watermark">Página de Teste – Contate o Desenvolvedor</div>
 <script>
-let users = { admin:{username:'admin',password:'admin123'}, funcionario:{username:'funcionario',password:'func123'}, cliente:{username:'cliente',password:'cli123'} };let clientes = JSON.parse(localStorage.getItem('clientes')) || []; let funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || []; let listas = JSON.parse(localStorage.getItem('listas')) || {};
-
-function login(){ const type = document.getElementById('userType').value; const user = document.getElementById('username').value; const pass = document.getElementById('password').value; if(user===users[type].username && pass===users[type].password){ document.getElementById('main').style.display='none'; if(type==='admin') renderAdmin(); else if(type==='funcionario') renderFuncionario(user); else renderCliente(user); } else document.getElementById('login-erro').innerText='Usuário ou senha incorretos.'; }
+let users = { admin:{username:'admin',password:'admin123'}, funcionario:{username:'funcionario',password:'func123'}, cliente:{username:'cliente',password:'cli123'} };
+let clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+let funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || [];
+let listas = JSON.parse(localStorage.getItem('listas')) || {};function login(){ const type = document.getElementById('userType').value; const user = document.getElementById('username').value; const pass = document.getElementById('password').value; if(user===users[type].username && pass===users[type].password){ document.getElementById('main').style.display='none'; if(type==='admin') renderAdmin(); else if(type==='funcionario') renderFuncionario(user); else renderCliente(user); } else document.getElementById('login-erro').innerText='Usuário ou senha incorretos.'; }
 
 function goBack(){ document.getElementById('adminPanel').style.display='none'; document.getElementById('funcionarioPanel').style.display='none'; document.getElementById('clientePanel').style.display='none'; document.getElementById('main').style.display='block'; }
 
-// Funções Admin function renderAdmin(){ const panel = document.getElementById('adminPanel'); panel.style.display='block'; panel.innerHTML=''; const card = document.createElement('div'); card.className='card'; card.innerHTML=<h2>Painel do Administrador</h2> <button onclick="addClienteForm()">Cadastrar Cliente</button> <button onclick="addFuncionarioForm()">Cadastrar Funcionário</button> <button onclick="enviarLista()">Enviar Lista para Funcionários</button> <button onclick="definirMetas()">Definir Metas</button> <button onclick="trocarSenhaAdmin()">Trocar Senhas</button> <button class="back-btn" onclick="goBack()">Voltar</button>; panel.appendChild(card); }
+// Admin function renderAdmin(){ const panel=document.getElementById('adminPanel'); panel.style.display='block'; panel.innerHTML=''; const card=document.createElement('div'); card.className='card'; card.innerHTML=<h2>Painel do Administrador</h2> <button onclick="toggleForm('cliente')">Cadastrar Cliente</button> <button onclick="toggleForm('funcionario')">Cadastrar Funcionário</button> <button onclick="alert('Enviar Lista para Funcionários')">Enviar Lista</button> <button onclick="alert('Definir Metas')">Definir Metas</button> <button onclick="alert('Trocar Senhas')">Trocar Senhas</button> <div id='formBar' class='form-bar'></div> <button class='back-btn' onclick='goBack()'>Voltar</button>; panel.appendChild(card); }
 
-function addClienteForm(){ const panel = document.getElementById('adminPanel'); panel.innerHTML=''; const card=document.createElement('div'); card.className='card'; card.innerHTML=<h2>Cadastrar Cliente</h2> <input id='clienteNome' placeholder='Nome' /> <input id='clienteTel' placeholder='Telefone/WhatsApp' /> <input id='clienteCidade' placeholder='Cidade' /> <button onclick='salvarCliente()'>Salvar</button> <button class='back-btn' onclick='renderAdmin()'>Voltar</button>; panel.appendChild(card); } function salvarCliente(){ const nome=document.getElementById('clienteNome').value; const tel=document.getElementById('clienteTel').value; const cidade=document.getElementById('clienteCidade').value; clientes.push({nome,tel,cidade}); localStorage.setItem('clientes',JSON.stringify(clientes)); alert('Cliente salvo!'); renderAdmin(); }
+function toggleForm(tipo){ const formBar=document.getElementById('formBar'); formBar.style.display='block'; if(tipo==='cliente'){ formBar.innerHTML=<h3>Adicionar Cliente</h3> <input id='clienteNome' placeholder='Nome' /> <input id='clienteTel' placeholder='Telefone/WhatsApp' /> <input id='clienteCidade' placeholder='Cidade' /> <button onclick='salvarCliente()'>Salvar Cliente</button>; } else { formBar.innerHTML=<h3>Adicionar Funcionário</h3> <input id='funcNome' placeholder='Nome' /> <input id='funcSenha' placeholder='Senha' /> <button onclick='salvarFuncionario()'>Salvar Funcionário</button>; } }
 
-function addFuncionarioForm(){ const panel=document.getElementById('adminPanel'); panel.innerHTML=''; const card=document.createElement('div'); card.className='card'; card.innerHTML=<h2>Cadastrar Funcionário</h2> <input id='funcNome' placeholder='Nome' /> <input id='funcSenha' placeholder='Senha' /> <button onclick='salvarFuncionario()'>Salvar</button> <button class='back-btn' onclick='renderAdmin()'>Voltar</button>; panel.appendChild(card); } function salvarFuncionario(){ const nome=document.getElementById('funcNome').value; const senha=document.getElementById('funcSenha').value; funcionarios.push({nome,senha}); localStorage.setItem('funcionarios',JSON.stringify(funcionarios)); users['funcionario']={username:nome,password:senha}; alert('Funcionário salvo!'); renderAdmin(); }
+function salvarCliente(){ const nome=document.getElementById('clienteNome').value; const tel=document.getElementById('clienteTel').value; const cidade=document.getElementById('clienteCidade').value; clientes.push({nome,tel,cidade}); localStorage.setItem('clientes',JSON.stringify(clientes)); alert('Cliente salvo!'); renderAdmin(); }
 
-function enviarLista(){ alert('Funcionalidade de envio de lista ativada'); } function definirMetas(){ alert('Funcionalidade de metas ativada'); } function trocarSenhaAdmin(){ alert('Funcionalidade de troca de senha'); }
+function salvarFuncionario(){ const nome=document.getElementById('funcNome').value; const senha=document.getElementById('funcSenha').value; funcionarios.push({nome,senha}); localStorage.setItem('funcionarios',JSON.stringify(funcionarios)); users['funcionario']={username:nome,password:senha}; alert('Funcionário salvo!'); renderAdmin(); }
 
-// Funções Funcionário function renderFuncionario(user){ const panel=document.getElementById('funcionarioPanel'); panel.style.display='block'; panel.innerHTML=''; const card=document.createElement('div'); card.className='card'; card.innerHTML=<h2>Painel do Funcionário</h2> <p>Bem-vindo, ${user}</p> <button onclick="alert('Lista de clientes recebida')">Ver Lista</button> <button class='back-btn' onclick='goBack()'>Voltar</button>; panel.appendChild(card); }
+// Funcionário function renderFuncionario(user){ const panel=document.getElementById('funcionarioPanel'); panel.style.display='block'; panel.innerHTML=''; const card=document.createElement('div'); card.className='card'; card.innerHTML=<h2>Painel do Funcionário</h2> <p>Bem-vindo, ${user}</p> <button onclick="alert('Lista de clientes recebida')">Ver Lista</button> <button class='back-btn' onclick='goBack()'>Voltar</button>; panel.appendChild(card); }
 
-// Funções Cliente function renderCliente(user){ const panel=document.getElementById('clientePanel'); panel.style.display='block'; panel.innerHTML=''; const card=document.createElement('div'); card.className='card'; card.innerHTML=<h2>Painel do Cliente</h2> <p>Bem-vindo, ${user}</p> <button onclick="alert('Enviar Feedback')">Feedback</button> <button class='back-btn' onclick='goBack()'>Voltar</button>; panel.appendChild(card); } </script>
+// Cliente function renderCliente(user){ const panel=document.getElementById('clientePanel'); panel.style.display='block'; panel.innerHTML=''; const card=document.createElement('div'); card.className='card'; card.innerHTML=<h2>Painel do Cliente</h2> <p>Bem-vindo, ${user}</p> <button onclick="alert('Enviar Feedback')">Feedback</button> <button class='back-btn' onclick='goBack()'>Voltar</button>; panel.appendChild(card); } </script>
 
 </body>
 </html>
