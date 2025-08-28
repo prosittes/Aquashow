@@ -1,183 +1,543 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>AquaShow Piscinas</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AquaShow Piscinas — Sistema Web</title>
+<!-- Chart.js para gráficos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f4f8fb; color:#333; }
-header { background: linear-gradient(90deg,#0096c7,#00b4d8); color:white; padding:20px; text-align:center; }
-header img { height:60px; margin-bottom:10px; }
-nav { background:#0077b6; padding:10px; text-align:center; }
-nav a { color:white; margin:0 15px; text-decoration:none; font-weight:bold; }
-section { padding:20px; display:none; max-width:900px; margin:auto; background:white; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.1); margin-top:20px; position:relative; }
-footer { background:#023e8a; color:white; text-align:center; padding:15px; margin-top:30px; }
-.btn { background:#0096c7; color:white; padding:10px 15px; border:none; cursor:pointer; border-radius:6px; margin-top:10px; }
-.btn:hover { background:#0077b6; }
-.support { margin-top:20px; background:#e0f7fa; padding:15px; border-radius:6px; }
-.support a { color:#0077b6; text-decoration:none; font-weight:bold; }
-.watermark { position:fixed; bottom:20px; right:20px; opacity:0.08; font-size:40px; transform:rotate(-20deg); pointer-events:none; color:#000; z-index:9999; font-weight:bold; text-align:center; }
-.admin-section { margin-top:20px; padding:15px; border:1px solid #ccc; border-radius:6px; background:#f9f9f9; }
-input, select { padding:8px; width:95%; margin-bottom:10px; border-radius:4px; border:1px solid #ccc; }
-textarea { width:95%; height:80px; padding:8px; border-radius:4px; border:1px solid #ccc; margin-bottom:10px; }
+  :root{
+    --azul:#0077b6;--azul2:#023e8a;--cta:#00b4d8;--bg:#f4f8fb;--card:#ffffff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:var(--bg);color:#1f2937}
+  header.hero{background:linear-gradient(90deg,#0096c7,#00b4d8);color:#fff;padding:22px 16px;text-align:center}
+  header.hero .logo{display:flex;align-items:center;justify-content:center;gap:12px}
+  header.hero img{height:54px;border-radius:10px;object-fit:cover}
+  header.hero p{margin:6px 0 0;opacity:.95}
+  /* NAV */
+  .topbar{position:sticky;top:0;z-index:50;background:var(--azul2);border-bottom:1px solid #0b2a73}
+  .nav{max-width:1100px;margin:0 auto;padding:8px 12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .brand{color:#fff;font-weight:700;margin-right:auto}
+  .nav button,.nav a.btn{background:transparent;border:1px solid rgba(255,255,255,.35);color:#fff;padding:8px 10px;border-radius:8px;cursor:pointer}
+  .nav button:hover,.nav a.btn:hover{background:rgba(255,255,255,.1)}
+  .pill{background:#0ea5e9;border:none}
+  main{max-width:1100px;margin:18px auto;padding:0 12px}
+  .card{background:var(--card);border-radius:12px;box-shadow:0 8px 22px rgba(2,46,80,.06);padding:18px;margin-bottom:16px}
+  h2{color:var(--azul)}
+  label{font-size:.9rem;color:#374151}
+  input,select,textarea{width:100%;padding:10px 12px;margin:6px 0 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff}
+  .row{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+  .col-6{grid-column:span 6}.col-4{grid-column:span 4}.col-8{grid-column:span 8}.col-12{grid-column:span 12}
+  @media(max-width:860px){.col-6,.col-4,.col-8{grid-column:span 12}}
+  .btn{background:var(--azul);color:#fff;border:none;border-radius:10px;padding:10px 14px;cursor:pointer}
+  .btn.alt{background:var(--cta);color:#05313c}
+  .btn.ghost{background:transparent;border:1px solid #cbd5e1;color:#0f172a}
+  .btn.danger{background:#ef4444}
+  table{width:100%;border-collapse:collapse;margin-top:8px;border-radius:10px;overflow:hidden}
+  th,td{padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:left}
+  th{background:#eff6ff;color:#0b3c66}
+  .status-chip{display:inline-block;padding:4px 8px;border-radius:999px;font-size:.78rem}
+  .ok{background:#dcfce7;color:#166534}.off{background:#fee2e2;color:#991b1b}
+  footer{background:var(--azul2);color:#fff;text-align:center;padding:16px;margin-top:28px}
+  .support{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+  .support a{background:#e0f2fe;border-radius:8px;padding:8px 10px;color:#075985;text-decoration:none}
+  .watermark{position:fixed;bottom:20px;right:20px;opacity:.1;font-size:34px;transform:rotate(-18deg);pointer-events:none;color:#000;font-weight:800;text-align:center;z-index:9999}
+  .muted{color:#64748b}
+  .grid-cards{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+  .kpi{grid-column:span 3;background:#fff;border-radius:12px;padding:16px;border:1px solid #e5e7eb}
+  @media(max-width:900px){.kpi{grid-column:span 12}}
+  .flex{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .right{margin-left:auto}
+  .hidden{display:none!important}
+  .quote{font-style:italic;color:#065f46;background:#ecfdf5;padding:10px 12px;border-radius:8px}
 </style>
 </head>
 <body>
 
+<!-- Marca d’água -->
 <div class="watermark">Página de Teste<br>Contate o desenvolvedor</div>
 
-<header>
-<img src="https://i.supaimg.com/92ccb218-1455-4b09-afee-f2c7fb087898.jpg" alt="Logo AquaShow">
-<h1>AquaShow Piscinas</h1>
-<p>Há mais de 20 anos no mercado, zelando sempre pelo bem-estar dos nossos clientes!</p>
+<!-- HERO -->
+<header class="hero">
+  <div class="logo">
+    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=128&q=80" alt="Logo Água">
+    <div>
+      <h1 style="margin:0">AquaShow Piscinas</h1>
+      <small>Há mais de 20 anos no mercado — zelo e bem-estar dos nossos clientes.</small>
+    </div>
+  </div>
+  <p id="motivation" class="quote" style="margin-top:10px"></p>
 </header>
 
-<nav>
-<a href="#" onclick="showSection('home')">Início</a>
-<a href="#" onclick="showSection('login')">Login</a>
-<a href="https://wa.me/5512997968579" target="_blank">WhatsApp</a>
-<a href="https://instagram.com" target="_blank">Instagram</a>
-<a href="mailto:contato@aquashow.com.br">E-mail</a>
-</nav>
-
-<section id="home" style="display:block;">
-<h2>Bem-vindo à AquaShow Piscinas</h2>
-<p>Oferecemos serviços de manutenção, limpeza e cuidados especiais para sua piscina.</p>
-<img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e" alt="Piscina" style="width:100%;border-radius:6px;margin:15px 0;">
-<button class="btn" onclick="alert('Formulário de orçamento em breve!')">Solicitar Orçamento</button>
-</section>
-
-<section id="login">
-<h2>Login</h2>
-<p>Escolha seu tipo de acesso:</p>
-<select id="tipoUsuario">
-<option value="admin">Administrador</option>
-<option value="funcionario">Funcionário</option>
-<option value="cliente">Cliente</option>
-</select><br>
-<input type="password" id="senha" placeholder="Digite sua senha"><br>
-<button class="btn" onclick="login()">Entrar</button>
-</section>
-
-<section id="admin">
-<h2>Painel do Administrador</h2>
-<button class="btn" onclick="showSection('home')">Voltar ao início</button>
-
-<div class="admin-section">
-<h3>Adicionar Cliente</h3>
-<input type="text" id="clienteNome" placeholder="Nome do Cliente">
-<input type="text" id="clienteEndereco" placeholder="Endereço">
-<input type="text" id="clienteTelefone" placeholder="Telefone">
-<input type="text" id="clienteVencimento" placeholder="Data de Vencimento">
-<input type="text" id="clienteValor" placeholder="Valor">
-<button class="btn" onclick="adicionarCliente()">Adicionar Cliente</button>
-<ul id="listaClientes"></ul>
+<!-- NAV -->
+<div class="topbar">
+  <div class="nav">
+    <span class="brand">Painel</span>
+    <button class="nav-btn" data-section="dashboard">Painel</button>
+    <button class="nav-btn" data-section="novo">Novo</button>
+    <button class="nav-btn" data-section="funcionarios">Funcionários</button>
+    <button class="nav-btn" data-section="clientes">Clientes</button>
+    <button class="nav-btn" data-section="relatorios">Relatórios</button>
+    <button class="nav-btn" data-section="exportar">Exportar</button>
+    <button class="nav-btn" data-section="disponibilidade">Disponibilidade</button>
+    <a class="btn pill" href="https://wa.me/5512997968579" target="_blank">WhatsApp</a>
+    <a class="btn pill" href="https://instagram.com" target="_blank">Instagram</a>
+    <a class="btn pill" href="mailto:contato@aquashow.com.br">E-mail</a>
+    <button id="logoutBtn" class="right">Sair</button>
+  </div>
 </div>
 
-<div class="admin-section">
-<h3>Adicionar Funcionário</h3>
-<input type="text" id="funcNome" placeholder="Nome do Funcionário">
-<input type="number" id="funcMeta" placeholder="Meta diária de piscinas">
-<input type="password" id="funcSenha" placeholder="Senha do Funcionário">
-<button class="btn" onclick="adicionarFuncionario()">Adicionar Funcionário</button>
-<ul id="listaFuncionarios"></ul>
+<main>
+  <!-- LOGIN -->
+  <section id="login" class="card">
+    <h2>Login</h2>
+    <p class="muted">Acesse com seu e-mail e senha. (CSRF protegido • sessão é regenerada no sucesso)</p>
+    <div class="row">
+      <div class="col-6">
+        <label for="email">E-mail</label>
+        <input id="email" type="email" placeholder="ex: admin@aquashow.com.br">
+      </div>
+      <div class="col-6">
+        <label for="password">Senha</label>
+        <input id="password" type="password" placeholder="••••••••">
+      </div>
+      <div class="col-12">
+        <input id="csrf" type="hidden">
+        <button id="loginBtn" class="btn">Entrar</button>
+      </div>
+      <div class="col-12">
+        <small class="muted">Usuários demo: admin@aquashow.com.br (admin123) • gerente@... (gerente123) • supervisor@... (sup123) • sdr@... (sdr123) • func1@... (func123) • cliente1@... (cliente123)</small>
+      </div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section id="dashboard" class="card hidden">
+    <div class="flex">
+      <h2>Visão Geral</h2>
+      <span id="whoami" class="right muted"></span>
+    </div>
+    <div class="grid-cards">
+      <div class="kpi"><div class="muted">Piscinas hoje</div><div id="kpiHoje" style="font-weight:800;font-size:26px">0</div></div>
+      <div class="kpi"><div class="muted">Clientes ativos</div><div id="kpiClientes" style="font-weight:800;font-size:26px">0</div></div>
+      <div class="kpi"><div class="muted">Funcionários</div><div id="kpiFuncs" style="font-weight:800;font-size:26px">0</div></div>
+      <div class="kpi"><div class="muted">Satisfação média</div><div id="kpiSatis" style="font-weight:800;font-size:26px">—</div></div>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <div class="col-8">
+        <div class="card">
+          <h3>Gráfico: Piscinas por Funcionário (semana)</h3>
+          <canvas id="chartBar" height="140"></canvas>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="card">
+          <h3>Gráfico: Tipo de Serviço</h3>
+          <canvas id="chartPie" height="140"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOVO (criação rápida) -->
+  <section id="novo" class="card hidden">
+    <h2>Novo Registro Rápido</h2>
+    <div class="row">
+      <div class="col-6">
+        <h3>Cliente</h3>
+        <input id="n_cli_nome" placeholder="Nome do cliente">
+        <input id="n_cli_email" placeholder="E-mail">
+        <input id="n_cli_end" placeholder="Endereço">
+        <input id="n_cli_venc" type="date" placeholder="Vencimento">
+        <input id="n_cli_valor" type="number" placeholder="Valor (R$)">
+        <button class="btn" onclick="addClienteRapido()">Salvar Cliente</button>
+      </div>
+      <div class="col-6">
+        <h3>Funcionário</h3>
+        <input id="n_fun_nome" placeholder="Nome">
+        <input id="n_fun_email" placeholder="E-mail">
+        <input id="n_fun_meta" type="number" placeholder="Meta semanal">
+        <input id="n_fun_senha" type="password" placeholder="Senha">
+        <button class="btn" onclick="addFuncionarioRapido()">Salvar Funcionário</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FUNCIONÁRIOS -->
+  <section id="funcionarios" class="card hidden">
+    <div class="flex">
+      <h2>Funcionários</h2>
+      <button class="btn alt right" onclick="atribuirHoje()">Atribuir Piscinas de Hoje</button>
+    </div>
+    <table id="tblFuncs">
+      <thead><tr><th>Nome</th><th>E-mail</th><th>Meta Semanal</th><th>Disponibilidade</th><th>Piscinas (hoje)</th><th>Ações</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- CLIENTES -->
+  <section id="clientes" class="card hidden">
+    <div class="flex">
+      <h2>Clientes</h2>
+      <button class="btn alt right" onclick="exportCSV('clientes')">Exportar CSV</button>
+    </div>
+    <table id="tblClientes">
+      <thead><tr><th>Nome</th><th>E-mail</th><th>Endereço</th><th>Vencimento</th><th>Valor (R$)</th><th>Ações</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <!-- RELATÓRIOS -->
+  <section id="relatorios" class="card hidden">
+    <div class="flex">
+      <h2>Relatórios</h2>
+      <div class="right">
+        <button class="btn ghost" onclick="exportCSV('visitas')">Exportar CSV (Visitas)</button>
+        <button class="btn ghost" onclick="exportCSV('avaliacoes')">Exportar CSV (Avaliações)</button>
+      </div>
+    </div>
+    <h3>Visitas (últimos 7 dias)</h3>
+    <table id="tblVisitas"><thead><tr><th>Data</th><th>Funcionário</th><th>Cliente</th><th>Status</th></tr></thead><tbody></tbody></table>
+    <h3 style="margin-top:16px">Avaliações</h3>
+    <table id="tblAvals"><thead><tr><th>Funcionário</th><th>Cliente</th><th>Nota</th><th>Comentário</th></tr></thead><tbody></tbody></table>
+  </section>
+
+  <!-- EXPORTAR -->
+  <section id="exportar" class="card hidden">
+    <h2>Exportar Dados</h2>
+    <p>Baixe tabelas completas em CSV.</p>
+    <div class="flex">
+      <button class="btn" onclick="exportCSV('clientes')">Clientes CSV</button>
+      <button class="btn" onclick="exportCSV('funcionarios')">Funcionários CSV</button>
+      <button class="btn" onclick="exportCSV('visitas')">Visitas CSV</button>
+      <button class="btn" onclick="exportCSV('avaliacoes')">Avaliações CSV</button>
+    </div>
+  </section>
+
+  <!-- DISPONIBILIDADE -->
+  <section id="disponibilidade" class="card hidden">
+    <h2>Painel de Disponibilidade</h2>
+    <p class="muted">Defina quem está disponível hoje para rota/atendimento.</p>
+    <table id="tblDisp"><thead><tr><th>Funcionário</th><th>Status</th><th>Ação</th></tr></thead><tbody></tbody></table>
+  </section>
+
+  <!-- ÁREA DO CLIENTE (emergência) -->
+  <section id="areaCliente" class="card hidden">
+    <h2>Área do Cliente</h2>
+    <p>Próximo vencimento: <span id="cliVenc"></span> • Valor: R$ <span id="cliValor"></span></p>
+    <h3>Emergência</h3>
+    <div class="flex">
+      <button class="btn danger" onclick="notify('Vou precisar usar a piscina')">Vou precisar usar a piscina</button>
+      <button class="btn danger" onclick="notify('Piscina com barulho na casa de máquinas')">Piscina com barulho na casa de máquinas</button>
+    </div>
+  </section>
+</main>
+
+<div class="card" style="max-width:1100px;margin:0 auto 16px; background:#e0f7fa">
+  <h3>Suporte</h3>
+  <div class="support">
+    <a href="https://wa.me/5512997968579" target="_blank">WhatsApp</a>
+    <a href="https://instagram.com" target="_blank">Instagram</a>
+    <a href="mailto:contato@aquashow.com.br">E-mail</a>
+  </div>
 </div>
 
-<div class="admin-section">
-<h3>Gerenciar Avaliações (simulado)</h3>
-<p>As avaliações dos clientes aparecerão aqui.</p>
-<ul id="avaliacoesFuncionarios"></ul>
-</div>
-
-</section>
-
-<section id="funcionario">
-<h2>Painel do Funcionário</h2>
-<p>Lista de piscinas do dia:</p>
-<ul id="listaPiscinasFuncionario">
-<li>Piscina 1 - Endereço X</li>
-<li>Piscina 2 - Endereço Y</li>
-</ul>
-<button class="btn" onclick="alert('Manutenção registrada!')">Registrar Manutenção</button>
-</section>
-
-<section id="cliente">
-<h2>Painel do Cliente</h2>
-<p>Próximo vencimento: <strong>15/09/2025</strong></p>
-<p>Valor a pagar: <strong>R$ 250,00</strong></p>
-<button class="btn" onclick="alert('Equipe acionada!')">Chamar emergência</button>
-</section>
-
-<div class="support">
-<h3>Suporte e Contato</h3>
-<p>WhatsApp: <a href="https://wa.me/5512997968579" target="_blank">+55 12 99796-8579</a></p>
-<p>Instagram: <a href="https://instagram.com" target="_blank">@aquashow</a></p>
-<p>E-mail: <a href="mailto:contato@aquashow.com.br">contato@aquashow.com.br</a></p>
-</div>
-
-<footer>
-© 2025 AquaShow Piscinas - Todos os direitos reservados.
-</footer>
+<footer>© 2025 AquaShow Piscinas — Todos os direitos reservados.</footer>
 
 <script>
-let clientes = [];
-let funcionarios = [];
-
-function showSection(id){
-document.querySelectorAll('section').forEach(sec=>sec.style.display='none');
-document.getElementById(id).style.display='block';
+/* ===== UTIL ===== */
+const $ = sel => document.querySelector(sel);
+const $$ = sel => document.querySelectorAll(sel);
+const uid = () => Math.random().toString(36).slice(2)+Date.now().toString(36);
+const todayISO = () => new Date().toISOString().slice(0,10);
+function download(filename, text){
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(text);a.download=filename;document.body.appendChild(a);a.click();a.remove();
 }
-
-function login(){
-const tipo=document.getElementById('tipoUsuario').value;
-const senha=document.getElementById('senha').value;
-if(tipo==='admin' && senha==='admin123'){ showSection('admin'); }
-else if(tipo==='funcionario' && senha==='func123'){ showSection('funcionario'); }
-else if(tipo==='cliente' && senha==='cliente123'){ showSection('cliente'); }
-else{ alert('Senha incorreta!'); }
+function csvFromArray(arr, headers){
+  const lines=[headers.join(',')];
+  arr.forEach(o=>lines.push(headers.map(h=>JSON.stringify(o[h]??'')).join(',')));
+  return lines.join('\n');
 }
-
-function adicionarCliente(){
-const nome=document.getElementById('clienteNome').value;
-const endereco=document.getElementById('clienteEndereco').value;
-const telefone=document.getElementById('clienteTelefone').value;
-const vencimento=document.getElementById('clienteVencimento').value;
-const valor=document.getElementById('clienteValor').value;
-if(nome && endereco){
-clientes.push({nome,endereco,telefone,vencimento,valor});
-atualizarListaClientes();
-document.getElementById('clienteNome').value='';
-document.getElementById('clienteEndereco').value='';
-document.getElementById('clienteTelefone').value='';
-document.getElementById('clienteVencimento').value='';
-document.getElementById('clienteValor').value='';
+/* ===== FRASES ===== */
+const frases=[
+  "Excelência é hábito: cuidamos da sua piscina todos os dias.",
+  "Detalhes importam — água cristalina, cliente feliz.",
+  "Planeje a rota, cumpra a meta, entregue qualidade.",
+  "Transparência na água e no serviço."
+];
+/* ===== DADOS DEMO (localStorage) ===== */
+const seed = {
+  usuarios:[
+    {id:'u1',nome:'Administrador',email:'admin@aquashow.com.br',senha:'admin123',role:'Admin'},
+    {id:'u2',nome:'Gerente',email:'gerente@aquashow.com.br',senha:'gerente123',role:'Gerente'},
+    {id:'u3',nome:'Supervisor',email:'supervisor@aquashow.com.br',senha:'sup123',role:'Supervisor'},
+    {id:'u4',nome:'SDR',email:'sdr@aquashow.com.br',senha:'sdr123',role:'SDR'},
+    {id:'u5',nome:'Func 1',email:'func1@aquashow.com.br',senha:'func123',role:'Funcionário',meta:16,disp:true},
+    {id:'u6',nome:'Cliente 1',email:'cliente1@aquashow.com.br',senha:'cliente123',role:'Cliente',venc:'2025-09-15',valor:250}
+  ],
+  clientes:[
+    {id:'c1',nome:'Cliente 1',email:'cliente1@aquashow.com.br',endereco:'Rua A, 123',venc:'2025-09-15',valor:250},
+    {id:'c2',nome:'Cliente 2',email:'cliente2@aquashow.com.br',endereco:'Rua B, 456',venc:'2025-09-20',valor:180}
+  ],
+  funcionarios:[
+    {id:'f1',nome:'Func 1',email:'func1@aquashow.com.br',meta:16,disp:true,piscinasHoje:8},
+    {id:'f2',nome:'Func 2',email:'func2@aquashow.com.br',meta:16,disp:false,piscinasHoje:6}
+  ],
+  visitas:[
+    {data:todayISO(),func:'Func 1',cliente:'Cliente 1',status:'feito'},
+    {data:todayISO(),func:'Func 2',cliente:'Cliente 2',status:'pendente'}
+  ],
+  avaliacoes:[
+    {func:'Func 1',cliente:'Cliente 1',nota:5,comentario:'Ótimo atendimento'},
+    {func:'Func 2',cliente:'Cliente 2',nota:3,comentario:'Precisa melhorar horário'}
+  ]
+};
+if(!localStorage.getItem('aw_data')) localStorage.setItem('aw_data', JSON.stringify(seed));
+function db(){ return JSON.parse(localStorage.getItem('aw_data')); }
+function save(data){ localStorage.setItem('aw_data', JSON.stringify(data)); }
+/* ===== SESSÃO & CSRF ===== */
+let session = {id:null, user:null, csrf:null};
+function regenCSRF(){ session.csrf = uid(); $('#csrf').value = session.csrf; }
+function regenSession(user){
+  session.id = uid(); // regeneração no sucesso
+  session.user = {id:user.id,nome:user.nome,email:user.email,role:user.role};
 }
+function requireRole(roles){ // esconde abas que não pode
+  const allowed = new Set(roles);
+  $$('.nav .nav-btn').forEach(b=>{
+    const sec=b.dataset.section;
+    const role=session.user?.role;
+    const map = {
+      dashboard:['Admin','Gerente','Supervisor','Funcionário','SDR','Cliente'],
+      novo:['Admin','Gerente','Supervisor'],
+      funcionarios:['Admin','Gerente','Supervisor'],
+      clientes:['Admin','Gerente','Supervisor','SDR'],
+      relatorios:['Admin','Gerente','Supervisor'],
+      exportar:['Admin','Gerente'],
+      disponibilidade:['Admin','Gerente','Supervisor']
+    };
+    const can = map[sec]?.includes(role);
+    b.classList.toggle('hidden', !can);
+  });
 }
-
-function atualizarListaClientes(){
-const ul=document.getElementById('listaClientes');
-ul.innerHTML='';
-clientes.forEach((c,i)=>{ ul.innerHTML+=`<li>${i+1} - ${c.nome} - ${c.endereco} - ${c.telefone} - Venc: ${c.vencimento} - R$ ${c.valor}</li>`; });
+/* ===== LOGIN / LOGOUT ===== */
+function show(sectionId){
+  $$('main > section').forEach(s=>s.classList.add('hidden'));
+  $('#'+sectionId).classList.remove('hidden');
 }
-
-function adicionarFuncionario(){
-const nome=document.getElementById('funcNome').value;
-const meta=document.getElementById('funcMeta').value;
-const senha=document.getElementById('funcSenha').value;
-if(nome && senha){
-funcionarios.push({nome,meta,senha});
-atualizarListaFuncionarios();
-document.getElementById('funcNome').value='';
-document.getElementById('funcMeta').value='';
-document.getElementById('funcSenha').value='';
+function renderKPIs(){
+  const d=db();
+  $('#kpiHoje').textContent = d.funcionarios.reduce((a,f)=>a+(f.piscinasHoje||0),0);
+  $('#kpiClientes').textContent = d.clientes.length;
+  $('#kpiFuncs').textContent = d.funcionarios.length;
+  const media = d.avaliacoes.length? (d.avaliacoes.reduce((a,v)=>a+v.nota,0)/d.avaliacoes.length).toFixed(1) : '—';
+  $('#kpiSatis').textContent = media;
 }
+function renderCharts(){
+  const d=db();
+  const ctxB = document.getElementById('chartBar');
+  const ctxP = document.getElementById('chartPie');
+  // Bar
+  const labels = d.funcionarios.map(f=>f.nome);
+  const data = d.funcionarios.map(f=>f.piscinasHoje||0);
+  new Chart(ctxB,{type:'bar',data:{labels,datasets:[{label:'Piscinas (hoje)',data}]},options:{plugins:{legend:{display:false}}}});
+  // Pie
+  const tipos=['Limpeza','Manutenção','Visita técnica'];
+  const valores=[10,5,3];
+  new Chart(ctxP,{type:'pie',data:{labels:tipos,datasets:[{data:valores}]}}); 
 }
-
-function atualizarListaFuncionarios(){
-const ul=document.getElementById('listaFuncionarios');
-ul.innerHTML='';
-funcionarios.forEach((f,i)=>{ ul.innerHTML+=`<li>${i+1} - ${f.nome} - Meta: ${f.meta}</li>`; });
+function fillTables(){
+  const d=db();
+  // Funcionários
+  const tf=$('#tblFuncs tbody'); tf.innerHTML='';
+  d.funcionarios.forEach(f=>{
+    const disp = f.disp?'<span class="status-chip ok">Disponível</span>':'<span class="status-chip off">Indisponível</span>';
+    tf.insertAdjacentHTML('beforeend', `
+      <tr>
+        <td>${f.nome}</td><td>${f.email||'-'}</td>
+        <td>${f.meta||'-'}</td>
+        <td>${disp}</td>
+        <td>${f.piscinasHoje||0}</td>
+        <td>
+          <button class="btn ghost" onclick="editarFunc('${f.id}')">Editar</button>
+          <button class="btn danger" onclick="removerFunc('${f.id}')">Remover</button>
+        </td>
+      </tr>
+    `);
+  });
+  // Clientes
+  const tc=$('#tblClientes tbody'); tc.innerHTML='';
+  d.clientes.forEach(c=>{
+    tc.insertAdjacentHTML('beforeend', `
+      <tr>
+        <td>${c.nome}</td><td>${c.email||'-'}</td>
+        <td>${c.endereco||'-'}</td>
+        <td>${c.venc||'-'}</td>
+        <td>${c.valor||'-'}</td>
+        <td>
+          <button class="btn ghost" onclick="editarCliente('${c.id}')">Editar</button>
+          <button class="btn danger" onclick="removerCliente('${c.id}')">Remover</button>
+        </td>
+      </tr>
+    `);
+  });
+  // Relatórios
+  const tv=$('#tblVisitas tbody'); tv.innerHTML='';
+  d.visitas.forEach(v=>{
+    tv.insertAdjacentHTML('beforeend', `<tr><td>${v.data}</td><td>${v.func}</td><td>${v.cliente}</td><td>${v.status}</td></tr>`);
+  });
+  const ta=$('#tblAvals tbody'); ta.innerHTML='';
+  d.avaliacoes.forEach(a=>{
+    ta.insertAdjacentHTML('beforeend', `<tr><td>${a.func}</td><td>${a.cliente}</td><td>${a.nota}</td><td>${a.comentario||''}</td></tr>`);
+  });
+  // Disponibilidade
+  const td=$('#tblDisp tbody'); td.innerHTML='';
+  d.funcionarios.forEach(f=>{
+    td.insertAdjacentHTML('beforeend', `
+      <tr>
+        <td>${f.nome}</td>
+        <td>${f.disp?'<span class="status-chip ok">Disponível</span>':'<span class="status-chip off">Indisponível</span>'}</td>
+        <td><button class="btn" onclick="toggleDisp('${f.id}')">Alternar</button></td>
+      </tr>
+    `);
+  });
 }
+function onLoginSuccess(user){
+  regenSession(user);
+  $('#whoami').textContent = `${user.nome} • ${user.role}`;
+  requireRole();
+  show('dashboard');
+  renderKPIs(); renderCharts(); fillTables();
+}
+function loginAction(){
+  const email=$('#email').value.trim();
+  const pass=$('#password').value;
+  const token=$('#csrf').value;
+  if(token!==session.csrf){ alert('Sessão inválida (CSRF). Recarregue a página.'); return; }
+  const d=db();
+  const user=d.usuarios.find(u=>u.email===email && u.senha===pass);
+  if(!user){ alert('Credenciais inválidas'); return; }
+  regenSession(user);
+  // Se for cliente, abrir área do cliente; senão, dashboard
+  if(user.role==='Cliente'){
+    show('areaCliente');
+    const cli=d.clientes.find(c=>c.email===user.email);
+    $('#cliVenc').textContent=cli?.venc||'-';
+    $('#cliValor').textContent=cli?.valor||'-';
+  }else{
+    onLoginSuccess(user);
+  }
+}
+function logout(){
+  session={id:null,user:null,csrf:uid()};
+  $('#csrf').value=session.csrf;
+  show('login');
+}
+/* ===== CRUD RÁPIDO ===== */
+function addClienteRapido(){
+  const d=db();
+  const c={ id:uid(), nome:$('#n_cli_nome').value, email:$('#n_cli_email').value, endereco:$('#n_cli_end').value, venc:$('#n_cli_venc').value, valor:Number($('#n_cli_valor').value||0) };
+  if(!c.nome){ alert('Informe o nome do cliente.'); return; }
+  d.clientes.push(c); save(d); fillTables(); alert('Cliente salvo!');
+  $('#n_cli_nome').value=$('#n_cli_email').value=$('#n_cli_end').value=$('#n_cli_venc').value=$('#n_cli_valor').value='';
+}
+function addFuncionarioRapido(){
+  const d=db();
+  const f={ id:uid(), nome:$('#n_fun_nome').value, email:$('#n_fun_email').value, meta:Number($('#n_fun_meta').value||16), senha:$('#n_fun_senha').value, disp:true, piscinasHoje:0 };
+  if(!f.nome||!f.email||!f.senha){ alert('Preencha nome, e-mail e senha.'); return; }
+  d.funcionarios.push(f);
+  d.usuarios.push({id:uid(),nome:f.nome,email:f.email,senha:f.senha,role:'Funcionário'});
+  save(d); fillTables(); alert('Funcionário salvo!');
+  $('#n_fun_nome').value=$('#n_fun_email').value=$('#n_fun_meta').value=$('#n_fun_senha').value='';
+}
+function editarFunc(id){
+  const d=db(); const f=d.funcionarios.find(x=>x.id===id); if(!f) return;
+  const novoNome=prompt('Nome',f.nome); if(novoNome===null) return;
+  const meta=Number(prompt('Meta semanal',f.meta)); if(Number.isNaN(meta)) return alert('Meta inválida');
+  f.nome=novoNome; f.meta=meta; save(d); fillTables();
+}
+function removerFunc(id){
+  const d=db(); d.funcionarios=d.funcionarios.filter(f=>f.id!==id); save(d); fillTables();
+}
+function editarCliente(id){
+  const d=db(); const c=d.clientes.find(x=>x.id===id); if(!c) return;
+  const nome=prompt('Nome',c.nome); if(nome===null) return;
+  const end=prompt('Endereço',c.endereco); if(end===null) return;
+  const venc=prompt('Vencimento (AAAA-MM-DD)',c.venc); if(venc===null) return;
+  const valor=Number(prompt('Valor (R$)',c.valor)); if(Number.isNaN(valor)) return alert('Valor inválido');
+  c.nome=nome;c.endereco=end;c.venc=venc;c.valor=valor; save(d); fillTables();
+}
+function removerCliente(id){
+  const d=db(); d.clientes=d.clientes.filter(c=>c.id!==id); save(d); fillTables();
+}
+/* ===== ATRIBUIÇÃO & DISPONIBILIDADE ===== */
+function atribuirHoje(){
+  const d=db();
+  // Distribui clientes do dia de forma simples
+  let i=0;
+  d.clientes.forEach(c=>{
+    const funs=d.funcionarios.filter(f=>f.disp);
+    if(!funs.length) return;
+    const f=funs[i%funs.length]; f.piscinasHoje=(f.piscinasHoje||0)+1; i++;
+  });
+  save(d); fillTables(); renderKPIs(); alert('Piscinas de hoje atribuídas!');
+}
+function toggleDisp(id){
+  const d=db(); const f=d.funcionarios.find(x=>x.id===id); if(!f) return;
+  f.disp=!f.disp; save(d); fillTables();
+}
+/* ===== RELATÓRIOS / EXPORT ===== */
+function exportCSV(tipo){
+  const d=db();
+  if(tipo==='clientes'){
+    const csv=csvFromArray(d.clientes,['id','nome','email','endereco','venc','valor']); download('clientes.csv',csv);
+  }else if(tipo==='funcionarios'){
+    const csv=csvFromArray(d.funcionarios,['id','nome','email','meta','disp','piscinasHoje']); download('funcionarios.csv',csv);
+  }else if(tipo==='visitas'){
+    const csv=csvFromArray(d.visitas,['data','func','cliente','status']); download('visitas.csv',csv);
+  }else if(tipo==='avaliacoes'){
+    const csv=csvFromArray(d.avaliacoes,['func','cliente','nota','comentario']); download('avaliacoes.csv',csv);
+  }
+}
+/* ===== NOTIFICAÇÃO CLIENTE ===== */
+function notify(msg){
+  alert('Notificação enviada: '+msg);
+  // Aqui poderia integrar com WhatsApp/Push/Email no backend futuramente.
+}
+/* ===== NAV CLICKS ===== */
+$$('.nav .nav-btn').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    const sec=b.dataset.section;
+    // Controle por perfil
+    const role=session.user?.role||'';
+    const access = {
+      'Admin':['dashboard','novo','funcionarios','clientes','relatorios','exportar','disponibilidade'],
+      'Gerente':['dashboard','novo','funcionarios','clientes','relatorios','exportar','disponibilidade'],
+      'Supervisor':['dashboard','novo','funcionarios','clientes','relatorios','disponibilidade'],
+      'SDR':['dashboard','clientes'],
+      'Funcionário':['dashboard','funcionarios'],
+      'Cliente':['areaCliente']
+    }[role]||[];
+    if(!access.includes(sec)){ alert('Acesso negado para seu perfil.'); return; }
+    show(sec);
+    if(sec==='dashboard'){ renderKPIs(); }
+  });
+});
+/* ===== INIT ===== */
+function init(){
+  // Frase motivacional
+  $('#motivation').textContent = frases[Math.floor(Math.random()*frases.length)];
+  // CSRF inicial
+  regenCSRF();
+  // Botões
+  $('#loginBtn').addEventListener('click', loginAction);
+  $('#logoutBtn').addEventListener('click', ()=>{ logout(); });
+  // Começa na tela de login
+  show('login');
+}
+init();
 </script>
-
 </body>
 </html>
