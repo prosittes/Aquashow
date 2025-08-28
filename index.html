@@ -24,6 +24,7 @@ th { background:#eee; }
 .feedback { display:flex; gap:5px; margin-top:5px; }
 .feedback button { padding:5px 10px; cursor:pointer; }
 img.ilustrativa { width:100%; max-height:250px; object-fit:cover; border-radius:10px; margin-bottom:10px; }
+input, textarea { width:100%; padding:8px; margin-top:5px; }
 </style>
 </head>
 <body>
@@ -41,7 +42,6 @@ img.ilustrativa { width:100%; max-height:250px; object-fit:cover; border-radius:
     <a href="mailto:contato@aquashow.com">E-mail</a>
 </nav>
 
-<!-- Tela Inicial -->
 <section id="inicio" class="active">
     <div class="card">
         <img src="https://via.placeholder.com/900x250?text=AquaShow+Piscinas" class="ilustrativa">
@@ -51,7 +51,6 @@ img.ilustrativa { width:100%; max-height:250px; object-fit:cover; border-radius:
     </div>
 </section>
 
-<!-- Login -->
 <section id="login">
     <div class="card">
         <h2>Login</h2>
@@ -64,52 +63,71 @@ img.ilustrativa { width:100%; max-height:250px; object-fit:cover; border-radius:
     </div>
 </section>
 
-<!-- Painel Admin -->
 <section id="painel-admin">
     <div class="card">
         <h2>Painel do Administrador</h2>
         <button class="btn" onclick="abrirSubsecao('clientes')">Gerenciar Clientes</button>
         <button class="btn" onclick="abrirSubsecao('funcionarios')">Gerenciar Funcionários</button>
+        <button class="btn" onclick="abrirSubsecao('trocar-senha')">Trocar Senha de Usuários</button>
         <button class="btn" onclick="abrirSubsecao('relatorios')">Relatórios</button>
         <button class="btn" onclick="abrirSubsecao('metas')">Metas</button>
     </div>
 </section>
 
-<!-- Sub-seção Clientes -->
 <section id="clientes">
     <div class="card">
         <h2>Gerenciar Clientes</h2>
-        <form onsubmit="enviarWhatsAppCliente(event)">
+        <form onsubmit="adicionarCliente(event)">
             <label>Nome:</label><br>
             <input type="text" id="cliente-nome" placeholder="Nome do cliente" required><br><br>
             <label>Telefone:</label><br>
             <input type="text" id="cliente-tel" placeholder="Telefone/WhatsApp" required><br><br>
             <label>Cidade:</label><br>
             <input type="text" id="cliente-cidade" placeholder="Cidade"><br><br>
-            <button class="btn" type="submit">Cadastrar Cliente / Enviar WhatsApp</button>
+            <button class="btn" type="submit">Adicionar Cliente</button>
         </form>
+        <h3>Lista de Clientes:</h3>
+        <table id="tabela-clientes">
+            <tr><th>Nome</th><th>Telefone</th><th>Cidade</th><th>Atribuir Funcionário</th></tr>
+        </table>
         <button class="btn" onclick="voltarPainel('painel-admin')">Voltar</button>
     </div>
 </section>
 
-<!-- Sub-seção Funcionários -->
 <section id="funcionarios">
     <div class="card">
         <h2>Gerenciar Funcionários</h2>
-        <form onsubmit="enviarWhatsAppFuncionario(event)">
+        <form onsubmit="adicionarFuncionario(event)">
             <label>Nome:</label><br>
             <input type="text" id="funcionario-nome" placeholder="Nome do funcionário" required><br><br>
             <label>Cargo:</label><br>
             <input type="text" id="funcionario-cargo" placeholder="Cargo ou Função"><br><br>
             <label>Meta diária:</label><br>
             <input type="number" id="funcionario-meta" placeholder="Meta de atendimentos"><br><br>
-            <button class="btn" type="submit">Cadastrar Funcionário / Enviar WhatsApp</button>
+            <label>Senha inicial:</label><br>
+            <input type="text" id="funcionario-senha" placeholder="Senha inicial"><br><br>
+            <button class="btn" type="submit">Adicionar Funcionário</button>
         </form>
+        <h3>Lista de Funcionários:</h3>
+        <table id="tabela-funcionarios">
+            <tr><th>Nome</th><th>Cargo</th><th>Meta</th></tr>
+        </table>
         <button class="btn" onclick="voltarPainel('painel-admin')">Voltar</button>
     </div>
 </section>
 
-<!-- Sub-seção Relatórios -->
+<section id="trocar-senha">
+    <div class="card">
+        <h2>Trocar Senha de Usuário</h2>
+        <label>Selecione usuário:</label><br>
+        <select id="usuario-selecionado"></select><br><br>
+        <label>Nova Senha:</label><br>
+        <input type="text" id="nova-senha"><br><br>
+        <button class="btn" onclick="trocarSenha()">Salvar Nova Senha</button>
+        <button class="btn" onclick="voltarPainel('painel-admin')">Voltar</button>
+    </div>
+</section>
+
 <section id="relatorios">
     <div class="card">
         <h2>Relatórios</h2>
@@ -118,7 +136,6 @@ img.ilustrativa { width:100%; max-height:250px; object-fit:cover; border-radius:
     </div>
 </section>
 
-<!-- Sub-seção Metas -->
 <section id="metas">
     <div class="card">
         <h2>Metas de Funcionários</h2>
@@ -127,98 +144,12 @@ img.ilustrativa { width:100%; max-height:250px; object-fit:cover; border-radius:
     </div>
 </section>
 
-<!-- Painel Cliente -->
 <section id="painel-cliente">
     <div class="card">
         <h2>Área do Cliente</h2>
-        <h3>Minhas Notificações</h3>
+        <h3>Notificações</h3>
         <div id="notificacoes-cliente">Nenhuma notificação no momento.</div>
         <h3>Feedback</h3>
         <div class="feedback">
             <button onclick="enviarFeedback(1)">1</button>
-            <button onclick="enviarFeedback(2)">2</button>
-            <button onclick="enviarFeedback(3)">3</button>
-            <button onclick="enviarFeedback(4)">4</button>
-            <button onclick="enviarFeedback(5)">5</button>
-        </div>
-    </div>
-</section>
-
-<!-- Painel Funcionário -->
-<section id="painel-funcionario">
-    <div class="card">
-        <h2>Área do Funcionário</h2>
-        <h3>Lista de Piscinas</h3>
-        <table>
-            <tr><th>Cliente</th><th>Endereço</th><th>Status</th></tr>
-            <tr><td>Cliente 1</td><td>Rua A, 123</td><td><input type="checkbox"> Feito</td></tr>
-            <tr><td>Cliente 2</td><td>Rua B, 456</td><td><input type="checkbox"> Feito</td></tr>
-        </table>
-        <h3>Pedidos de Produtos</h3>
-        <form onsubmit="enviarPedidoWhatsApp(event)">
-            <textarea id="pedido-produto" placeholder="Descreva o pedido..." required></textarea><br>
-            <button class="btn" type="submit">Enviar Pedido / WhatsApp</button>
-        </form>
-    </div>
-</section>
-
-<footer>
-    &copy; 2025 AquaShow Piscinas | Todos os direitos reservados
-</footer>
-<div class="marca-dagua">Página de Teste – Contate o Desenvolvedor</div>
-
-<script>
-function navegar(secao){
-    document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
-    document.getElementById(secao).classList.add('active');
-}
-
-function abrirSubsecao(subsecao){
-    navegar(subsecao);
-}
-
-function voltarPainel(secao){
-    navegar(secao);
-}
-
-function fazerLogin(){
-    const usuario = document.getElementById('usuario').value.trim();
-    const senha = document.getElementById('senha').value.trim();
-    if(usuario==="admin" && senha==="admin123") navegar('painel-admin');
-    else if(usuario==="funcionario" && senha==="func123") navegar('painel-funcionario');
-    else if(usuario==="cliente" && senha==="cliente123") navegar('painel-cliente');
-    else document.getElementById('login-erro').innerText="Usuário ou senha incorretos.";
-}
-
-function enviarFeedback(nota){
-    alert("Feedback enviado: "+nota+" estrelas");
-}
-
-function enviarWhatsAppCliente(e){
-    e.preventDefault();
-    const nome = document.getElementById('cliente-nome').value;
-    const tel = document.getElementById('cliente-tel').value;
-    const cidade = document.getElementById('cliente-cidade').value;
-    const msg = `Olá ${nome}, seu cadastro na AquaShow Piscinas foi realizado. Cidade: ${cidade}`;
-    window.open(`https://wa.me/${tel.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank');
-}
-
-function enviarWhatsAppFuncionario(e){
-    e.preventDefault();
-    const nome = document.getElementById('funcionario-nome').value;
-    const cargo = document.getElementById('funcionario-cargo').value;
-    const meta = document.getElementById('funcionario-meta').value;
-    const msg = `Olá ${nome}, seu cadastro foi realizado. Cargo: ${cargo}, Meta diária: ${meta}`;
-    window.open(`https://wa.me/5512997968579?text=${encodeURIComponent(msg)}`,'_blank');
-}
-
-function enviarPedidoWhatsApp(e){
-    e.preventDefault();
-    const pedido = document.getElementById('pedido-produto').value;
-    const msg = `Pedido de produtos do funcionário: ${pedido}`;
-    window.open(`https://wa.me/5512997968579?text=${encodeURIComponent(msg)}`,'_blank');
-}
-</script>
-
-</body>
-</html>
+            <button onclick="enviar
