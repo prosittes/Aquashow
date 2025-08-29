@@ -1,70 +1,55 @@
-<!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AquaShow Piscinas - Sistema Completo</title>
-<style>
-body { margin:0; font-family: Arial, sans-serif; background:#f5f5f5 url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?fit=crop&w=1350&q=80') no-repeat center center fixed; background-size: cover; }
-header { background: rgba(0,123,255,0.9); color:white; padding:15px; text-align:center; position: fixed; top:0; width:100%; z-index:10; box-shadow:0 2px 5px rgba(0,0,0,0.3); }
-header img { vertical-align: middle; margin-right: 10px; height:40px; }
-.container { margin-top:100px; padding:20px; }
-.card { background:white; border-radius:12px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.2); max-width:900px; margin:20px auto; }
-input, select, button, textarea { width:100%; padding:10px; margin:8px 0; border:1px solid #ccc; border-radius:8px; }
-button { background:#007bff; color:white; border:none; cursor:pointer; font-weight:bold; }
-button:hover { background:#0056b3; }
-.back-btn { background:#6c757d; margin-top:10px; }
-.watermark { position:fixed; bottom:10px; right:10px; opacity:0.2; font-size:14px; color:#000; }
-.form-bar { margin-top:10px; padding:10px; background:#f1f1f1; border-radius:8px; display:none; }
-table { width:100%; border-collapse:collapse; margin-top:10px; }
-th, td { border:1px solid #ccc; padding:8px; text-align:left; }
-th { background:#eee; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prosites - Formulário</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f5f5f5; }
+        h2 { text-align: center; color: #333; }
+        form { max-width: 500px; margin: 20px auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+        input, textarea, button { margin: 10px 0; padding: 12px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; }
+        button { cursor: pointer; background-color: #007bff; color: white; border: none; transition: 0.3s; }
+        button:hover { background-color: #0056b3; }
+    </style>
 </head>
 <body>
-<header>
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Water_drop_icon.svg/120px-Water_drop_icon.svg.png" alt="Logo">
-  AquaShow Piscinas
-</header>
-<div class="container" id="main">
-  <div class="card" id="loginBox">
-    <h2>Login</h2>
-    <select id="userType">
-      <option value="admin">Administrador</option>
-      <option value="funcionario">Funcionário</option>
-      <option value="cliente">Cliente</option>
-    </select>
-    <input type="text" id="username" placeholder="Usuário">
-    <input type="password" id="password" placeholder="Senha">
-    <button onclick="login()">Entrar</button>
-    <p id="login-erro" style="color:red;"></p>
-  </div>
-</div>
-<div class="container" id="adminPanel" style="display:none;"></div>
-<div class="container" id="funcionarioPanel" style="display:none;"></div>
-<div class="container" id="clientePanel" style="display:none;"></div>
-<div class="watermark">Página de Teste – Contate o Desenvolvedor</div>
-<script>
-let users = { admin:{username:'admin',password:'admin123'} };
-let clientes = JSON.parse(localStorage.getItem('clientes')) || [];
-let funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || [];function login(){ const type = document.getElementById('userType').value; const user = document.getElementById('username').value; const pass = document.getElementById('password').value; let valid=false;
 
-if(type==='admin'){ if(user===users.admin.username && pass===users.admin.password) valid=true; } else if(type==='funcionario'){ valid=funcionarios.some(f=>f.nome===user && f.senha===pass); } else if(type==='cliente'){ valid=clientes.some(c=>c.nome===user && c.senha===pass); }
+<h2>Formulário Prosites</h2>
 
-if(valid){ document.getElementById('main').style.display='none'; if(type==='admin') renderAdmin(); else if(type==='funcionario') renderFuncionario(user); else renderCliente(user); } else document.getElementById('login-erro').innerText='Usuário ou senha incorretos.'; }
+<form id="meuForm">
+    <input type="text" id="nome" placeholder="Nome" required>
+    <input type="text" id="telefone" placeholder="Telefone/WhatsApp" required>
+    <input type="text" id="servico" placeholder="Serviço" required>
+    <textarea id="observacoes" placeholder="Observações"></textarea>
+    <button type="submit">Enviar</button>
+</form>
 
-function goBack(){ document.getElementById('adminPanel').style.display='none'; document.getElementById('funcionarioPanel').style.display='none'; document.getElementById('clientePanel').style.display='none'; document.getElementById('main').style.display='block'; }
+<script type="module">
+import { supabase } from './supabase.js';
 
-function renderAdmin(){ const panel=document.getElementById('adminPanel'); panel.style.display='block'; panel.innerHTML=''; const card=document.createElement('div'); card.className='card'; card.innerHTML=<h2>Painel do Administrador</h2> <button onclick="toggleForm('cliente')">Cadastrar Cliente</button> <button onclick="toggleForm('funcionario')">Cadastrar Funcionário</button> <button onclick="alert('Enviar Lista para Funcionários')">Enviar Lista</button> <button onclick="alert('Definir Metas')">Definir Metas</button> <button onclick="alert('Trocar Senhas')">Trocar Senhas</button> <div id='formBar' class='form-bar'></div> <button class='back-btn' onclick='goBack()'>Voltar</button>; panel.appendChild(card); }
+const form = document.getElementById('meuForm');
 
-function toggleForm(tipo){ const formBar=document.getElementById('formBar'); formBar.style.display='block'; if(tipo==='cliente'){ formBar.innerHTML=<h3>Adicionar Cliente</h3> <input id='clienteNome' placeholder='Nome' /> <input id='clienteSenha' placeholder='Senha' /> <button onclick='salvarCliente()'>Salvar Cliente</button>; } else { formBar.innerHTML=<h3>Adicionar Funcionário</h3> <input id='funcNome' placeholder='Nome' /> <input id='funcSenha' placeholder='Senha' /> <button onclick='salvarFuncionario()'>Salvar Funcionário</button>; } }
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-function salvarCliente(){ const nome=document.getElementById('clienteNome').value; const senha=document.getElementById('clienteSenha').value; clientes.push({nome,senha}); localStorage.setItem('clientes',JSON.stringify(clientes)); alert('Cliente salvo!'); renderAdmin(); }
+    const nome = document.getElementById('nome').value;
+    const telefone = document.getElementById('telefone').value;
+    const servico = document.getElementById('servico').value;
+    const observacoes = document.getElementById('observacoes').value;
 
-function salvarFuncionario(){ const nome=document.getElementById('funcNome').value; const senha=document.getElementById('funcSenha').value; funcionarios.push({nome,senha}); localStorage.setItem('funcionarios',JSON.stringify(funcionarios)); alert('Funcionário salvo!'); renderAdmin(); }
+    const { data, error } = await supabase
+        .from('prosites')
+        .insert([{ nome, telefone, servico, observacoes }]);
 
-function renderFuncionario(user){ const panel=document.getElementById('funcionarioPanel'); panel.style.display='block'; panel.innerHTML=''; const card=document.createElement('div'); card.className='card'; card.innerHTML=<h2>Painel do Funcionário</h2> <p>Bem-vindo, ${user}</p> <button onclick="alert('Lista de clientes recebida')">Ver Lista</button> <button class='back-btn' onclick='goBack()'>Voltar</button>; panel.appendChild(card); }
-
-function renderCliente(user){ const panel=document.getElementById('clientePanel'); panel.style.display='block'; panel.innerHTML=''; const card=document.createElement('div'); card.className='card'; card.innerHTML=<h2>Painel do Cliente</h2> <p>Bem-vindo, ${user}</p> <button onclick="alert('Enviar Feedback')">Feedback</button> <button class='back-btn' onclick='goBack()'>Voltar</button>; panel.appendChild(card); } </script>
+    if (error) {
+        alert('Erro ao enviar: ' + error.message);
+    } else {
+        alert('Cadastro enviado com sucesso!');
+        form.reset();
+    }
+});
+</script>
 
 </body>
 </html>
