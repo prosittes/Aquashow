@@ -3,33 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prosites - Teste Funcional</title>
+  <title>Prosites - Teste Novo</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    form { display: flex; flex-direction: column; max-width: 400px; }
+    input, button { margin-bottom: 10px; padding: 10px; font-size: 16px; }
+    button { cursor: pointer; background-color: #4CAF50; color: white; border: none; }
+    button:hover { background-color: #45a049; }
+  </style>
 </head>
 <body>
-  <h1>Formulário de Teste Prosites</h1>
+  <h1>Formulário de Teste Novo</h1>
 
-  <form id="meuForm">
+  <form id="novoForm">
     <input type="text" id="nome" placeholder="Nome" required>
     <input type="text" id="telefone" placeholder="Telefone/WhatsApp" required>
     <input type="text" id="servico" placeholder="Serviço" required>
-    <button type="submit">Enviar</button>
+    <button id="btnEnviar" type="button">Enviar Cadastro</button>
   </form>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-    // Cole sua Project URL e anon/public key aqui
+    // Cole sua Project URL e chave anon/public aqui
     const supabaseUrl = 'COLE_AQUI_SUA_PROJECT_URL';
     const supabaseKey = 'COLE_AQUI_SUA_ANON_KEY';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Função para enviar dados
-    async function enviarFormulario(event) {
-      event.preventDefault();
+    // Pega o botão
+    const btn = document.getElementById('btnEnviar');
 
+    btn.addEventListener('click', async () => {
       const nome = document.getElementById('nome').value;
       const telefone = document.getElementById('telefone').value;
       const servico = document.getElementById('servico').value;
+
+      if (!nome || !telefone || !servico) {
+        alert('Preencha todos os campos!');
+        return;
+      }
 
       try {
         const { data, error } = await supabase
@@ -41,16 +53,13 @@
           console.error(error);
         } else {
           alert('Cadastro enviado com sucesso!');
-          document.getElementById('meuForm').reset();
+          document.getElementById('novoForm').reset();
         }
       } catch (err) {
         alert('Erro inesperado: ' + err.message);
         console.error(err);
       }
-    }
-
-    // Adiciona evento ao form
-    document.getElementById('meuForm').addEventListener('submit', enviarFormulario);
+    });
   </script>
 </body>
 </html>
