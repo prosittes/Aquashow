@@ -64,7 +64,7 @@
     const servico = document.getElementById('servico').value;
 
     const { data, error } = await supabase
-      .from('prosites') // use exatamente o nome da tabela no Supabase
+      .from('prosittes') // nome correto da tabela
       .insert([{ nome, telefone, servico }]);
 
     if (error) {
