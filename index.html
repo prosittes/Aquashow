@@ -11,13 +11,14 @@
 
   <form id="meuForm">
     <input type="text" id="cliente" placeholder="Cliente" required>
-    <input type="text" id="telefone" placeholder="Telefone" required>
-    <input type="text" id="servico" placeholder="Servico" required>
+    <input type="text" id="telefone" placeholder="Telefone/WhatsApp" required>
+    <input type="text" id="servico" placeholder="Serviço" required>
+    <input type="text" id="cidade" placeholder="Cidade" required>
+    <input type="text" id="observacoes" placeholder="Observações" required>
     <button type="submit">Enviar</button>
   </form>
 
   <script type="module">
-    // Importa o Supabase
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
     // Conexão com o Supabase
@@ -25,7 +26,6 @@
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5kcHhvb256Z2RqZ3Z5YWZwb216Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzOTQwNDUsImV4cCI6MjA3MTk3MDA0NX0.UBzTy0OFE2XDtPOCOFDwh4T_E2vXX5KJgQEEG1ulzY0';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Captura o formulário
     const form = document.getElementById('meuForm');
 
     form.addEventListener('submit', async (e) => {
@@ -34,20 +34,8 @@
       const cliente = document.getElementById('cliente').value;
       const telefone = document.getElementById('telefone').value;
       const servico = document.getElementById('servico').value;
+      const cidade = document.getElementById('cidade').value;
+      const observacoes = document.getElementById('observacoes').value;
 
       // Envia os dados para a tabela prosittes
-      const { data, error } = await supabase
-        .from('prosittes')  // use o nome exato da tabela
-        .insert([{ cliente, telefone, servico }]);
-
-      if (error) {
-        alert('Erro ao enviar: ' + error.message);
-      } else {
-        alert('Cadastro enviado com sucesso!');
-        form.reset();
-      }
-    });
-  </script>
-
-</body>
-</html>
+      const
