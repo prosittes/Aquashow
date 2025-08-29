@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prosites - Formulário</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+    h1 { color: #333; }
+    form { background: #fff; padding: 20px; border-radius: 10px; max-width: 400px; }
+    input { display: block; width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc; }
+    button { padding: 10px 20px; border: none; border-radius: 5px; background: #007bff; color: #fff; cursor: pointer; }
+    button:hover { background: #0056b3; }
+  </style>
 </head>
 <body>
 
@@ -21,7 +29,7 @@
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-    // Conexão com o Supabase
+    // Conexão Supabase
     const supabaseUrl = 'https://ndpxoonzgdjgvyafpomz.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5kcHhvb256Z2RqZ3Z5YWZwb216Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzOTQwNDUsImV4cCI6MjA3MTk3MDA0NX0.UBzTy0OFE2XDtPOCOFDwh4T_E2vXX5KJgQEEG1ulzY0';
     const supabase = createClient(supabaseUrl, supabaseKey);
@@ -29,7 +37,7 @@
     const form = document.getElementById('meuForm');
 
     form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+      e.preventDefault(); // impede refresh da página
 
       const cliente = document.getElementById('cliente').value;
       const telefone = document.getElementById('telefone').value;
@@ -37,5 +45,19 @@
       const cidade = document.getElementById('cidade').value;
       const observacoes = document.getElementById('observacoes').value;
 
-      // Envia os dados para a tabela prosittes
-      const
+      // Envia para a tabela prosittes
+      const { data, error } = await supabase
+        .from('prosittes')
+        .insert([{ cliente, telefone, servico, cidade, observacoes }]);
+
+      if (error) {
+        alert('Erro ao enviar: ' + error.message);
+      } else {
+        alert('Cadastro enviado com sucesso!');
+        form.reset();
+      }
+    });
+  </script>
+
+</body>
+</html>
