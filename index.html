@@ -3,78 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prosites - Cadastro</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f2f2f2;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    form {
-      background-color: #fff;
-      padding: 20px 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      width: 300px;
-    }
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-  </style>
+  <title>Prosites - Formulário</title>
 </head>
 <body>
 
-<form id="meuForm">
-  <input type="text" id="nome" placeholder="Nome" required>
-  <input type="text" id="telefone" placeholder="Telefone/WhatsApp" required>
-  <input type="text" id="servico" placeholder="Servico" required>
-  <button type="submit">Enviar</button>
-</form>
+  <h1>Formulário Prosites</h1>
 
-<script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+  <form id="meuForm">
+    <input type="text" id="cliente" placeholder="Cliente" required>
+    <input type="text" id="telefone" placeholder="Telefone" required>
+    <input type="text" id="servico" placeholder="Servico" required>
+    <button type="submit">Enviar</button>
+  </form>
 
-  const supabaseUrl = 'https://ndpxoonzgdjgvyafpomz.supabase.co/';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5kcHhvb256Z2RqZ3Z5YWZwb216Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzOTQwNDUsImV4cCI6MjA3MTk3MDA0NX0.UBzTy0OFE2XDtPOCOFDwh4T_E2vXX5KJgQEEG1ulzY0';
-  const supabase = createClient(supabaseUrl, supabaseKey);
+  <script type="module">
+    // Importa o Supabase
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-  const form = document.getElementById('meuForm');
+    // Conexão com o Supabase
+    const supabaseUrl = 'https://ndpxoonzgdjgvyafpomz.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5kcHhvb256Z2RqZ3Z5YWZwb216Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzOTQwNDUsImV4cCI6MjA3MTk3MDA0NX0.UBzTy0OFE2XDtPOCOFDwh4T_E2vXX5KJgQEEG1ulzY0';
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+    // Captura o formulário
+    const form = document.getElementById('meuForm');
 
-    const nome = document.getElementById('nome').value;
-    const telefone = document.getElementById('telefone').value;
-    const servico = document.getElementById('servico').value;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-    const { data, error } = await supabase
-      .from('prosittes') // nome correto da tabela
-      .insert([{ nome, telefone, servico }]);
+      const cliente = document.getElementById('cliente').value;
+      const telefone = document.getElementById('telefone').value;
+      const servico = document.getElementById('servico').value;
 
-    if (error) {
-      alert('Erro ao enviar: ' + error.message);
-    } else {
-      alert('Cadastro enviado com sucesso!');
-      form.reset();
-    }
-  });
-</script>
+      // Envia os dados para a tabela prosittes
+      const { data, error } = await supabase
+        .from('prosittes')  // use o nome exato da tabela
+        .insert([{ cliente, telefone, servico }]);
+
+      if (error) {
+        alert('Erro ao enviar: ' + error.message);
+      } else {
+        alert('Cadastro enviado com sucesso!');
+        form.reset();
+      }
+    });
+  </script>
 
 </body>
 </html>
