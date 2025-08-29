@@ -15,26 +15,26 @@
     <button type="submit">Enviar</button>
   </form>
 
+  <!-- Coloquei o script no final do body para garantir que o form já exista -->
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-    // Substitua aqui pela sua Project URL e sua chave anon
+    // Substitua aqui pela sua Project URL e chave anon
     const supabaseUrl = 'COLE_AQUI_SUA_PROJECT_URL';
     const supabaseKey = 'COLE_AQUI_SUA_ANON_KEY';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Pega o formulário
+    // Seleciona o formulário
     const form = document.getElementById('meuForm');
 
-    // Evento de envio
+    // Evento de submit
     form.addEventListener('submit', async (e) => {
-      e.preventDefault(); // evita que a página recarregue
+      e.preventDefault(); // evita recarregar a página
 
       const nome = document.getElementById('nome').value;
       const telefone = document.getElementById('telefone').value;
       const servico = document.getElementById('servico').value;
 
-      // Envia para a tabela Prosittes
       const { data, error } = await supabase
         .from('Prosittes') // nome exato da tabela
         .insert([{ nome, telefone, servico }]);
