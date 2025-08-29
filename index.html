@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prosites - Teste</title>
+  <title>Prosites - Teste Funcionando</title>
 </head>
 <body>
   <h1>Formulário de Teste Prosites</h1>
@@ -15,7 +15,6 @@
     <button type="submit">Enviar</button>
   </form>
 
-  <!-- Coloquei o script no final do body para garantir que o form já exista -->
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
@@ -24,28 +23,31 @@
     const supabaseKey = 'COLE_AQUI_SUA_ANON_KEY';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Seleciona o formulário
-    const form = document.getElementById('meuForm');
+    // Espera o DOM carregar
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('meuForm');
 
-    // Evento de submit
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault(); // evita recarregar a página
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault(); // evita recarregar a página
 
-      const nome = document.getElementById('nome').value;
-      const telefone = document.getElementById('telefone').value;
-      const servico = document.getElementById('servico').value;
+        const nome = document.getElementById('nome').value;
+        const telefone = document.getElementById('telefone').value;
+        const servico = document.getElementById('servico').value;
 
-      const { data, error } = await supabase
-        .from('Prosittes') // nome exato da tabela
-        .insert([{ nome, telefone, servico }]);
+        try {
+          const { data, error } = await supabase
+            .from('Prosittes') // nome exato da tabela
+            .insert([{ nome, telefone, servico }]);
 
-      if (error) {
-        console.error(error);
-        alert('Erro ao enviar: ' + error.message);
-      } else {
-        alert('Cadastro enviado com sucesso!');
-        form.reset();
-      }
+          if (error) throw error;
+
+          alert('Cadastro enviado com sucesso!');
+          form.reset();
+        } catch (err) {
+          console.error(err);
+          alert('Erro ao enviar: ' + err.message);
+        }
+      });
     });
   </script>
 </body>
