@@ -2,61 +2,104 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prosites - Formulário</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
-    h1 { color: #333; }
-    form { background: #fff; padding: 20px; border-radius: 10px; max-width: 400px; }
-    input { display: block; width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc; }
-    button { padding: 10px 20px; border: none; border-radius: 5px; background: #007bff; color: #fff; cursor: pointer; }
-    button:hover { background: #0056b3; }
-  </style>
+  <title>DoctorGo - Protótipo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 p-6">
 
-  <h1>Formulário Prosites</h1>
+  <!-- PACIENTE -->
+  <div class="max-w-md mx-auto mb-12">
+    <h1 class="text-2xl font-bold text-center mb-4">Agendar Consulta</h1>
 
-  <form id="meuForm">
-    <input type="text" id="cliente" placeholder="Cliente" required>
-    <input type="text" id="telefone" placeholder="Telefone/WhatsApp" required>
-    <input type="text" id="servico" placeholder="Servico" required>
-    <input type="text" id="cidade" placeholder="Cidade" required>
-    <input type="text" id="observacoes" placeholder="Observações" required>
-    <button type="submit">Enviar</button>
-  </form>
+    <!-- Lista de horários livres -->
+    <div id="horarios" class="bg-white shadow rounded-lg p-4 mb-4">
+      <h2 class="font-semibold mb-2">Horários disponíveis</h2>
+      <!-- Botões de horários -->
+      <button onclick="agendar('09/09 - 09:00')" 
+        class="w-full bg-green-500 text-white p-2 rounded-lg mb-2 hover:bg-green-600">
+        09/09 - 09:00
+      </button>
+      <button onclick="agendar('09/09 - 14:00')" 
+        class="w-full bg-green-500 text-white p-2 rounded-lg mb-2 hover:bg-green-600">
+        09/09 - 14:00
+      </button>
+      <button onclick="agendar('10/09 - 09:00')" 
+        class="w-full bg-green-500 text-white p-2 rounded-lg mb-2 hover:bg-green-600">
+        10/09 - 09:00
+      </button>
+    </div>
 
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+    <!-- Solicitar atendimento -->
+    <div class="bg-white shadow rounded-lg p-4">
+      <h2 class="font-semibold mb-2">Nenhum horário?</h2>
+      <button onclick="solicitarAtendimento()" 
+        class="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600">
+        Solicitar Atendimento
+      </button>
+    </div>
+  </div>
 
-    // Conexão Supabase
-    const supabaseUrl = 'https://ndpxoonzgdjgvyafpomz.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5kcHhvb256Z2RqZ3Z5YWZwb216Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzOTQwNDUsImV4cCI6MjA3MTk3MDA0NX0.UBzTy0OFE2XDtPOCOFDwh4T_E2vXX5KJgQEEG1ulzY0';
-    const supabase = createClient(supabaseUrl, supabaseKey);
+  <!-- MÉDICA -->
+  <div class="max-w-md mx-auto">
+    <h1 class="text-2xl font-bold text-center mb-4">Agenda da Dra. Bruna</h1>
 
-    const form = document.getElementById('meuForm');
+    <!-- Pendentes -->
+    <div class="bg-white shadow rounded-lg p-4 mb-4">
+      <h2 class="font-semibold mb-2">Pendentes</h2>
+      <div id="pendentes"></div>
+    </div>
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault(); // impede refresh da página
+    <!-- Confirmadas -->
+    <div class="bg-white shadow rounded-lg p-4">
+      <h2 class="font-semibold mb-2">Confirmadas</h2>
+      <div id="confirmadas"></div>
+    </div>
+  </div>
 
-      const cliente = document.getElementById('cliente').value;
-      const telefone = document.getElementById('telefone').value;
-      const servico = document.getElementById('servico').value;
-      const cidade = document.getElementById('cidade').value;
-      const observacoes = document.getElementById('observacoes').value;
+  <script>
+    const pendentesDiv = document.getElementById("pendentes");
+    const confirmadasDiv = document.getElementById("confirmadas");
 
-      // Envia para a tabela prosittes
-      const { data, error } = await supabase
-        .from('prosittes')
-        .insert([{ cliente, telefone, servico, cidade, observacoes }]);
+    // Função: paciente escolhe horário
+    function agendar(horario) {
+      const consulta = document.createElement("div");
+      consulta.className = "flex justify-between items-center mb-2";
+      consulta.innerHTML = `
+        <span>Paciente (Consulta solicitada)</span>
+        <button onclick="confirmar(this, '${horario}')" 
+          class="bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600">
+          Confirmar
+        </button>`;
+      pendentesDiv.appendChild(consulta);
+      alert("Consulta solicitada para " + horario);
+    }
 
-      if (error) {
-        alert('Erro ao enviar: ' + error.message);
-      } else {
-        alert('Cadastro enviado com sucesso!');
-        form.reset();
-      }
-    });
+    // Função: paciente solicita sem horário
+    function solicitarAtendimento() {
+      const consulta = document.createElement("div");
+      consulta.className = "flex justify-between items-center mb-2";
+      consulta.innerHTML = `
+        <span>Paciente (Sem horário)</span>
+        <button onclick="confirmar(this, 'A definir')" 
+          class="bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600">
+          Confirmar
+        </button>`;
+      pendentesDiv.appendChild(consulta);
+      alert("Solicitação de atendimento enviada.");
+    }
+
+    // Função: médica confirma consulta
+    function confirmar(button, horario) {
+      const consultaDiv = button.parentElement;
+      consultaDiv.remove();
+
+      const confirmada = document.createElement("div");
+      confirmada.className = "flex justify-between items-center mb-2";
+      confirmada.innerHTML = `
+        <span>Paciente</span>
+        <span class="text-sm text-gray-600">${horario}</span>`;
+      confirmadasDiv.appendChild(confirmada);
+    }
   </script>
 
 </body>
