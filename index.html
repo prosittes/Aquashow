@@ -2,105 +2,66 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>DoctorGo - Protótipo</title>
+  <title>DoctorGo</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 p-6">
 
-  <!-- PACIENTE -->
+  <!-- TELA DO PACIENTE -->
   <div class="max-w-md mx-auto mb-12">
     <h1 class="text-2xl font-bold text-center mb-4">Agendar Consulta</h1>
 
     <!-- Lista de horários livres -->
-    <div id="horarios" class="bg-white shadow rounded-lg p-4 mb-4">
+    <div class="bg-white shadow rounded-lg p-4 mb-4">
       <h2 class="font-semibold mb-2">Horários disponíveis</h2>
-      <!-- Botões de horários -->
-      <button onclick="agendar('09/09 - 09:00')" 
-        class="w-full bg-green-500 text-white p-2 rounded-lg mb-2 hover:bg-green-600">
+      <button class="w-full bg-green-500 text-white p-2 rounded-lg mb-2 hover:bg-green-600">
         09/09 - 09:00
       </button>
-      <button onclick="agendar('09/09 - 14:00')" 
-        class="w-full bg-green-500 text-white p-2 rounded-lg mb-2 hover:bg-green-600">
+      <button class="w-full bg-green-500 text-white p-2 rounded-lg mb-2 hover:bg-green-600">
         09/09 - 14:00
       </button>
-      <button onclick="agendar('10/09 - 09:00')" 
-        class="w-full bg-green-500 text-white p-2 rounded-lg mb-2 hover:bg-green-600">
+      <button class="w-full bg-green-500 text-white p-2 rounded-lg mb-2 hover:bg-green-600">
         10/09 - 09:00
       </button>
     </div>
 
-    <!-- Solicitar atendimento -->
+    <!-- Caso não tenha horário -->
     <div class="bg-white shadow rounded-lg p-4">
       <h2 class="font-semibold mb-2">Nenhum horário?</h2>
-      <button onclick="solicitarAtendimento()" 
-        class="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600">
+      <button class="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600">
         Solicitar Atendimento
       </button>
     </div>
   </div>
 
-  <!-- MÉDICA -->
+  <!-- TELA DA MÉDICA -->
   <div class="max-w-md mx-auto">
     <h1 class="text-2xl font-bold text-center mb-4">Agenda da Dra. Bruna</h1>
 
-    <!-- Pendentes -->
+    <!-- Consultas pendentes -->
     <div class="bg-white shadow rounded-lg p-4 mb-4">
       <h2 class="font-semibold mb-2">Pendentes</h2>
-      <div id="pendentes"></div>
+      <div class="flex justify-between items-center mb-2">
+        <span>João Silva</span>
+        <button class="bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600">
+          Confirmar
+        </button>
+      </div>
     </div>
 
-    <!-- Confirmadas -->
+    <!-- Consultas confirmadas -->
     <div class="bg-white shadow rounded-lg p-4">
       <h2 class="font-semibold mb-2">Confirmadas</h2>
-      <div id="confirmadas"></div>
+      <div class="flex justify-between items-center mb-2">
+        <span>Maria Silva</span>
+        <span class="text-sm text-gray-600">10/09 - 14:00</span>
+      </div>
+      <div class="flex justify-between items-center mb-2">
+        <span>João Silva</span>
+        <span class="text-sm text-gray-600">12/09 - 15:00</span>
+      </div>
     </div>
   </div>
-
-  <script>
-    const pendentesDiv = document.getElementById("pendentes");
-    const confirmadasDiv = document.getElementById("confirmadas");
-
-    // Função: paciente escolhe horário
-    function agendar(horario) {
-      const consulta = document.createElement("div");
-      consulta.className = "flex justify-between items-center mb-2";
-      consulta.innerHTML = `
-        <span>Paciente (Consulta solicitada)</span>
-        <button onclick="confirmar(this, '${horario}')" 
-          class="bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600">
-          Confirmar
-        </button>`;
-      pendentesDiv.appendChild(consulta);
-      alert("Consulta solicitada para " + horario);
-    }
-
-    // Função: paciente solicita sem horário
-    function solicitarAtendimento() {
-      const consulta = document.createElement("div");
-      consulta.className = "flex justify-between items-center mb-2";
-      consulta.innerHTML = `
-        <span>Paciente (Sem horário)</span>
-        <button onclick="confirmar(this, 'A definir')" 
-          class="bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600">
-          Confirmar
-        </button>`;
-      pendentesDiv.appendChild(consulta);
-      alert("Solicitação de atendimento enviada.");
-    }
-
-    // Função: médica confirma consulta
-    function confirmar(button, horario) {
-      const consultaDiv = button.parentElement;
-      consultaDiv.remove();
-
-      const confirmada = document.createElement("div");
-      confirmada.className = "flex justify-between items-center mb-2";
-      confirmada.innerHTML = `
-        <span>Paciente</span>
-        <span class="text-sm text-gray-600">${horario}</span>`;
-      confirmadasDiv.appendChild(confirmada);
-    }
-  </script>
 
 </body>
 </html>
