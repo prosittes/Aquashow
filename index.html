@@ -1,10 +1,95 @@
-"use client"
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Posto Shell Setville</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; }
+    h1 { color: #d40000; text-align: center; }
+    .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    input, select, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
+    .small { font-size: 0.9em; color: gray; }
+    @media print {
+      body * { visibility: hidden; }
+      #printable, #printable * { visibility: visible; }
+      #printable { position: absolute; top: 0; left: 0; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Posto Shell Setville</h1>  <div class="card">
+    <h2>Cadastrar Cliente</h2>
+    <input id="nome" placeholder="Nome do cliente">
+    <input id="cpf" placeholder="CPF do cliente">
+    <button onclick="cadastrarCliente()">Salvar Cliente</button>
+  </div>  <div class="card">
+    <h2>Registrar Abastecimento</h2>
+    <select id="combustivel">
+      <option value="1">Gasolina Comum (1 ponto/litro)</option>
+      <option value="2">Gasolina Aditivada (2 pontos/litro)</option>
+      <option value="0.5">Etanol (0.5 ponto/litro)</option>
+    </select>
+    <input id="litros" type="number" placeholder="Quantidade em litros">
+    <select id="cliente"></select>
+    <button onclick="registrarAbastecimento()">Salvar Abastecimento</button>
+  </div>  <div class="card">
+    <h2>Gerar Recompensa</h2>
+    <select id="clienteRecompensa"></select>
+    <button onclick="gerarComprovante()">Gerar e Imprimir Comprovante</button>
+  </div>  <div id="printable" style="display:none;">
+    <pre id="comprovante"></pre>
+  </div>  <script>
+    const clientes = {};
 
-import { useRef } from 'react';
-import { Input } from '../ui/input';
-import { TextArea } from '../ui/textarea';
-import styles from './styles.module.scss';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import emailJs from '@emailjs/browser';
+    function cadastrarCliente() {
+      const nome = document.getElementById('nome').value;
+      const cpf = document.getElementById('cpf').value;
+      if (nome && cpf) {
+        clientes[cpf] = { nome, cpf, pontos: 0 };
+        atualizarSelects();
+        alert('Cliente cadastrado com sucesso.');
+      }
+    }
+
+    function atualizarSelects() {
+      const clienteSelect = document.getElementById('cliente');
+      const recompensaSelect = document.getElementById('clienteRecompensa');
+      clienteSelect.innerHTML = recompensaSelect.innerHTML = '';
+      for (let cpf in clientes) {
+        const option = document.createElement('option');
+        option.value = cpf;
+        option.textContent = clientes[cpf].nome + ' (' + clientes[cpf].cpf + ')';
+        clienteSelect.appendChild(option.cloneNode(true));
+        recompensaSelect.appendChild(option);
+      }
+    }
+
+    function registrarAbastecimento() {
+      const litros = parseFloat(document.getElementById('litros').value);
+      const multiplicador = parseFloat(document.getElementById('combustivel').value);
+      const cpf = document.getElementById('cliente').value;
+      if (litros && cpf && clientes[cpf]) {
+        const pontosGanhos = litros * multiplicador;
+        clientes[cpf].pontos += pontosGanhos;
+        alert(`+${pontosGanhos.toFixed(2)} pontos para ${clientes[cpf].nome}. Total: ${clientes[cpf].pontos.toFixed(2)} pts.`);
+      }
+    }
+
+    function gerarComprovante() {
+      const cpf = document.getElementById('clienteRecompensa').value;
+      const cliente = clientes[cpf];
+      if (!cliente || cliente.pontos < 100) {
+        alert('Cliente não tem pontos suficientes. Mínimo: 100.');
+        return;
+      }
+      const codigo = '#' + Math.random().toString(36).substring(2, 8).toUpperCase();
+      const data = new Date().toLocaleString();
+      const texto = `-------------------------------\nPOSTO SHELL – SETVILLE\nCOMPROVANTE DE RECOMPENSA\n-------------------------------\nCliente: ${cliente.nome}\nCPF: ${cliente.cpf}\nRecompensa: Lavagem Grátis\nCódigo: ${codigo}\nData: ${data}\n\nApresente este cupom com RG.\n-------------------------------`;
+      cliente.pontos -= 100;
+      document.getElementById('comprovante').textContent = texto;
+      document.getElementById('printable').style.display = 'block';
+      window.print();
+      document.getElementById('printable').style.display = 'none';
+    }
+  </script></body>
+</html>
