@@ -1,186 +1,201 @@
-
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<title>AQUASHOUW PISCINAS - Sistema</title>
-<style>
-    body { font-family: Arial, sans-serif; background: #f2f2f2; margin: 0; padding: 0; }
-    header { background: #0077b6; color: white; padding: 15px; text-align: center; }
-    .container { max-width: 800px; margin: 30px auto; background: white; padding: 20px; border-radius: 10px; }
-    h2 { color: #0077b6; }
-    input, select, button, textarea { width: 100%; padding: 10px; margin: 5px 0; }
-    button { background: #0077b6; color: white; border: none; cursor: pointer; }
-    button:hover { background: #005f8a; }
-    .hidden { display: none; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-    th { background: #0077b6; color: white; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aquashow — Painel (Protótipo HTML)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { color-scheme: light dark; }
+    html { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+    .card { @apply bg-white/80 dark:bg-zinc-900/70 backdrop-blur rounded-2xl border border-zinc-200/70 dark:border-zinc-800 shadow-sm; }
+    .tab-btn[aria-selected="true"] { @apply bg-zinc-900 text-white dark:bg-white dark:text-zinc-900; }
+  </style>
 </head>
-<body>
-<header>
-    <h1>AQUASHOUW PISCINAS</h1>
-</header>
-<div class="container" id="login-section">
-    <h2>Login</h2>
-    <input type="text" id="username" placeholder="Usuário">
-    <input type="password" id="password" placeholder="Senha">
-    <select id="userType">
-        <option value="">Selecione o tipo de acesso</option>
-        <option value="admin">Administrador</option>
-        <option value="funcionario">Funcionário</option>
-        <option value="cliente">Cliente</option>
-    </select>
-    <button onclick="login()">Entrar</button>
-</div>
+<body class="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 min-h-screen">
+  <header class="sticky top-0 z-40 border-b border-zinc-200/70 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/60 backdrop-blur">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-sky-600"></div>
+        <div class="font-semibold">Aquashow Piscinas — Painel</div>
+      </div>
+      <nav class="flex gap-2" role="tablist" aria-label="Abas do painel">
+        <button class="tab-btn px-3 h-9 rounded-xl text-sm" data-tab="func" aria-selected="true">Funcionários</button>
+        <button class="tab-btn px-3 h-9 rounded-xl text-sm" data-tab="cli">Clientes</button>
+        <button class="tab-btn px-3 h-9 rounded-xl text-sm" data-tab="adm">Pedidos (Admin)</button>
+        <button class="tab-btn px-3 h-9 rounded-xl text-sm" data-tab="cliente-painel">Painel do Cliente</button>
+      </nav>
+    </div>
+  </header>
 
-<div class="container hidden" id="admin-panel">
-    <h2>Painel do Administrador</h2>
-    <button onclick="showSection('clientes')">Gerenciar Clientes</button>
-    <button onclick="showSection('funcionarios')">Gerenciar Funcionários</button>
-    <button onclick="showSection('avaliacoes')">Ver Avaliações</button>
-    <button onclick="showSection('senha')">Alterar Senha</button>
-    <div id="admin-content"></div>
-</div>
+  <main class="max-w-6xl mx-auto px-4 py-8 space-y-8">
+    <!-- Funcionários: criar lista de pedido -->
+    <section id="tab-func" class="space-y-6">
+      <h2 class="text-xl font-semibold">Funcionários — Fazer Lista de Pedido</h2>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="card p-4 md:col-span-2">
+          <div class="mb-3">
+            <label class="text-sm">Cliente</label>
+            <select class="mt-1 w-full h-11 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3">
+              <option>Selecione um cliente…</option>
+              <option>Casa do Sr. João — Centro</option>
+              <option>Condomínio Vale Verde — Bloco B</option>
+            </select>
+          </div>
 
-<div class="container hidden" id="funcionario-panel">
-    <h2>Painel do Funcionário</h2>
-    <p>Aqui você verá suas metas semanais e piscinas designadas.</p>
-</div>
+          <div class="divide-y divide-zinc-200 dark:divide-zinc-800">
+            <!-- Produtos fixos -->
+            <div class="py-3 flex items-center justify-between gap-4">
+              <div>
+                <div class="font-medium">Cloro</div>
+                <div class="text-xs text-zinc-500">Unidade: kg</div>
+              </div>
+              <input type="number" step="0.1" min="0" placeholder="Qtd" class="h-10 w-28 text-right rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3" />
+            </div>
+            <div class="py-3 flex items-center justify-between gap-4">
+              <div>
+                <div class="font-medium">Redutor de pH</div>
+                <div class="text-xs text-zinc-500">Unidade: L</div>
+              </div>
+              <input type="number" step="0.1" min="0" placeholder="Qtd" class="h-10 w-28 text-right rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3" />
+            </div>
+            <div class="py-3 flex items-center justify-between gap-4">
+              <div>
+                <div class="font-medium">Pastilha</div>
+                <div class="text-xs text-zinc-500">Unidade: un</div>
+              </div>
+              <input type="number" step="1" min="0" placeholder="Qtd" class="h-10 w-28 text-right rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3" />
+            </div>
+            <div class="py-3 flex items-center justify-between gap-4">
+              <div>
+                <div class="font-medium">Clear gel</div>
+                <div class="text-xs text-zinc-500">Unidade: L</div>
+              </div>
+              <input type="number" step="0.1" min="0" placeholder="Qtd" class="h-10 w-28 text-right rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3" />
+            </div>
+            <div class="py-3 flex items-center justify-between gap-4">
+              <div>
+                <div class="font-medium">Clarificante</div>
+                <div class="text-xs text-zinc-500">Unidade: L</div>
+              </div>
+              <input type="number" step="0.1" min="0" placeholder="Qtd" class="h-10 w-28 text-right rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3" />
+            </div>
+          </div>
 
-<div class="container hidden" id="cliente-panel">
-    <h2>Painel do Cliente</h2>
-    <button onclick="alert('Chamado de emergência enviado!')">Chamada de Emergência</button>
-    <h3>Avaliar Funcionário</h3>
-    <select id="avaliacao">
-        <option value="1">1 estrela</option>
-        <option value="2">2 estrelas</option>
-        <option value="3">3 estrelas</option>
-        <option value="4">4 estrelas</option>
-        <option value="5">5 estrelas</option>
-    </select>
-    <button onclick="salvarAvaliacao()">Enviar Avaliação</button>
-</div>
+          <div class="mt-4 flex gap-2">
+            <button class="h-10 px-4 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900">Salvar rascunho</button>
+            <button class="h-10 px-4 rounded-xl border border-zinc-300 dark:border-zinc-700">Enviar ao cliente</button>
+          </div>
+        </div>
 
-<script>
-let adminSenha = "123";
-let avaliacoes = JSON.parse(localStorage.getItem("avaliacoes")) || [];
-let clientes = JSON.parse(localStorage.getItem("clientes")) || [];
-let funcionarios = JSON.parse(localStorage.getItem("funcionarios")) || [];
+        <div class="card p-4">
+          <h3 class="font-semibold mb-2">Resumo do Pedido</h3>
+          <ul class="text-sm space-y-1 list-disc list-inside text-zinc-600 dark:text-zinc-400">
+            <li>Cliente: —</li>
+            <li>Itens: Cloro, Redutor de pH, …</li>
+            <li>Status: rascunho</li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
-function login() {
-    const user = document.getElementById("username").value;
-    const pass = document.getElementById("password").value;
-    const type = document.getElementById("userType").value;
+    <!-- Clientes: aprovar e enviar -->
+    <section id="tab-cli" class="hidden space-y-6">
+      <h2 class="text-xl font-semibold">Clientes — Aprovar & Enviar</h2>
+      <div class="card p-4">
+        <div class="text-sm">Pedido #A1B2C3 • 21/09/2025 10:40</div>
+        <ul class="mt-3 text-sm list-disc list-inside">
+          <li>Cloro: 1.0 kg</li>
+          <li>Pastilha: 5 un</li>
+          <li>Clarificante: 0.2 L</li>
+        </ul>
+        <div class="mt-4 flex gap-2">
+          <button class="h-10 px-4 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900">Aprovar pedido</button>
+          <button class="h-10 px-4 rounded-xl border border-zinc-300 dark:border-zinc-700">Enviar ao Administrador</button>
+        </div>
+      </div>
+    </section>
 
-    if (type === "admin" && user === "admin" && pass === adminSenha) {
-        document.getElementById("login-section").classList.add("hidden");
-        document.getElementById("admin-panel").classList.remove("hidden");
-    } else if (type === "funcionario" && user === "funcionario" && pass === "123") {
-        document.getElementById("login-section").classList.add("hidden");
-        document.getElementById("funcionario-panel").classList.remove("hidden");
-    } else if (type === "cliente" && user === "cliente" && pass === "123") {
-        document.getElementById("login-section").classList.add("hidden");
-        document.getElementById("cliente-panel").classList.remove("hidden");
-    } else {
-        alert("Credenciais inválidas!");
-    }
-}
+    <!-- Admin: aprovar ou reprovar -->
+    <section id="tab-adm" class="hidden space-y-6">
+      <h2 class="text-xl font-semibold">Administrador — Aprovação</h2>
+      <div class="card p-4">
+        <div class="text-sm">Pedido #A1B2C3 • 21/09/2025 11:10 • Cliente: Casa do Sr. João</div>
+        <ul class="mt-3 text-sm list-disc list-inside">
+          <li>Cloro: 1.0 kg</li>
+          <li>Pastilha: 5 un</li>
+          <li>Clarificante: 0.2 L</li>
+        </ul>
+        <div class="mt-4 flex gap-2">
+          <button class="h-10 px-4 rounded-xl bg-emerald-600 text-white">Aprovar</button>
+          <button class="h-10 px-4 rounded-xl bg-rose-600 text-white">Reprovar</button>
+        </div>
+      </div>
+    </section>
 
-function showSection(section) {
-    let content = document.getElementById("admin-content");
-    content.innerHTML = "";
+    <!-- Painel do Cliente: endereço, funcionário, visita, histórico -->
+    <section id="tab-cliente-painel" class="hidden space-y-6">
+      <h2 class="text-xl font-semibold">Painel do Cliente</h2>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="card p-4">
+          <div class="text-sm text-zinc-500">Cliente</div>
+          <div class="text-lg font-semibold">Casa do Sr. João</div>
+          <div class="mt-2 text-sm">Endereço: Rua das Palmeiras, 123 — Centro</div>
+        </div>
+        <div class="card p-4">
+          <div class="text-sm text-zinc-500">Funcionário(s) designado(s)</div>
+          <ul class="mt-2 text-sm list-disc list-inside">
+            <li>Marcos Silva</li>
+            <li>Ana Souza</li>
+          </ul>
+        </div>
+        <div class="card p-4">
+          <div class="text-sm text-zinc-500">Próxima visita</div>
+          <div class="mt-2 text-sm">23/09/2025 09:00 • planned</div>
+          <div class="text-xs mt-1">Aplicações previstas: cloração, ajuste de pH, pastilha</div>
+        </div>
+      </div>
+      <div class="card p-4">
+        <div class="text-base font-semibold">Últimas aplicações</div>
+        <div class="mt-3 grid gap-3">
+          <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 p-3">
+            <div class="text-sm">14/09/2025 10:10 • done</div>
+            <div class="text-xs mt-1">Aplicações: cloração, clarificante</div>
+            <div class="text-xs mt-1">Produtos: Cloro: 0.5 kg; Clarificante: 0.2 L</div>
+          </div>
+          <div class="rounded-xl border border-zinc-200 dark:border-zinc-800 p-3">
+            <div class="text-sm">07/09/2025 09:45 • done</div>
+            <div class="text-xs mt-1">Aplicações: ajuste de pH, pastilha</div>
+            <div class="text-xs mt-1">Produtos: Redutor de pH: 0.3 L; Pastilha: 3 un</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 
-    if (section === "clientes") {
-        content.innerHTML = `
-            <h3>Clientes</h3>
-            <form onsubmit="adicionarCliente(event)">
-                <input type="text" id="clienteNome" placeholder="Nome" required>
-                <input type="text" id="clienteEndereco" placeholder="Endereço" required>
-                <input type="text" id="clienteContato" placeholder="Contato" required>
-                <button type="submit">Adicionar Cliente</button>
-            </form>
-            <table>
-                <tr><th>Nome</th><th>Endereço</th><th>Contato</th><th>Ações</th></tr>
-                ${clientes.map((c, i) => `<tr><td>${c.nome}</td><td>${c.endereco}</td><td>${c.contato}</td><td><button onclick="removerCliente(${i})">Remover</button></td></tr>`).join("")}
-            </table>
-        `;
-    } else if (section === "funcionarios") {
-        content.innerHTML = `
-            <h3>Funcionários</h3>
-            <form onsubmit="adicionarFuncionario(event)">
-                <input type="text" id="funcNome" placeholder="Nome" required>
-                <input type="number" id="funcMeta" placeholder="Meta semanal" required>
-                <button type="submit">Adicionar Funcionário</button>
-            </form>
-            <table>
-                <tr><th>Nome</th><th>Meta Semanal</th><th>Ações</th></tr>
-                ${funcionarios.map((f, i) => `<tr><td>${f.nome}</td><td>${f.meta}</td><td><button onclick="removerFuncionario(${i})">Remover</button></td></tr>`).join("")}
-            </table>
-        `;
-    } else if (section === "avaliacoes") {
-        content.innerHTML = `
-            <h3>Avaliações</h3>
-            <table>
-                <tr><th>Avaliação</th></tr>
-                ${avaliacoes.map(a => `<tr><td>${a} estrelas</td></tr>`).join("")}
-            </table>
-        `;
-    } else if (section === "senha") {
-        content.innerHTML = `
-            <h3>Alterar Senha do Administrador</h3>
-            <input type="password" id="novaSenha" placeholder="Nova senha">
-            <button onclick="alterarSenha()">Alterar</button>
-        `;
-    }
-}
+  <footer class="py-10 text-center text-xs text-zinc-500">
+    Protótipo estático — depois conectamos ao Supabase.
+  </footer>
 
-function adicionarCliente(event) {
-    event.preventDefault();
-    const nome = document.getElementById("clienteNome").value;
-    const endereco = document.getElementById("clienteEndereco").value;
-    const contato = document.getElementById("clienteContato").value;
-    clientes.push({ nome, endereco, contato });
-    localStorage.setItem("clientes", JSON.stringify(clientes));
-    showSection('clientes');
-}
-
-function removerCliente(i) {
-    clientes.splice(i, 1);
-    localStorage.setItem("clientes", JSON.stringify(clientes));
-    showSection('clientes');
-}
-
-function adicionarFuncionario(event) {
-    event.preventDefault();
-    const nome = document.getElementById("funcNome").value;
-    const meta = document.getElementById("funcMeta").value;
-    funcionarios.push({ nome, meta });
-    localStorage.setItem("funcionarios", JSON.stringify(funcionarios));
-    showSection('funcionarios');
-}
-
-function removerFuncionario(i) {
-    funcionarios.splice(i, 1);
-    localStorage.setItem("funcionarios", JSON.stringify(funcionarios));
-    showSection('funcionarios');
-}
-
-function salvarAvaliacao() {
-    const avaliacao = document.getElementById("avaliacao").value;
-    avaliacoes.push(avaliacao);
-    localStorage.setItem("avaliacoes", JSON.stringify(avaliacoes));
-    alert("Avaliação salva!");
-}
-
-function alterarSenha() {
-    const nova = document.getElementById("novaSenha").value;
-    if (nova) {
-        adminSenha = nova;
-        alert("Senha alterada com sucesso!");
-    }
-}
-</script>
+  <script>
+    const tabs = document.querySelectorAll('.tab-btn');
+    const sections = {
+      func: document.getElementById('tab-func'),
+      cli: document.getElementById('tab-cli'),
+      adm: document.getElementById('tab-adm'),
+      'cliente-painel': document.getElementById('tab-cliente-painel'),
+    };
+    tabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabs.forEach(b => b.setAttribute('aria-selected', 'false'));
+        btn.setAttribute('aria-selected', 'true');
+        for (const k in sections) sections[k].classList.add('hidden');
+        sections[btn.dataset.tab].classList.remove('hidden');
+      });
+    });
+  </script>
 </body>
 </html>
