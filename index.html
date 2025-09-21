@@ -22,12 +22,18 @@
         <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-500 to-sky-600"></div>
         <div class="font-semibold">Aquashow Piscinas — Painel</div>
       </div>
-      <nav class="flex gap-2" role="tablist" aria-label="Abas do painel">
+      <nav class="flex flex-wrap gap-2" role="tablist" aria-label="Abas do painel">
         <button class="tab-btn px-3 h-9 rounded-xl text-sm" data-tab="func" aria-selected="true">Funcionários</button>
         <button class="tab-btn px-3 h-9 rounded-xl text-sm" data-tab="cli">Clientes</button>
         <button class="tab-btn px-3 h-9 rounded-xl text-sm" data-tab="adm">Pedidos (Admin)</button>
         <button class="tab-btn px-3 h-9 rounded-xl text-sm" data-tab="cliente-painel">Painel do Cliente</button>
+        <button class="tab-btn px-3 h-9 rounded-xl text-sm" data-tab="cliente-pagamentos">Cliente — Pagamentos (QR Pix)</button>
+        <button class="tab-btn px-3 h-9 rounded-xl text-sm" data-tab="func-hoje">Funcionário — Hoje</button>
+        <button class="tab-btn px-3 h-9 rounded-xl text-sm" data-tab="adm-escala">Admin — Escala</button>
       </nav>
+      <div class="hidden md:flex items-center gap-2 text-xs text-zinc-500">
+        <span class="px-2 py-1 rounded-full border border-zinc-300 dark:border-zinc-700">role: visual</span>
+      </div>
     </div>
   </header>
 
@@ -102,6 +108,40 @@
       </div>
     </section>
 
+    <!-- Cliente: Pagamentos (QR Pix) -->
+    <section id="cliente-pagamentos" class="hidden space-y-6">
+      <h2 class="text-xl font-semibold">Cliente — Pagamentos (QR Pix)</h2>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="card p-4 md:col-span-2">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-sm text-zinc-500">Assinatura</div>
+              <div class="font-semibold">Plano Mensal — R$ 149,90</div>
+            </div>
+            <button id="btnGerarPix" class="h-10 px-4 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900">Gerar QR</button>
+          </div>
+          <div class="mt-4 grid sm:grid-cols-2 gap-4">
+            <div class="aspect-square card flex items-center justify-center" id="qrBox">
+              <span class="text-xs text-zinc-500">QR será exibido aqui</span>
+            </div>
+            <div class="card p-3">
+              <div class="text-sm font-medium mb-2">Pix “copia e cola”</div>
+              <textarea id="pixPayload" class="w-full h-40 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-3 text-xs" readonly>—</textarea>
+              <button id="btnCopiar" class="mt-2 h-9 px-3 rounded-xl border border-zinc-300 dark:border-zinc-700 text-sm">Copiar</button>
+            </div>
+          </div>
+          <p class="mt-3 text-xs text-zinc-500">*Protótipo: QR ilustrativo. No app real, geramos o payload EMV e o QR de verdade.</p>
+        </div>
+        <div class="card p-4">
+          <div class="font-semibold mb-2">Faturas</div>
+          <ul class="text-sm space-y-2">
+            <li class="flex items-center justify-between"><span>09/2025 • R$ 149,90</span><span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-xs">Em aberto</span></li>
+            <li class="flex items-center justify-between opacity-70"><span>08/2025 • R$ 149,90</span><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs">Pago</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     <!-- Clientes: aprovar e enviar -->
     <section id="tab-cli" class="hidden space-y-6">
       <h2 class="text-xl font-semibold">Clientes — Aprovar & Enviar</h2>
@@ -119,6 +159,27 @@
       </div>
     </section>
 
+    <!-- Funcionário: Hoje (lista + meta + reagendar) -->
+    <section id="func-hoje" class="hidden space-y-6">
+      <h2 class="text-xl font-semibold">Funcionário — Lista do Dia</h2>
+      <div class="card p-4">
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="text-sm">Meta de hoje:</div>
+          <div class="text-sm"><span class="font-semibold" id="metaTarget">8</span> piscinas</div>
+          <div class="text-sm">Concluídas: <span class="font-semibold" id="metaDone">2</span></div>
+          <div class="text-sm">Pendentes: <span class="font-semibold" id="metaLeft">6</span></div>
+        </div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4" id="listaDia">
+        <!-- Cards gerados por JS abaixo -->
+      </div>
+
+      <div class="card p-4">
+        <div class="font-semibold mb-2">Reagendadas para amanhã</div>
+        <div id="listaAmanha" class="grid md:grid-cols-2 gap-3 text-sm"></div>
+      </div>
+    </section>
+
     <!-- Admin: aprovar ou reprovar -->
     <section id="tab-adm" class="hidden space-y-6">
       <h2 class="text-xl font-semibold">Administrador — Aprovação</h2>
@@ -132,6 +193,38 @@
         <div class="mt-4 flex gap-2">
           <button class="h-10 px-4 rounded-xl bg-emerald-600 text-white">Aprovar</button>
           <button class="h-10 px-4 rounded-xl bg-rose-600 text-white">Reprovar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Admin: Escala (atribuir visitas) -->
+    <section id="adm-escala" class="hidden space-y-6">
+      <h2 class="text-xl font-semibold">Admin — Escala e Atribuição</h2>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="card p-4 md:col-span-2">
+          <div class="flex flex-col sm:flex-row gap-3">
+            <select id="selFuncionario" class="h-11 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3">
+              <option value="marcos">Marcos Silva</option>
+              <option value="ana">Ana Souza</option>
+            </select>
+            <input id="dataEscala" type="date" class="h-11 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3" />
+            <select id="selCliente" class="h-11 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 flex-1">
+              <option value="1">Casa do Sr. João — Centro</option>
+              <option value="2">Condomínio Vale Verde — Bloco B</option>
+            </select>
+            <button id="btnAtribuir" class="h-11 px-4 rounded-xl bg-zinc-900 text-white dark:bg-white dark:text-zinc-900">Atribuir</button>
+          </div>
+          <div class="mt-4 grid md:grid-cols-2 gap-3" id="gridEscala">
+            <!-- Itens atribuídos aparecem aqui -->
+          </div>
+        </div>
+        <div class="card p-4">
+          <div class="font-semibold mb-2">Dicas</div>
+          <ul class="text-sm space-y-1 list-disc list-inside text-zinc-600 dark:text-zinc-400">
+            <li>Use filtros por **funcionário** e **data** para montar rotas eficientes.</li>
+            <li>Evite cruzar bairros distantes no mesmo turno.</li>
+            <li>Defina metas diárias coerentes com a distância.</li>
+          </ul>
         </div>
       </div>
     </section>
@@ -196,6 +289,365 @@
         sections[btn.dataset.tab].classList.remove('hidden');
       });
     });
+    <script>
+    const tabs = document.querySelectorAll('.tab-btn');
+    const sections = {
+      func: document.getElementById('tab-func'),
+      cli: document.getElementById('tab-cli'),
+      adm: document.getElementById('tab-adm'),
+      'cliente-painel': document.getElementById('tab-cliente-painel'),
+      'cliente-pagamentos': document.getElementById('cliente-pagamentos'),
+      'func-hoje': document.getElementById('func-hoje'),
+      'adm-escala': document.getElementById('adm-escala'),
+    };
+    tabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabs.forEach(b => b.setAttribute('aria-selected', 'false'));
+        btn.setAttribute('aria-selected', 'true');
+        for (const k in sections) sections[k].classList.add('hidden');
+        sections[btn.dataset.tab].classList.remove('hidden');
+      });
+    });
+
+    // ==== Cliente Pagamentos (QR Pix mock) ====
+    const btnGerar = document.getElementById('btnGerarPix');
+    const qrBox = document.getElementById('qrBox');
+    const payloadEl = document.getElementById('pixPayload');
+    const btnCopiar = document.getElementById('btnCopiar');
+    function buildMockPayload(){
+      const payload = '00020126BR.GOV.BCB.PIX01chave-pix-aquashow5204000053039865406149.905802BR5920Aquashow Piscinas6009SaoJose62' + Date.now() + '6304MOCK';
+      return payload;
+    }
+    btnGerar?.addEventListener('click', () => {
+      const p = buildMockPayload();
+      payloadEl.value = p;
+      qrBox.innerHTML = '<div class="w-40 h-40 rounded-lg border border-zinc-300 dark:border-zinc-700 grid grid-cols-6 grid-rows-6 overflow-hidden">' +
+        Array.from({length:36}).map((_,i)=>`<div class="${(i%3===0||i%5===0)?'bg-zinc-900 dark:bg-white':''}"></div>`).join('') + '</div>';
+    });
+    btnCopiar?.addEventListener('click', async () => {
+      await navigator.clipboard.writeText(payloadEl.value || '');
+      btnCopiar.textContent = 'Copiado!';
+      setTimeout(()=>btnCopiar.textContent='Copiar',1200);
+    });
+
+    // ==== Funcionário Hoje (mock data + meta) ====
+    const metaTargetEl = document.getElementById('metaTarget');
+    const metaDoneEl = document.getElementById('metaDone');
+    const metaLeftEl = document.getElementById('metaLeft');
+    const listaDia = document.getElementById('listaDia');
+    const listaAmanha = document.getElementById('listaAmanha');
+
+    const visitas = [
+      {id:'v1', cliente:'Casa do Sr. João', endereco:'Rua das Palmeiras, 123 — Centro', hora:'09:00', lat:-23.2, lng:-45.9},
+      {id:'v2', cliente:'Condomínio Vale Verde', endereco:'Av. Central, 456 — Bloco B', hora:'10:00', lat:-23.21, lng:-45.91},
+      {id:'v3', cliente:'Sítio Boa Vista', endereco:'Estrada Municipal, km 7', hora:'11:30', lat:-23.3, lng:-46.0},
+      {id:'v4', cliente:'Dona Maria', endereco:'Rua Ipês, 77 — Bosque', hora:'14:00', lat:-23.22, lng:-45.92},
+      {id:'v5', cliente:'Seu Pedro', endereco:'Rua das Acácias, 55 — Centro', hora:'15:00', lat:-23.205, lng:-45.905},
+      {id:'v6', cliente:'Dona Cida', endereco:'Alameda Sul, 90 — Parque', hora:'16:00', lat:-23.26, lng:-45.95}
+    ];
+
+    function renderVisitaCard(v){
+      const el = document.createElement('div');
+      el.className = 'card p-4';
+      el.innerHTML = `
+        <div class="text-sm text-zinc-500">${v.hora}</div>
+        <div class="font-semibold">${v.cliente}</div>
+        <div class="text-sm">${v.endereco}</div>
+        <div class="mt-3 flex gap-2">
+          <button data-id="${v.id}" data-act="done" class="h-9 px-3 rounded-xl bg-emerald-600 text-white text-sm">Concluir</button>
+          <button data-id="${v.id}" data-act="fail" class="h-9 px-3 rounded-xl bg-rose-600 text-white text-sm">Não consegui</button>
+          <button data-id="${v.id}" data-act="near" class="h-9 px-3 rounded-xl border border-zinc-300 dark:border-zinc-700 text-sm">Sugerir próximas</button>
+        </div>`;
+      return el;
+    }
+
+    function updateMeta(){
+      const target = Number(metaTargetEl.textContent||'0');
+      const done = Number(metaDoneEl.textContent||'0');
+      metaLeftEl.textContent = String(Math.max(target - done, 0));
+    }
+
+    function renderLista(){
+      listaDia.innerHTML = '';
+      visitas.forEach(v => listaDia.appendChild(renderVisitaCard(v)));
+    }
+    renderLista();
+    updateMeta();
+
+    listaDia?.addEventListener('click', (e)=>{
+      const b = e.target.closest('button');
+      if(!b) return;
+      const id = b.getAttribute('data-id');
+      const act = b.getAttribute('data-act');
+      const idx = visitas.findIndex(x=>x.id===id);
+      if(idx<0) return;
+      const v = visitas[idx];
+      if(act==='done'){
+        visitas.splice(idx,1);
+        metaDoneEl.textContent = String(Number(metaDoneEl.textContent||'0')+1);
+        updateMeta();
+        renderLista();
+      } else if(act==='fail'){
+        visitas.splice(idx,1);
+        const tile = document.createElement('div');
+        tile.className='p-3 rounded-xl border border-zinc-200 dark:border-zinc-800';
+        tile.textContent = `${v.cliente} — reagendada para amanhã, ${v.hora}`;
+        listaAmanha.appendChild(tile);
+        renderLista();
+      } else if(act==='near'){
+        // mock: lista 2 próximas pelo índice
+        const prox = visitas.slice(0,2).map(x=>x.cliente).join(', ');
+        alert('Próximas próximas sugeridas: '+prox);
+      }
+    });
+
+    // ==== Admin Escala (mock atribuição) ====
+    const btnAttr = document.getElementById('btnAtribuir');
+    const gridEscala = document.getElementById('gridEscala');
+    const selFunc = document.getElementById('selFuncionario');
+    const selCliente = document.getElementById('selCliente');
+    const dataEscala = document.getElementById('dataEscala');
+    btnAttr?.addEventListener('click', ()=>{
+      const card = document.createElement('div');
+      card.className = 'rounded-xl border border-zinc-200 dark:border-zinc-800 p-3 text-sm';
+      card.textContent = `${dataEscala.value||'data'} • ${selFunc.value} → ${selCliente.options[selCliente.selectedIndex].text}`;
+      gridEscala.appendChild(card);
+    });
   </script>
 </body>
 </html>
+
+
+---
+
+# 6) Acessos separados por perfil (Auth + RLS)
+> Cada papel tem **seu próprio acesso** e vê **apenas o que precisa**. O **Admin** enxerga tudo sem trocar de login.
+
+## Perfis e rotas
+- **Cliente** (role `cliente`)
+  - Rota inicial: `/cliente` (ou `/clientes/me`)
+  - Ver: sua piscina(s), endereço(s), **botão de emergência** “Minha piscina ficou ruim”, **pagamento da mensalidade via QR Pix**, próximas visitas e histórico.
+- **Funcionário** (role `funcionario`)
+  - Rota inicial: `/funcionario`
+  - Ver: **lista do dia** de piscinas com **endereços**, marcar **feita**/**não feita** (auto-reagendar para o **dia seguinte**), **meta diária** e sugestões de **adiantar** piscinas **próximas**.
+- **Admin** (role `admin`)
+  - Rota inicial: `/admin`
+  - Ver e **editar tudo**: clientes, endereços, piscinas, atribuição de funcionários, agenda, metas, pedidos e aprovações.
+
+### Proteção de páginas (Next.js)
+- Um **middleware** lê o `profiles.role` e redireciona para a área correta.
+- Componentes/queries usam **RLS** (já configurado) garantindo isolamento de dados no banco.
+
+---
+
+# 7) Emergência do Cliente ("Minha piscina ficou ruim")
+## SQL
+```sql
+create table if not exists public.emergency_tickets (
+  id uuid primary key default gen_random_uuid(),
+  client_id uuid not null references public.clients(id) on delete cascade,
+  pool_id uuid references public.pools(id) on delete set null,
+  description text,
+  status text not null default 'open', -- open | acknowledged | scheduled | done | canceled
+  created_at timestamptz default now(),
+  acknowledged_at timestamptz,
+  scheduled_visit_id uuid references public.service_visits(id) on delete set null,
+  closed_at timestamptz
+);
+
+alter table public.emergency_tickets enable row level security;
+create policy if not exists "admin emergency full" on public.emergency_tickets for all using (
+  exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='admin')
+);
+create policy if not exists "cliente emergency write" on public.emergency_tickets for insert with check (
+  exists(select 1 from public.clients c where c.id=client_id and c.profile_id=auth.uid())
+);
+create policy if not exists "cliente emergency read" on public.emergency_tickets for select using (
+  exists(select 1 from public.clients c where c.id=emergency_tickets.client_id and c.profile_id=auth.uid())
+);
+create policy if not exists "func emergency read" on public.emergency_tickets for select using (
+  exists(select 1 from public.employee_clients ec where ec.employee_id=auth.uid() and ec.client_id=emergency_tickets.client_id)
+);
+```
+
+## UI (cliente)
+- Botão **“Minha piscina ficou ruim”** abre um formulário simples (descrição + foto opcional).
+- Ao enviar, cria `emergency_tickets(status='open')` e notifica o admin.
+
+## UI (admin)
+- Lista de emergências `open`/`acknowledged`.
+- Ações: **Reconhecer**, **Agendar visita** (cria `service_visits` vinculando em `scheduled_visit_id`), **Concluir**.
+
+---
+
+# 8) Mensalidade com **QR Pix** (cliente)
+> Suporte a **Pix estático** ou **dinâmico**. Para MVP, usamos **estático por cliente** com valor do mês.
+
+## SQL
+```sql
+create table if not exists public.subscriptions (
+  id uuid primary key default gen_random_uuid(),
+  client_id uuid not null references public.clients(id) on delete cascade,
+  monthly_amount_cents int not null,
+  pix_key text not null, -- sua chave Pix (CPF/CNPJ/aleatória/email)
+  active boolean default true,
+  created_at timestamptz default now()
+);
+
+create table if not exists public.invoices (
+  id uuid primary key default gen_random_uuid(),
+  subscription_id uuid not null references public.subscriptions(id) on delete cascade,
+  due_date date not null,
+  amount_cents int not null,
+  status text not null default 'open', -- open | paid | canceled
+  txid text, -- para conciliação
+  paid_at timestamptz
+);
+
+alter table public.subscriptions enable row level security;
+alter table public.invoices enable row level security;
+
+-- Cliente enxerga suas faturas
+create policy if not exists "cliente invoices read" on public.invoices for select using (
+  exists(select 1 from public.subscriptions s join public.clients c on c.id=s.client_id
+    where s.id=invoices.subscription_id and c.profile_id=auth.uid())
+);
+-- Admin gerencia tudo
+create policy if not exists "admin invoices full" on public.invoices for all using (
+  exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='admin')
+);
+```
+
+## Front-end (Pix EMV)
+- Geramos o **payload EMV** do Pix (Merchant Account Info + Amount + TXID + CRC16) no cliente e renderizamos o **QR** com a lib `qrcode`.
+- Mostramos também o **“copia e cola”**.
+
+```ts
+// utils/pix.ts (simplificado; produção requer validações completas)
+export function buildPixPayload({pixKey, name, city, amount, txid}:{pixKey:string; name:string; city:string; amount:number; txid:string}){
+  const format = (id:string, value:string) => id + String(value.length).padStart(2,'0') + value;
+  const merchantAccount = format('00','br.gov.bcb.pix') + format('01', pixKey);
+  const gui = format('26', merchantAccount);
+  const merchant = format('59', name) + format('60', city);
+  const transaction = format('52','0000') + format('53','986') + format('54', amount.toFixed(2)) + format('58','BR');
+  const payload = format('00','01') + gui + merchant + transaction + format('62', format('05', txid)) + '6304';
+  // calcular CRC16-CCITT
+  let crc = 0xFFFF;
+  for (let i=0;i<payload.length;i++){ crc ^= payload.charCodeAt(i) << 8; for(let j=0;j<8;j++){ crc = (crc & 0x8000) ? (crc<<1) ^ 0x1021 : (crc<<1); crc &= 0xFFFF; } }
+  return payload + crc.toString(16).toUpperCase().padStart(4,'0');
+}
+```
+
+Na tela do cliente, use:
+```tsx
+import QRCode from 'qrcode';
+const payload = buildPixPayload({ pixKey: 'SUA_CHAVE', name: 'Aquashow', city: 'SJC', amount: 149.90, txid: 'INV-2025-09-001' });
+const dataUrl = await QRCode.toDataURL(payload);
+```
+
+> **Conciliação**: ao receber o comprovante (upload) ou via webhook/consulta (se usar um PSP com API), marque `invoices.status='paid'` e `paid_at=now()`.
+
+---
+
+# 9) Funcionário — lista do dia, metas e reagendamento
+## SQL (com geolocalização)
+```sql
+-- Coordenadas da piscina para proximidade (opcional)
+alter table public.pools add column if not exists lat double precision;
+alter table public.pools add column if not exists lng double precision;
+
+-- Metas diárias
+create table if not exists public.employee_daily_goals (
+  employee_id uuid references public.employees(profile_id) on delete cascade,
+  day date not null,
+  target_count int not null,
+  primary key (employee_id, day)
+);
+
+-- Campos na visita para conclusão e reagendamento
+alter table public.service_visits
+  add column if not exists completed_at timestamptz,
+  add column if not exists result text, -- done | failed | partial
+  add column if not exists rescheduled_from uuid references public.service_visits(id);
+```
+
+## RPCs (transição segura)
+```sql
+create or replace function public.mark_visit_done(p_visit uuid)
+returns void language plpgsql security definer as $$
+begin
+  update public.service_visits
+  set status='done', completed_at=now(), result='done'
+  where id=p_visit and assigned_employee = auth.uid();
+end; $$;
+
+declare
+-- Falhou: reagendar automaticamente para o dia seguinte, mesmo horário
+create or replace function public.mark_visit_failed_and_reschedule(p_visit uuid)
+returns void language plpgsql security definer as $$
+declare v service_visits; new_time timestamptz; begin
+  select * into v from public.service_visits where id=p_visit;
+  if v.assigned_employee <> auth.uid() then raise exception 'not allowed'; end if;
+  update public.service_visits set status='canceled', result='failed' where id=p_visit;
+  new_time := (v.scheduled_at + interval '1 day');
+  insert into public.service_visits(client_id,pool_id,scheduled_at,assigned_employee,status,rescheduled_from)
+  values(v.client_id,v.pool_id,new_time,v.assigned_employee,'planned',p_visit);
+end; $$;
+
+-- Sugerir visitas próximas para adiantar (raio em km)
+create or replace function public.suggest_nearby_visits(p_employee uuid, p_ref_visit uuid, p_radius_km numeric)
+returns table(visit_id uuid, distance_km numeric) language plpgsql security definer as $$
+begin
+  return query
+  with ref as (
+    select p.lat as rlat, p.lng as rlng from public.service_visits v join public.pools p on p.id=v.pool_id where v.id=p_ref_visit
+  )
+  select v.id,
+    (111.045 * sqrt(pow(p.lat - (select rlat from ref),2) + pow(p.lng - (select rlng from ref),2))) as distance_km
+  from public.service_visits v
+  join public.pools p on p.id=v.pool_id
+  where v.assigned_employee=p_employee and v.status='planned'
+  order by distance_km asc;
+end; $$;
+```
+
+## UI (funcionário)
+- **/funcionario** mostra: “Minhas piscinas de hoje”, cada card com **endereço**, telefone do cliente, **botões**: **Concluir** (chama `mark_visit_done`) e **Não consegui** (chama `mark_visit_failed_and_reschedule`).
+- Mostra **meta do dia** (de `employee_daily_goals`) e um contador **feitas/pendentes**.
+- Em cada visita feita, um botão “**Sugerir próximas**” consulta `suggest_nearby_visits` para adiantar.
+
+---
+
+# 10) Admin — controle total
+- **/admin** com abas: **Clientes**, **Piscinas**, **Agenda**, **Funcionários**, **Pedidos**, **Financeiro**.
+- Pode **atribuir** piscinas a funcionários (criar `service_visits` em lote), **editar** endereços, **criar/atualizar** metas, **gerar faturas** (`invoices`) e ver status de pagamento.
+
+---
+
+# 11) Middleware de login (roteamento por papel)
+```ts
+// middleware.ts (exemplo simplificado)
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
+export async function middleware(req: NextRequest) {
+  // obter role via cookie/session ou chamada SSR ao Supabase (edge)
+  const role = req.cookies.get('role')?.value; // ou injete via sessão
+  const url = req.nextUrl;
+  if (url.pathname.startsWith('/admin') && role !== 'admin') return NextResponse.redirect(new URL('/login', req.url));
+  if (url.pathname.startsWith('/funcionario') && role !== 'funcionario') return NextResponse.redirect(new URL('/login', req.url));
+  if (url.pathname.startsWith('/cliente') && role !== 'cliente') return NextResponse.redirect(new URL('/login', req.url));
+  return NextResponse.next();
+}
+```
+
+---
+
+# 12) Telas extras a implementar
+- **/cliente/pagamentos**: lista `invoices` abertas, **QR Pix** (payload + QR + copia/cola), upload de comprovante.
+- **/cliente/emergencia**: formulário “Minha piscina ficou ruim”.
+- **/funcionario/hoje**: lista do dia, check-in/out, concluir/reagendar.
+- **/funcionario/meta**: ver meta do dia e histórico semanal.
+- **/admin/escala**: calendário para montar a agenda por funcionário.
+
+> Com isso, cobrimos **acessos separados**, **emergência**, **Pix**, **lista do dia com metas e reagendamento**, e **admin total** — tudo isolado por **login/role** e com **RLS** garantindo segurança no banco.
